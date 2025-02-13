@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../Components/Navbar'
 import Footer from '../Components/Footer'
-import homePic from '../images/homepic.png' // Make sure to add your illustration to assets folder
+ // Make sure to add your illustration to assets folder
 import '../styles/Home.css'
 
 function Home() {
@@ -24,7 +24,7 @@ function Home() {
           </button>
          </div>
         <div className="hero-image">
-          <img src={homePic} alt="Education illustration" />
+          <img src={'images/homepic.png'} alt="Education illustration" />
         </div>
       </div>
       <Footer />
