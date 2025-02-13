@@ -1,0 +1,99 @@
+.home {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(45deg, #9b4de0, #6c2bb3);
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.hero-section {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 6rem;
+  margin: 0;
+  width: 100%;
+}
+
+.hero-content {
+  width: 60%;
+  padding-right: 2rem;
+}
+
+.hero-content h1 {
+  font-size: calc(2rem + 2vw);
+  line-height: 1.1;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.hero-content p {
+  font-size: calc(0.9rem + 0.3vw);
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.explore-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #6619c2;
+  color: white;
+  border: none;
+  padding: 1rem 3rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.explore-btn .dot {
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.explore-btn:hover {
+  transform: translateY(-2px);
+}
+
+.hero-image {
+  width: 40%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.hero-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 1024px) {
+  .hero-section {
+    padding: 0 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    flex-direction: column;
+    padding: 2rem;
+  }
+
+  .hero-content, .hero-image {
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .hero-content p {
+    margin: 1.5rem auto;
+  }
+}

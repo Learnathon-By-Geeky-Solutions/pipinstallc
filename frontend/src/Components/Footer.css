@@ -1,0 +1,65 @@
+.footer {
+  width: 100vw;
+  background-color: #1C1D1F;
+  padding: 1rem 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.footer-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 0 4rem;
+}
+
+.footer-text {
+  color: white;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.footer-text .highlight {
+  color: #A435F0;
+  font-weight: 600;
+}
+
+.company-logos {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-left: auto;
+}
+
+.company-logos img {
+  height: 32px;
+  object-fit: contain;
+  filter: brightness(0) invert(1); /* Makes logos white */
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.company-logos img:hover {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  
+  .company-logos {
+    margin-left: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .company-logos img {
+    height: 24px;
+  }
+} 

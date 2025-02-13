@@ -1,0 +1,35 @@
+.navbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 6rem;
+    background: transparent;
+    margin: 0;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.8);
+  }
+  /* ... rest of the existing navbar styles ... */
+  
+  .nav-container {
+    width: calc(100% - 3rem);  /* Adjust based on your preference */
+    margin: 0 auto;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .l-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 0.5rem 2rem;
+    border-radius: 5px;
+  }
+
