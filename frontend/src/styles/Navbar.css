@@ -23,6 +23,41 @@
   .nav-links a {
     color: white;
     text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    position: relative;
+    padding-bottom: 5px;
+  }
+  
+  .nav-links a:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: white;
+    left: 0;
+    bottom: 0;
+    transition: width 0.3s ease;
+  }
+  
+  .nav-links a:hover:after {
+    width: 100%;
+  }
+  
+  .nav-links a.active {
+    opacity: 1;
+  }
+  
+  .nav-links a.active:after {
+    width: 100%;
+  }
+  
+  .logo a {
+    text-decoration: none;
+  }
+  
+  .logo h2 {
+    color: white;
   }
   
   .l-btn {
@@ -31,5 +66,14 @@
     border: none;
     padding: 0.5rem 2rem;
     border-radius: 5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .l-btn:hover {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.3);
   }
 

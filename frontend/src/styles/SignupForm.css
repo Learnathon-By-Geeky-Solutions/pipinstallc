@@ -1,0 +1,137 @@
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 5rem;
+  transform: scale(1.1);
+}
+
+.signup-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  margin-top: 1rem;
+}
+
+.signup-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  color: #6c2bb3;
+}
+
+.signup-header h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #6c2bb3;
+}
+
+.signup-header a {
+  color: #9b4de0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  color: #6c2bb3;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #9b4de0;
+  border-radius: 8px;
+  color: #6c2bb3;
+  font-size: 1.1rem;
+}
+
+.signup-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #6c2bb3;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.divider {
+  text-align: center;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background: rgba(108, 43, 179, 0.2);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.divider span {
+  background: white;
+  padding: 0 1rem;
+  color: #6c2bb3;
+}
+
+.google-btn {
+  width: 100%;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #9b4de0;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: #6c2bb3;
+}
+
+.google-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+.login-redirect {
+  text-align: center;
+  margin-top: 2rem;
+  color: #6c2bb3;
+}
+
+.login-redirect a {
+  color: #9b4de0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-redirect a:hover {
+  color: #6c2bb3;
+} 

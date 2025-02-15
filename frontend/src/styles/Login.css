@@ -1,0 +1,17 @@
+.login-page {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.login-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+/* Remove any position: fixed from the footer */
+footer {
+  margin-top: auto; /* This pushes the footer to the bottom */
+} 
