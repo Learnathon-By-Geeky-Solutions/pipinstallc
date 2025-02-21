@@ -26,3 +26,35 @@ class ProfileView(APIView):
             },
             status=status.HTTP_200_OK
         )
+
+
+class UserInfoView(APIView):
+    """
+    Add user info.
+    """
+    permission_classes = [IsAuthenticated]
+    def put(self, request):
+        user = request.user
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    'status': True,
+                    'message': 'User info updated successfully',
+                    'data':serializer.data
+                }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(
+            {
+                'status': True,
+                'message': 'User info fetched successfully',    
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+    
