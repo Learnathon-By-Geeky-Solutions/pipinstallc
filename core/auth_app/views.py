@@ -7,9 +7,10 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from rest_framework import status
 from .serializers import RegisterSerializer
-from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from .models import CustomUser
+
 class RegisterView(APIView):
     """
     Register a new user.
@@ -38,7 +39,7 @@ class LoginView(APIView):
         username = data.get('username')
         password = data.get('password')
 
-        user = User.objects.filter(username=username).first()
+        user = CustomUser.objects.filter(username=username).first()
         if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
             return Response(

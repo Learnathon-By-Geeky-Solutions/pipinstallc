@@ -8,6 +8,9 @@ db.sqlite3
 db.sqlite3-journal
 media/
 
+# Migrations files
+auth_app/migrations/
+api/migrations/
 # Environment variables
 .env
 .env.local

@@ -1,16 +1,12 @@
 
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from .models import User_Profile
+from auth_app.models import CustomUser
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email']
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number', 'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject']
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User_Profile
-        fields = ['id', 'user', 'profile_picture', 'is_email_verified', 'is_profile_verified', 'is_active', 'created_at', 'updated_at', 'date_of_birth', 'university', 'department', 'major_subject']
 
 
