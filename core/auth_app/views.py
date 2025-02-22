@@ -105,7 +105,7 @@ class LogoutView(APIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        except Exception as e:
+        except Exception:
             return Response(
                 {
                     'status': False,
@@ -113,7 +113,6 @@ class LogoutView(APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-    
 class VerifyEmailView(APIView):
     """
     Verify a user's email address by checking the provided OTP (One-Time Password).
@@ -272,5 +271,4 @@ class ResetPasswordView(APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-    
     
