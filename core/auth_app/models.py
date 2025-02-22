@@ -13,8 +13,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     university = models.CharField(max_length=100, null=True, blank=True)
     department = models.CharField(max_length=100, null=True, blank=True)
     major_subject = models.CharField(max_length=100, null=True, blank=True)
-    
-    # Required fields for Django's auth system
+    otp = models.CharField(max_length=6, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
