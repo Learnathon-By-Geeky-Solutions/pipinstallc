@@ -3,6 +3,9 @@ from .models import CustomUser
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    """
+    Serializer for registering a new user.
+    """
     password2 = serializers.CharField(write_only=True)
 
     class Meta:
@@ -30,6 +33,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class VerifyEmailSerializer(serializers.Serializer):
+    """
+    Serializer for verifying a user's email.
+    """
     email = serializers.EmailField()
     otp = serializers.CharField(max_length=4)
 
@@ -51,6 +57,10 @@ class VerifyEmailSerializer(serializers.Serializer):
         return data
 
 class ResendOTPSerializer(serializers.Serializer):
+    """
+    Serializer for resending OTP for email verification.
+
+    """
     email = serializers.EmailField()
 
     def validate(self, data):
@@ -59,6 +69,10 @@ class ResendOTPSerializer(serializers.Serializer):
         return data
     
 class ForgotPasswordSerializer(serializers.Serializer):
+    """
+    Serializer for sending OTP for password reset.
+
+    """
     email = serializers.EmailField()
 
     def validate(self, data):
@@ -67,6 +81,9 @@ class ForgotPasswordSerializer(serializers.Serializer):
         return data
 
 class ResetPasswordSerializer(serializers.Serializer):
+    """
+    Serializer for resetting a user's password.
+    """
     email = serializers.EmailField()
     otp = serializers.CharField(max_length=4)
     password = serializers.CharField(write_only=True)

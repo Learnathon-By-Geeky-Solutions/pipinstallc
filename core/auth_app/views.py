@@ -41,6 +41,12 @@ class RegisterView(APIView):
 class LoginView(APIView):
     """
     Login a user.
+
+    This view handles user login requests. It expects a POST request with 
+    the username and password in the request body. If the credentials are 
+    valid, it generates a JWT refresh token for the user and returns it 
+    along with the user's details. If the credentials are invalid, it 
+    returns an unauthorized response.
     """
     def post(self, request):
         data = request.data
@@ -71,7 +77,6 @@ class LoginView(APIView):
             },
             status=status.HTTP_401_UNAUTHORIZED
         )
-
 class LogoutView(APIView):
     """
     Logout a user by blacklisting their refresh token.
@@ -111,7 +116,12 @@ class LogoutView(APIView):
     
 class VerifyEmailView(APIView):
     """
-    Verify a user's email address.
+    Verify a user's email address by checking the provided OTP (One-Time Password).
+    
+    This view handles POST requests containing the user's email and the OTP they received.
+    It validates the OTP against the stored OTP in the database for the user associated with the provided email.
+    If the OTP is valid, the user's email is marked as verified, and the stored OTP is cleared.
+    If the OTP is invalid or the user does not exist, appropriate error messages are returned.
     """
     def post(self, request):
         serializer = VerifyEmailSerializer(data=request.data)
@@ -159,7 +169,6 @@ class VerifyEmailView(APIView):
             },
             status=status.HTTP_400_BAD_REQUEST
         )
-    
 class ResendOTPView(APIView):
     """
     Resend OTP to user's email.
