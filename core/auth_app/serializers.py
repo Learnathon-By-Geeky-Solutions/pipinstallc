@@ -65,7 +65,7 @@ class ResendOTPSerializer(serializers.Serializer):
 
     def validate(self, data):
         if not CustomUser.objects.filter(email=data['email']).exists():
-            raise serializers.ValidationError("No user found with this email")
+            raise serializers.ValidationError("No user found")
         return data
     
 class ForgotPasswordSerializer(serializers.Serializer):
@@ -77,7 +77,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
 
     def validate(self, data):
         if not CustomUser.objects.filter(email=data['email']).exists():
-            raise serializers.ValidationError("No user found with this email")
+            raise serializers.ValidationError("No user found registered with this email")
         return data
 
 class ResetPasswordSerializer(serializers.Serializer):
