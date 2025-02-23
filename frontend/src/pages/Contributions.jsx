@@ -47,7 +47,7 @@ function Contributions() {
     <div className="contributions-page">
       <Navbar />
       <div className="contributions-content">
-        <h1>All the exam preparations you need in one place</h1>
+        <h1 style={{color: '#6c2bb3'}}>All the exam preparations you need in one place</h1>
         <p className="subtitle">From critical skills to exam topics, edusphere supports your development.</p>
         
         <div className="sub-navbar">
