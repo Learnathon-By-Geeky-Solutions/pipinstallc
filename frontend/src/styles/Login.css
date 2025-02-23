@@ -1,0 +1,19 @@
+.login-page {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+}
+
+.login-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 6rem 0;
+  color: #6c2bb3;
+}
+
+/* Remove any position: fixed from the footer */
+footer {
+  margin-top: auto; /* This pushes the footer to the bottom */
+} 

@@ -1,0 +1,171 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 2rem;
+  transform: scale(1.1); /* Changed from 1.2 to 1.1 (10% scale up instead of 20%) */
+}
+
+.login-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  color: #6c2bb3; /* Purple text */
+}
+
+.login-header a {
+  color: #9b4de0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  color: #6c2bb3;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #9b4de0;
+  border-radius: 8px;
+  color: #6c2bb3;
+  font-size: 1.1rem;
+}
+
+.form-group input::placeholder {
+  color: rgba(108, 43, 179, 0.5);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #6c2bb3;
+  box-shadow: 0 0 0 2px rgba(108, 43, 179, 0.1);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.8rem 0;
+}
+
+.remember-me {
+  color: #6c2bb3;
+  font-size: 0.9rem;
+}
+
+.remember-me input[type="checkbox"] {
+  accent-color: #6c2bb3;
+  margin-right: 0.5rem;
+}
+
+.forgot-password {
+  text-decoration: underline;
+  color: #9b4de0;
+  opacity: 0.9;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #6c2bb3;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.login-btn:hover {
+  background: #9b4de0;
+}
+
+/* Add hover effects */
+.login-header a:hover{
+    color: #9b4de0;
+}
+.forgot-password:hover {
+  color: #6c2bb3;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+}
+
+/* Add these styles to your existing LoginForm.css */
+
+.divider {
+  text-align: center;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background: rgba(108, 43, 179, 0.2);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.divider span {
+  background: white;
+  padding: 0 1rem;
+  color: #6c2bb3;
+}
+
+.google-btn {
+  width: 100%;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #9b4de0;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: #6c2bb3;
+  margin-top: 1rem;
+}
+
+.google-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+.google-btn:hover {
+  background: rgba(155, 77, 224, 0.05);
+} 

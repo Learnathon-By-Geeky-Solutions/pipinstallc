@@ -3,22 +3,28 @@ import Navbar from '../Components/Navbar'
 import Footer from '../Components/Footer'
  // Make sure to add your illustration to assets folder
 import '../styles/Home.css'
+import { useNavigate } from 'react-router-dom'
 
 function Home() {
-    return (
-      <div className="home">
-        <Navbar />
-        <div className="hero-section">
-          <div className="hero-content" style={{ width: '100%' }}>
-            <h1>
-              Increase your<br />
-              Result<br />
-              with us!
-            </h1>
-          <p style={{ textAlign: 'left' }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
+  const navigate = useNavigate();
+
+  return (
+    <div className="home">
+      <Navbar />
+      <div className="hero-section">
+        <div className="hero-content">
+          <h1>
+            Increase your<br />
+            Result<br />
+            with us!
+          </h1>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
              eiusmod tempor incididunt ut labom et dolore magna aliqua. Ut 
              enim ad minim veniam</p>
-          <button className="explore-btn">
+          <button 
+            className="explore-btn"
+            onClick={() => navigate('/contributions')}
+          >
             <span className="dot"></span>
             EXPLORE
           </button>
@@ -27,7 +33,7 @@ function Home() {
           <img src={'images/homepic.png'} alt="Education illustration" />
         </div>
       </div>
-      <Footer />
+      
     </div>
   )
 }

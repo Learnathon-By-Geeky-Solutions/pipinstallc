@@ -1,7 +1,7 @@
 .home {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(45deg, #9b4de0, #6c2bb3);
+  background: white;
   display: flex;
   flex-direction: column;
   margin: 0;
@@ -9,14 +9,19 @@
   position: relative;
 }
 
+.home-page {
+  min-height: 100vh;
+  background: white;
+}
+
 .hero-section {
-  flex: 1;
+  min-height: calc(100vh - 80px);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
   padding: 2rem 6rem;
-  margin: 0;
-  width: 100%;
+  text-align: left;
+  background: white;
 }
 
 .hero-content {
@@ -25,17 +30,32 @@
 }
 
 .hero-content h1 {
-  font-size: calc(2rem + 2vw);
-  line-height: 1.1;
-  color: white;
+  font-size: 3.5rem;
+  color: #6c2bb3;
   margin-bottom: 1.5rem;
+  text-shadow: 0 2px 4px rgba(108, 43, 179, 0.1);
+  text-align: left;
 }
 
 .hero-content p {
-  font-size: calc(0.9rem + 0.3vw);
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2rem;
-  max-width: 600px;
+  font-size: 1.2rem;
+  color: #6c2bb3;
+  margin-bottom: 2.5rem;
+}
+
+.primary-btn {
+  background: #6c2bb3;
+  color: white;
+}
+
+.secondary-btn {
+  background: transparent;
+  color: #6c2bb3;
+  border: 2px solid #6c2bb3;
+}
+
+.secondary-btn:hover {
+  background: rgba(108, 43, 179, 0.1);
 }
 
 .explore-btn {
@@ -96,4 +116,61 @@
   .hero-content p {
     margin: 1.5rem auto;
   }
+}
+
+.features-section {
+  padding: 6rem;
+  background: white;
+}
+
+.features-section h2 {
+  color: #6c2bb3;
+}
+
+.feature-card {
+  background: white;
+  box-shadow: 0 4px 15px rgba(108, 43, 179, 0.1);
+}
+
+.feature-card h3,
+.feature-card p {
+  color: #6c2bb3;
+}
+
+.cta-section {
+  background: white;
+  padding: 6rem 2rem;
+  text-align: center;
+  color: #6c2bb3;
+  border-top: 1px solid rgba(108, 43, 179, 0.1);
+}
+
+.cta-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #6c2bb3;
+}
+
+.cta-section p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #9b4de0;
+}
+
+.cta-btn {
+  display: inline-block;
+  padding: 1rem 3rem;
+  background: #6c2bb3;
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(108, 43, 179, 0.3);
+  background: #9b4de0;
 }
