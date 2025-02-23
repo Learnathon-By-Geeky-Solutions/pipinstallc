@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import '../styles/Contributions.css';
 
 function Contributions() {
+  const navigate = useNavigate();
   const [activeTag, setActiveTag] = useState('DSA');
   const [showFilter, setShowFilter] = useState(false);
   const filterRef = useRef(null);
@@ -41,6 +43,10 @@ function Contributions() {
 
   const handleClearFilter = () => {
     setShowFilter(false);
+  };
+
+  const handleViewClick = (id) => {
+    navigate(`/contributions/${id}`);
   };
 
   return (
@@ -127,7 +133,12 @@ function Contributions() {
           <div className="video-card">
             <div className="video-thumbnail">
               <h3>learn {activeTag}</h3>
-              <button className="view-btn">view</button>
+              <button 
+                onClick={() => handleViewClick('learn-algorithm')}
+                className="view-btn"
+              >
+                view
+              </button>
             </div>
           </div>
           <div className="video-card">
