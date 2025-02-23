@@ -1,0 +1,16 @@
+.signup-page {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(45deg, #9b4de0, #6c2bb3);
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px; /* Space for navbar */
+  padding: 60rem 0;
+} 
