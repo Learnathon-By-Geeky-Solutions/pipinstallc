@@ -167,7 +167,7 @@ class ContributionDetailSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        request = self.context.get('request')
+        # request = self.context.get('request')
         
         # Remove sensitive data if user is not enrolled
         if not self.get_is_enrolled(instance):
