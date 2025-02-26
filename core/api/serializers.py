@@ -1,44 +1,44 @@
 from rest_framework import serializers
 from auth_app.models import CustomUser
-from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes
-
+from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, \
+    Enrollment
+from django.shortcuts import get_object_or_404
 
 """
 Serializer for custom User model.
 """
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number', 'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject']
-
-
-
-
-
-
-
-
+        fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number',
+                  'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject']
 
 
 class ContributionVideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = contribution_videos
-        fields = '__all__'
+        fields = '_all_'
+
 
 class ContributionTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contribution_tags
-        fields = '__all__'
+        fields = '_all_'
+
 
 class ContributionOriginSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contribution_origines
-        fields = '__all__'
+        fields = '_all_'
+
 
 class ContributionNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contribution_notes
-        fields = '__all__'
+        fields = '_all_'
+
 
 class ContributionSerializer(serializers.ModelSerializer):
     '''
@@ -51,7 +51,7 @@ class ContributionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contributions
-        fields = '__all__'
+        fields = '_all_'
 
     def create(self, validated_data):
         # Pop nested data
@@ -137,6 +137,72 @@ class ContributionSerializer(serializers.ModelSerializer):
 class ContributionBasicAdsSerializer(serializers.ModelSerializer):
     tags = ContributionTagSerializer(many=True, required=False)
     origine = ContributionOriginSerializer(many=True, required=False)
+
     class Meta:
         model = Contributions
-        fields = ['id', 'title', 'description' ,'price','thumbnail_image','tags','origine','rating']
+        fields = ['id', 'title', 'description', 'price', 'thumbnail_image', 'tags', 'origine', 'rating']
+
+
+class ContributionDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializer for detailed contribution view based on enrollment status
+    """
+    videos = ContributionVideoSerializer(many=True, required=False)
+    tags = ContributionTagSerializer(many=True, required=False)
+    origine = ContributionOriginSerializer(many=True, required=False)
+    notes = ContributionNoteSerializer(many=True, required=False)
+    is_enrolled = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Contributions
+        fields = '_all_'
+
+    def get_is_enrolled(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.enrollments.filter(
+                user=request.user,
+                payment_status='COMPLETED'
+            ).exists()
+        return False
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+
+        # Remove sensitive data if user is not enrolled
+        if not self.get_is_enrolled(instance):
+            data.pop('videos', None)
+            data.pop('notes', None)
+
+        return data
+
+
+class EnrollmentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for enrollment model.
+    user can get all their enrollments and add new enrollments
+    user must be authenticated to enroll in a contribution
+
+    """
+    user = UserSerializer(read_only=True)
+    contribution = ContributionSerializer(read_only=True)
+
+    class Meta:
+        model = Enrollment
+        fields = ['id', 'user', 'contribution', 'amount_paid', 'payment_status', 'enrolled_at']
+        read_only_fields = ['id', 'enrolled_at', 'user', 'contribution']
+
+    def create(self, validated_data):
+        """
+        Create an enrollment record.
+        """
+        user = self.context['request'].user
+        contribution_id = self.context['contribution_id']
+        contribution = get_object_or_404(Contributions, id=contribution_id)
+
+        return Enrollment.objects.create(
+            user=user,
+            contribution=contribution,
+            **validated_data
+        )
