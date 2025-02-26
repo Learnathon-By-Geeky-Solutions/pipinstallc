@@ -3,9 +3,6 @@ from uuid import uuid4
 from auth_app.models import CustomUser
 
 
-class Enrolled_contributions:
-    pass
-
 
 class contribution_videos(models.Model):
     """
@@ -54,12 +51,11 @@ class Contributions(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
     tags = models.ManyToManyField(Contribution_tags, related_name='contributions')
     videos = models.ManyToManyField(contribution_videos, related_name='contributions')
-    notes = models.ManyToManyField(Contribution_notes,  related_name='contributions', blank=True,null=True)
+    notes = models.ManyToManyField(Contribution_notes,  related_name='contributions')
     origine = models.ManyToManyField(Contribution_origines, related_name='contributions', blank=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
 
 class Enrollment(models.Model):
     """
@@ -75,6 +71,11 @@ class Enrollment(models.Model):
         ('FAILED', 'Failed')
     ], default='PENDING')
     enrolled_at = models.DateTimeField(auto_now_add=True)
-
+    
     class Meta:
         unique_together = ['user', 'contribution']  # Prevent duplicate enrollments
+
+
+
+
+

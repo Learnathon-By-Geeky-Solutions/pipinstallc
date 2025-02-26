@@ -1,44 +1,45 @@
 from rest_framework import serializers
 from auth_app.models import CustomUser
-from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, \
-    Enrollment
+from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, Enrollment
 from django.shortcuts import get_object_or_404
+
 
 """
 Serializer for custom User model.
 """
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number',
-                  'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject']
+        fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number', 'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject']
+
+
+
+
+
+
+
+
 
 
 class ContributionVideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = contribution_videos
-        fields = '_all_'
-
+        fields = '__all__'
 
 class ContributionTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contribution_tags
-        fields = '_all_'
-
+        fields = '__all__'
 
 class ContributionOriginSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contribution_origines
-        fields = '_all_'
-
+        fields = '__all__'
 
 class ContributionNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contribution_notes
-        fields = '_all_'
-
+        fields = '__all__'
 
 class ContributionSerializer(serializers.ModelSerializer):
     '''
@@ -51,7 +52,7 @@ class ContributionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contributions
-        fields = '_all_'
+        fields = '__all__'
 
     def create(self, validated_data):
         # Pop nested data
@@ -137,11 +138,9 @@ class ContributionSerializer(serializers.ModelSerializer):
 class ContributionBasicAdsSerializer(serializers.ModelSerializer):
     tags = ContributionTagSerializer(many=True, required=False)
     origine = ContributionOriginSerializer(many=True, required=False)
-
     class Meta:
         model = Contributions
-        fields = ['id', 'title', 'description', 'price', 'thumbnail_image', 'tags', 'origine', 'rating']
-
+        fields = ['id', 'title', 'description' ,'price','thumbnail_image','tags','origine','rating']
 
 class ContributionDetailSerializer(serializers.ModelSerializer):
     """
@@ -155,7 +154,7 @@ class ContributionDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contributions
-        fields = '_all_'
+        fields = '__all__'
 
     def get_is_enrolled(self, obj):
         request = self.context.get('request')
@@ -169,21 +168,20 @@ class ContributionDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         request = self.context.get('request')
-
+        
         # Remove sensitive data if user is not enrolled
         if not self.get_is_enrolled(instance):
             data.pop('videos', None)
             data.pop('notes', None)
-
+        
         return data
-
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     """
     Serializer for enrollment model.
     user can get all their enrollments and add new enrollments
     user must be authenticated to enroll in a contribution
-
+    
     """
     user = UserSerializer(read_only=True)
     contribution = ContributionSerializer(read_only=True)
@@ -200,9 +198,11 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         contribution_id = self.context['contribution_id']
         contribution = get_object_or_404(Contributions, id=contribution_id)
-
+        
         return Enrollment.objects.create(
             user=user,
             contribution=contribution,
             **validated_data
         )
+    
+    

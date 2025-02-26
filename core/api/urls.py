@@ -15,3 +15,4 @@ urlpatterns = [
     path('enrollments/', EnrollmentView.as_view(), name='user-enrollments'),
     path('enrollments/<uuid:contribution_id>/', EnrollmentView.as_view(), name='enrollment-detail'),
 ]
+

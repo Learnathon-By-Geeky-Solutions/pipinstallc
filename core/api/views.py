@@ -6,8 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, ContributionSerializer, ContributionBasicAdsSerializer, EnrollmentSerializer, \
-    ContributionDetailSerializer
+from .serializers import UserSerializer, ContributionSerializer, ContributionBasicAdsSerializer, EnrollmentSerializer, ContributionDetailSerializer
 from .models import Contributions, Enrollment
 
 
@@ -16,10 +15,9 @@ class ProfileView(APIView):
     Get user profile data.
     """
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
         user = request.user
-        serializer = UserSerializer(user)
+        serializer = UserSerializer(user)   
 
         return Response(
             {
@@ -36,7 +34,6 @@ class UserInfoView(APIView):
     Add user info.
     """
     permission_classes = [IsAuthenticated]
-
     def put(self, request):
         user = request.user
         serializer = UserSerializer(user, data=request.data, partial=True)
@@ -46,23 +43,21 @@ class UserInfoView(APIView):
                 {
                     'status': True,
                     'message': 'User info updated successfully',
-                    'data': serializer.data
+                    'data':serializer.data
                 }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
     def get(self, request):
         user = request.user
         serializer = UserSerializer(user)
         return Response(
             {
                 'status': True,
-                'message': 'User info fetched successfully',
+                'message': 'User info fetched successfully',    
                 'data': serializer.data
             },
             status=status.HTTP_200_OK
         )
-
-
 class UserContributionView(APIView):
     """
     Get all contributions that user have created.
@@ -70,7 +65,6 @@ class UserContributionView(APIView):
 
     """
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
         user = request.user
         contributions = Contributions.objects.filter(user=user)
@@ -83,7 +77,7 @@ class UserContributionView(APIView):
             },
             status=status.HTTP_200_OK
         )
-
+    
     def post(self, request):
         try:
             serializer = ContributionSerializer(data=request.data)
@@ -121,7 +115,7 @@ class UserContributionView(APIView):
         try:
             user = request.user
             contribution = Contributions.objects.get(id=pk)
-
+            
             # Check if user owns the contribution
             if contribution.user != user:
                 return Response(
@@ -177,6 +171,7 @@ class UserContributionView(APIView):
                 'status': True,
                 'message': 'Contribution deleted successfully',
             }, status=status.HTTP_200_OK)
+    
 
 
 class ContributionAdsView(APIView):
@@ -185,8 +180,7 @@ class ContributionAdsView(APIView):
     user does not need to be authenticated to view the contributions
     this will show the basic data of the contribution. but the videos will be hidden.
     """
-
-    def get(self, request):
+    def get(self,request):
         contributions = Contributions.objects.all()
         serializer = ContributionBasicAdsSerializer(contributions, many=True)
         return Response(
@@ -198,12 +192,10 @@ class ContributionAdsView(APIView):
             status=status.HTTP_200_OK
         )
 
-
 class ContributionDetailsView(APIView):
     """
     Get single contribution details with content based on enrollment status
     """
-
     def get(self, request, pk):
         contribution = get_object_or_404(Contributions, id=pk)
         serializer = ContributionDetailSerializer(
@@ -215,7 +207,6 @@ class ContributionDetailsView(APIView):
             'message': 'Contribution details fetched successfully',
             'data': serializer.data
         }, status=status.HTTP_200_OK)
-
 
 class EnrollmentView(APIView):
     """
@@ -255,12 +246,12 @@ class EnrollmentView(APIView):
 
     def post(self, request, contribution_id):
         contribution = get_object_or_404(Contributions, id=contribution_id)
-
+        
         # Check if already enrolled
         if Enrollment.objects.filter(
-                user=request.user,
-                contribution=contribution,
-                payment_status='COMPLETED'
+            user=request.user,
+            contribution=contribution,
+            payment_status='COMPLETED'
         ).exists():
             return Response({
                 'status': False,
@@ -274,12 +265,13 @@ class EnrollmentView(APIView):
             'amount_paid': contribution.price,
             'payment_status': 'COMPLETED'  # You should implement actual payment processing
         }
-
+        
         enrollment = Enrollment.objects.create(**enrollment_data)
         serializer = EnrollmentSerializer(enrollment)
-
+        
         return Response({
             'status': True,
             'message': 'Successfully enrolled in the contribution',
             'data': serializer.data
         }, status=status.HTTP_201_CREATED)
+
