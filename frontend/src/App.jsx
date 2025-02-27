@@ -8,6 +8,7 @@ import Signup from './pages/Signup'
 import Contributions from './pages/Contributions'
 import ContributionView from './pages/ContributionView'
 
+
 function App() {
   return (
     <Router>
@@ -19,6 +20,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/contributions" element={<Contributions />} />
             <Route path="/contributions/:id" element={<ContributionView />} />
+
           </Routes>
         </div>
         <Footer />

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import Navbar from '../Components/Navbar';
 import '../styles/Contributions.css';
 
 function Contributions() {
   const navigate = useNavigate();
+
   const [activeTag, setActiveTag] = useState('DSA');
   const [showFilter, setShowFilter] = useState(false);
   const filterRef = useRef(null);
@@ -48,6 +50,7 @@ function Contributions() {
   const handleViewClick = (id) => {
     navigate(`/contributions/${id}`);
   };
+
 
   return (
     <div className="contributions-page">
@@ -139,6 +142,7 @@ function Contributions() {
               >
                 view
               </button>
+
             </div>
           </div>
           <div className="video-card">
