@@ -26,6 +26,7 @@ const RouteChangeTracker = ({ setLoading }) => {
   return null;
 };
 
+
 function App() {
   const [loading, setLoading] = useState(false);
 
@@ -52,6 +53,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/contributions" element={<Contributions />} />
             <Route path="/contributions/:id" element={<ContributionView />} />
+
           </Routes>
         </div>
         <Footer />

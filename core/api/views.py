@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 
@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, ContributionSerializer, ContributionBasicAdsSerializer
-from .models import Contributions
+from .serializers import UserSerializer, ContributionSerializer, ContributionBasicAdsSerializer, EnrollmentSerializer, ContributionDetailSerializer
+from .models import Contributions, Enrollment
 
 
 class ProfileView(APIView):
@@ -175,6 +175,11 @@ class UserContributionView(APIView):
 
 
 class ContributionAdsView(APIView):
+    """
+    Get all contributions with basic ads data.
+    user does not need to be authenticated to view the contributions
+    this will show the basic data of the contribution. but the videos will be hidden.
+    """
     def get(self,request):
         contributions = Contributions.objects.all()
         serializer = ContributionBasicAdsSerializer(contributions, many=True)
@@ -188,14 +193,85 @@ class ContributionAdsView(APIView):
         )
 
 class ContributionDetailsView(APIView):
-    def get(self,request,pk):
-        contribution = Contributions.objects.get(id=pk)
-        serializer = ContributionSerializer(contribution)
-        return Response(
-            {
-                'status': True,
-                'message': 'Contribution details fetched successfully',
-                'data': serializer.data
-            },
-            status=status.HTTP_200_OK 
+    """
+    Get single contribution details with content based on enrollment status
+    """
+    def get(self, request, pk):
+        contribution = get_object_or_404(Contributions, id=pk)
+        serializer = ContributionDetailSerializer(
+            contribution,
+            context={'request': request}
         )
+        return Response({
+            'status': True,
+            'message': 'Contribution details fetched successfully',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+
+class EnrollmentView(APIView):
+    """
+    Handle contribution enrollments
+    user must be authenticated to enroll in a contribution
+    user can get all their enrollments and add new enrollments
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, contribution_id=None):
+        """Get all enrollments or specific enrollment details"""
+        if contribution_id:
+            # Check if user is enrolled in this specific contribution
+            enrollment = get_object_or_404(
+                Enrollment,
+                user=request.user,
+                contribution_id=contribution_id
+            )
+            serializer = EnrollmentSerializer(enrollment)
+            return Response({
+                'status': True,
+                'message': 'Enrollment details fetched successfully',
+                'data': serializer.data
+            }, status=status.HTTP_200_OK)
+        else:
+            # Get all enrollments for the user
+            enrollments = Enrollment.objects.filter(
+                user=request.user,
+                payment_status='COMPLETED'
+            )
+            serializer = EnrollmentSerializer(enrollments, many=True)
+            return Response({
+                'status': True,
+                'message': 'Enrollments fetched successfully',
+                'data': serializer.data
+            }, status=status.HTTP_200_OK)
+
+    def post(self, request, contribution_id):
+        contribution = get_object_or_404(Contributions, id=contribution_id)
+        
+        # Check if already enrolled
+        if Enrollment.objects.filter(
+            user=request.user,
+            contribution=contribution,
+            payment_status='COMPLETED'
+        ).exists():
+            return Response({
+                'status': False,
+                'message': 'Already enrolled in this contribution'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create enrollment
+        enrollment_data = {
+            'user': request.user,
+            'contribution': contribution,
+            'amount_paid': contribution.price,
+            'payment_status': 'COMPLETED'  # You should implement actual payment processing
+        }
+        
+        enrollment = Enrollment.objects.create(**enrollment_data)
+        serializer = EnrollmentSerializer(enrollment)
+        
+        return Response({
+            'status': True,
+            'message': 'Successfully enrolled in the contribution',
+            'data': serializer.data
+        }, status=status.HTTP_201_CREATED)
+

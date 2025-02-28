@@ -26,6 +26,7 @@ function LoginForm() {
             <label htmlFor="username">Username</label>
             <input
               id="username"
+
               type="text"
               placeholder="Enter your username"
               value={formData.username}
@@ -37,6 +38,7 @@ function LoginForm() {
             <label htmlFor="password">Password</label>
             <input
               id="password"
+
               type="password"
               placeholder="Enter password"
               value={formData.password}
