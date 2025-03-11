@@ -9,7 +9,7 @@
 - [Diagrams](#diagrams)
   - [Data Flow Diagram](#data-flow-diagram)
 - [Tech Stack](#tech-stack)
-- [Development Setup](docs/setup.md)
+- [Development Setup](setup.md)
 - [Devlogs](devlog.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
 
