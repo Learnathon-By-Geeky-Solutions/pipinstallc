@@ -33,7 +33,10 @@ This platform will foster an academic community where students can seamlessly tr
 ## Stakeholders
 - **Student:** University students are the primary users and the core beneficiary group of the EduSphere platform. They will utilize EduSphere to enhance their learning experience, access academic resources, collaborate with peers, and potentially share their own knowledge. Students will play the role of both learner and teacher within the system
 
-- **Admin:** Administrators are responsible for the overall management, operation, and maintenance of the EduSphere platform. This group ensures the platform functions smoothly, remains secure, and meets the needs of its users. Administrators oversee the technical and operational aspects of EduSphere. 
+- **Admin:** Administrators are responsible for the overall management, operation, and maintenance of the EduSphere platform. This group ensures the platform functions smoothly, remains secure, and meets the needs of its users. Administrators oversee the technical and operational aspects of EduSphere.
+
+## Data Flow Diagram
+![Data Flow Diagram of EduSphere] (images/DataFlowDiagram.png)
 
 ## Getting Started
 1. Clone the repository
