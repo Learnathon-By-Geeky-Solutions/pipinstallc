@@ -36,7 +36,7 @@ This platform will foster an academic community where students can seamlessly tr
 - **Admin:** Administrators are responsible for the overall management, operation, and maintenance of the EduSphere platform. This group ensures the platform functions smoothly, remains secure, and meets the needs of its users. Administrators oversee the technical and operational aspects of EduSphere.
 
 ## Data Flow Diagram
-![Data Flow Diagram of EduSphere] (images/DataFlowDiagram.png)
+![Data Flow Diagram of EduSphere] (../images/DataFlowDiagram.png)
 
 ## Getting Started
 1. Clone the repository
