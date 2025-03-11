@@ -8,6 +8,7 @@
 - [SRS](#software-requirements-specification-srs---functional-requirements)
 - [Diagrams](#diagrams)
   - [Data Flow Diagram](#data-flow-diagram)
+- Tech Stack(#tech-stack)
 - [Development Setup](docs/setup.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
 
@@ -170,6 +171,25 @@ This platform will foster an academic community where students can seamlessly tr
 
 ### Data Flow Diagram
 ![Data Flow Diagram of EduSphere](frontend/public/images/DataFlowDiagram.png)
+
+
+
+## Tech Stack
+
+- **Frontend:**
+
+    - **Framework:** ReactJS
+
+- **Backend:**
+
+  - **Framework:** Django
+  - **ORM:** Django ORM
+  - **Database:** PostgreSQL
+
+- **Other:**
+  - **Logging:** GitHub Markdown files
+  - **Version Control:** Git (GitHub)
+  - **Deployment:** 
 
 ## Getting Started
 1. Clone the repository
