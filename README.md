@@ -10,7 +10,7 @@
   - [Data Flow Diagram](#data-flow-diagram)
 - [Tech Stack](#tech-stack)
 - [Development Setup](docs/setup.md)
-- [Devlogs](docs/devlog.md)
+- [Devlogs](devlog.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
 
 ## Team Members
