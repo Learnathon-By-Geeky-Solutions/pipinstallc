@@ -5,6 +5,9 @@
 - [Project Description](#project-description)
 - [Key Highlights](#key-highlights)
 - [Stakeholders](#stakeholders)
+- [SRS](#software-requirements-specification-srs---functional-requirements)
+- [Diagrams](#diagrams)
+  - [Data Flow Diagram](#data-flow-diagram)
 - [Development Setup](docs/setup.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
 
@@ -35,7 +38,28 @@ This platform will foster an academic community where students can seamlessly tr
 
 - **Admin:** Administrators are responsible for the overall management, operation, and maintenance of the EduSphere platform. This group ensures the platform functions smoothly, remains secure, and meets the needs of its users. Administrators oversee the technical and operational aspects of EduSphere.
 
-## Data Flow Diagram
+## Software Requirements Specification (SRS) - Functional Requirements
+
+| FR 01        | login                                  |
+|--------------|----------------------------------------|
+| Description  | User can login using their credentials |
+| Stakeholders | Admin, students                        |
+
+
+
+| FR 01        | Signup                                 |
+|--------------|----------------------------------------|
+| Description  | Students can sign up using their info  |
+|              |like name, email, phone, university,    |
+|              |there will be manual verification for   |
+|              |expert signup                           |
+
+| Stakeholders | Admin, students, experts               |
+
+
+## Diagrams
+
+### Data Flow Diagram
 ![Data Flow Diagram of EduSphere](frontend/public/images/DataFlowDiagram.png)
 
 ## Getting Started
