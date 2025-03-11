@@ -10,6 +10,7 @@
   - [Data Flow Diagram](#data-flow-diagram)
 - [Tech Stack](#tech-stack)
 - [Development Setup](docs/setup.md)
+- [Devlogs](docs/devlog.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
 
 ## Team Members
@@ -195,7 +196,7 @@ This platform will foster an academic community where students can seamlessly tr
 1. Clone the repository
 2. Install dependencies
 3. Start development
-
+   
 ## Development Guidelines
 1. Create feature branches
 2. Make small, focused commits
