@@ -8,7 +8,7 @@
 - [SRS](#software-requirements-specification-srs---functional-requirements)
 - [Diagrams](#diagrams)
   - [Data Flow Diagram](#data-flow-diagram)
-- Tech Stack(#tech-stack)
+- [Tech Stack](#tech-stack)
 - [Development Setup](docs/setup.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
 
