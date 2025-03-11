@@ -49,13 +49,27 @@ This platform will foster an academic community where students can seamlessly tr
 
 | FR 02        | Signup                                 |
 |--------------|----------------------------------------|
-| Description  | Students can sign up using their info like name, email, phone, university |
+| Description  | Students can sign up using their info
+                like name, email, phone, university     |
 | Stakeholders | Admin, students                        |
 
 
 | FR 03        |Logout                                  |
 |--------------|----------------------------------------|
 | Description  | User can logout when they want         |
+| Stakeholders | Admin, students                        |
+
+
+
+| FR 04        |View profile                              |
+|--------------|----------------------------------------|
+| Description  | User can view profile information     |
+| Stakeholders | Admin, students                        |
+
+
+| FR 04        |Update profile                             |
+|--------------|----------------------------------------|
+| Description  | User can update profile information     |
 | Stakeholders | Admin, students                        |
 
 
