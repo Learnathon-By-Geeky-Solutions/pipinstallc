@@ -47,14 +47,16 @@ This platform will foster an academic community where students can seamlessly tr
 
 
 
-| FR 01        | Signup                                 |
+| FR 02        | Signup                                 |
 |--------------|----------------------------------------|
-| Description  | Students can sign up using their info  |
-|              |like name, email, phone, university,    |
-|              |there will be manual verification for   |
-|              |expert signup                           |
+| Description  | Students can sign up using their info like name, email, phone, university |
+| Stakeholders | Admin, students                        |
 
-| Stakeholders | Admin, students, experts               |
+
+| FR 03        |Logout                                  |
+|--------------|----------------------------------------|
+| Description  | User can logout when they want         |
+| Stakeholders | Admin, students                        |
 
 
 ## Diagrams
