@@ -77,21 +77,93 @@ This platform will foster an academic community where students can seamlessly tr
 | Description  | User can view all the contributions of a particular student in view profile section     |
 | Stakeholders | Admin, student                        |
 
+
 | FR 07        |Make contributions                          |
 |--------------|----------------------------------------|
 | Description  | All users can provide contributions like course video, notes etc.    |
 | Stakeholders | Student                        |
+
 
 | FR 08        |Update contributions                         |
 |--------------|----------------------------------------|
 | Description  | User can update their provided contribution data anytime   |
 | Stakeholders | Student                        |
 
+
+
 | FR 09        |Access contributions                        |
 |--------------|----------------------------------------|
 | Description  |Users can search and get any contribution data that they are enrolled in    |
-| Stakeholders | Student           
+| Stakeholders | Student                         |
 
+
+
+| FR 10        |Search by contributor or contributions                       |
+|--------------|----------------------------------------|
+| Description  |Users can search contributions by contributor name or contribution name    |
+| Stakeholders |Admin, Student                | 
+
+
+
+| FR 11        |Filter by contributor or contributions                       |
+|--------------|----------------------------------------|
+| Description  |User can filter contributions by contributor name or contribution name    |
+| Stakeholders |Admin, Student                | 
+
+
+
+| FR 12        |Filter by university or departments                        |
+|--------------|----------------------------------------|
+| Description  |User can filter contributions by university name or department name    |
+| Stakeholders |Admin, Student                | 
+
+
+
+| FR 13        |Filter by course                        |
+|--------------|----------------------------------------|
+| Description  |User can filter contributions by the course name    |
+| Stakeholders |Admin, Student                | 
+
+
+
+| FR 14        |Help and support                        |
+|--------------|----------------------------------------|
+| Description  |Users can get any type of support from here. This can be how to use the website, how to enroll, how to earn from here etc.  |
+| Stakeholders |Student                | 
+
+
+
+| FR 15        |Report a contribution                        |
+|--------------|----------------------------------------|
+| Description  |User can report a contribution if they see any issues  |
+| Stakeholders |Admin, student                | 
+
+
+
+| FR 16        |Download contribution materials                        |
+|--------------|----------------------------------------|
+| Description  |Users can download contribution notes as pdf  |
+| Stakeholders |Student                    | 
+
+
+
+| FR 17        |Take Notes                        |
+|--------------|----------------------------------------|
+| Description  |Learners can take note from a specific section of the video lecture  |
+| Stakeholders |Student                    | 
+
+
+
+| FR 18        |Make Payment                        |
+|--------------|----------------------------------------|
+| Description  |Users will pay the course fee to access the study materials provided by other students  |
+| Stakeholders |Student                    | 
+
+
+| FR 19        |Request Refund                        |
+|--------------|----------------------------------------|
+| Description  |Userss can request for refunds showing a reasonable cause  |
+| Stakeholders |Student                    | 
 
 
 ## Diagrams
