@@ -43,34 +43,55 @@ This platform will foster an academic community where students can seamlessly tr
 | FR 01        | login                                  |
 |--------------|----------------------------------------|
 | Description  | User can login using their credentials |
-| Stakeholders | Admin, students                        |
+| Stakeholders | Admin, student                        |
 
 
 
 | FR 02        | Signup                                 |
 |--------------|----------------------------------------|
-| Description  | Students can sign up using their info
-                like name, email, phone, university     |
-| Stakeholders | Admin, students                        |
+| Description  | Students can sign up using their info like name, email, phone, university  |
+| Stakeholders | Admin, student                        |
 
 
 | FR 03        |Logout                                  |
 |--------------|----------------------------------------|
 | Description  | User can logout when they want         |
-| Stakeholders | Admin, students                        |
+| Stakeholders | Admin, student                        |
 
 
 
 | FR 04        |View profile                              |
 |--------------|----------------------------------------|
 | Description  | User can view profile information     |
-| Stakeholders | Admin, students                        |
+| Stakeholders | Student                        |
 
 
-| FR 04        |Update profile                             |
+| FR 05        |Update profile                             |
 |--------------|----------------------------------------|
 | Description  | User can update profile information     |
-| Stakeholders | Admin, students                        |
+| Stakeholders | Student                        |
+
+
+| FR 06        |View contributions                           |
+|--------------|----------------------------------------|
+| Description  | User can view all the contributions of a particular student in view profile section     |
+| Stakeholders | Admin, student                        |
+
+| FR 07        |Make contributions                          |
+|--------------|----------------------------------------|
+| Description  | All users can provide contributions like course video, notes etc.    |
+| Stakeholders | Student                        |
+
+| FR 08        |Update contributions                         |
+|--------------|----------------------------------------|
+| Description  | User can update their provided contribution data anytime   |
+| Stakeholders | Student                        |
+
+| FR 09        |Access contributions                        |
+|--------------|----------------------------------------|
+| Description  |Users can search and get any contribution data that they are enrolled in    |
+| Stakeholders | Student           
+
 
 
 ## Diagrams
