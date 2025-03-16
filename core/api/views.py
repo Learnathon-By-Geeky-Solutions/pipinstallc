@@ -9,6 +9,12 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, ContributionSerializer, ContributionBasicAdsSerializer, EnrollmentSerializer, ContributionDetailSerializer
 from .models import Contributions, Enrollment
 
+from sslcommerz_lib import SSLCOMMERZ
+from django.conf import settings
+from django.http import JsonResponse
+import logging
+
+
 
 class ProfileView(APIView):
     """
@@ -212,18 +218,9 @@ class ContributionDetailsView(APIView):
 
 
 
-
-from sslcommerz_lib import SSLCOMMERZ
-from django.conf import settings
-from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from .models import Enrollment, Contributions
-from .serializers import EnrollmentSerializer
-from django.http import JsonResponse
-import logging
+"""
+payment integration
+"""
 
 logger = logging.getLogger(__name__)
 
@@ -348,9 +345,9 @@ def payment_success(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
     # Log all received parameters for debugging
-    logger.info(f"Payment callback received for enrollment {enrollment_id}")
-    logger.info(f"Request GET params: {request.GET}")
-    logger.info(f"Request POST params: {request.POST}")
+    # logger.info(f"Payment callback received for enrollment {enrollment_id}")
+    # logger.info(f"Request GET params: {request.GET}")
+    # logger.info(f"Request POST params: {request.POST}")
     
     # In sandbox/development mode, be very lenient
     if settings.SSLCOMMERZ['IS_SANDBOX']:
@@ -401,8 +398,8 @@ def payment_success(request, enrollment_id):
             logger.error(f"SSLCommerz validation error: {str(e)}")
     
     # If we reach here, something went wrong
-    logger.error(f"Payment validation failed for enrollment {enrollment_id}")
-    logger.error(f"Status: {status}, val_id: {val_id}, tran_id: {tran_id}")
+    # logger.error(f"Payment validation failed for enrollment {enrollment_id}")
+    # logger.error(f"Status: {status}, val_id: {val_id}, tran_id: {tran_id}")
     return JsonResponse({
         'status': 'error',
         'message': 'Payment validation failed',
@@ -437,8 +434,8 @@ def payment_cancel(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
     # Log the cancellation
-    logger.info(f"Payment cancelled for enrollment {enrollment_id}")
-    logger.info(f"Request GET params: {request.GET}")
+    # logger.info(f"Payment cancelled for enrollment {enrollment_id}")
+    # logger.info(f"Request GET params: {request.GET}")
     
     # Update payment status
     enrollment.payment_status = 'CANCELLED'
