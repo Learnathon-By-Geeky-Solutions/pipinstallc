@@ -68,9 +68,12 @@ class Enrollment(models.Model):
     payment_status = models.CharField(max_length=20, choices=[
         ('PENDING', 'Pending'),
         ('COMPLETED', 'Completed'),
-        ('FAILED', 'Failed')
+        ('FAILED', 'Failed'),
+        ('CANCELLED', 'Cancelled')
     ], default='PENDING')
     enrolled_at = models.DateTimeField(auto_now_add=True)
+    payment_reference = models.CharField(max_length=100, blank=True, null=True)  # Store SSLCommerz transaction reference
+    payment_method = models.CharField(max_length=50, blank=True, null=True)  # Store payment method used
     
     class Meta:
         unique_together = ['user', 'contribution']  # Prevent duplicate enrollments

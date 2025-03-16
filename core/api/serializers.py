@@ -184,12 +184,12 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     
     """
     user = UserSerializer(read_only=True)
-    contribution = ContributionSerializer(read_only=True)
+    contribution = ContributionDetailSerializer(read_only=True)
 
     class Meta:
         model = Enrollment
         fields = ['id', 'user', 'contribution', 'amount_paid', 'payment_status', 'enrolled_at']
-        read_only_fields = ['id', 'enrolled_at', 'user', 'contribution']
+        read_only_fields = ['id', 'created_at', 'user', 'contribution']
 
     def create(self, validated_data):
         """
