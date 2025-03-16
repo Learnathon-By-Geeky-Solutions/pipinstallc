@@ -1,0 +1,358 @@
+.contribution-view {
+  min-height: 100vh;
+  background: white;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  height: 40px;
+  margin-top: 60px;
+  font-size: 14px;
+  color: #6c2bb3;
+  background-color: #f9f9f9;
+}
+
+.menu-toggle-btn {
+  background: transparent; /* Remove background color */
+  border: none; /* No border */
+  cursor: pointer; /* Pointer cursor on hover */
+  padding: 8px; /* Padding around the button */
+  display: flex; /* Use flex to center the text */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  z-index: 10; /* Ensure it is above other elements */
+  border-radius: 4px; /* Optional: Add some border radius for aesthetics */
+  color: #6c2bb3; /* Set text color to purple */
+  font-size: 16px; /* Set font size */
+}
+
+.menu-toggle-btn:hover {
+  color: #f9f9f9
+   /* Change text color on hover for feedback */
+}
+
+.menu-toggle-btn i {
+  font-size: 24px; /* Set icon size */
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+}
+
+.content-container {
+  display: flex;
+}
+
+.sidebar {
+  width: 280px;
+  border-right: 1px solid #e5e5e5;
+  padding: 16px;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: #6c2bb3;
+}
+
+.sidebar-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(108, 43, 179, 0.05);
+}
+
+.completion-indicator {
+  width: 20px;
+  height: 20px;
+  background-color: #e5e5e5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* .completion-indicator.completed {
+  background-color: #6c2bb3;
+} */
+/* Add this to your existing CSS file */
+
+.completion-indicator.active {
+    background-color: #6c2bb3; /* Change to purple when active */
+  }
+
+.check-icon {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: white;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.item-title {
+  color: #333;
+  flex: 1;
+}
+
+.item-duration {
+  color: #777;
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px;
+}
+
+.main-content.full-width {
+  margin-left: 0;
+}
+
+.content-wrapper {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.video-player {
+  position: relative;
+  background: black;
+  aspect-ratio: 16/9;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.video-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(108, 43, 179, 0.1);
+}
+
+.placeholder-text {
+  color: #6c2bb3;
+  font-size: 20px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.video-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  padding: 16px;
+}
+
+.controls-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: white;
+}
+
+.play-button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.play-button:hover {
+  background-color: rgba(108, 43, 179, 0.2);
+}
+
+.play-button.active {
+  background-color: purple;
+}
+
+.play-button svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.progress-indicator {
+  height: 100%;
+  width: 33%;
+  background-color: #6c2bb3;
+  border-radius: 2px;
+}
+
+.time-display {
+  font-size: 14px;
+}
+
+.content-tabs {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.tabs-nav {
+  display: flex;
+  gap: 24px;
+}
+
+.tab-button {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #777;
+  position: relative;
+}
+
+.tab-button:hover {
+  color: #f9f9f9;
+}
+
+.tab-button.active {
+  color: white;
+  background-color: #6c2bb3;
+  border-bottom: 2px solid #6c2bb3;
+}
+
+.tab-content {
+  margin-top: 24px;
+}
+
+.transcript-item {
+  display: flex;
+  gap: 16px;
+}
+
+.timestamp {
+  color: #777;
+  width: 48px;
+}
+
+.transcript-text {
+  flex: 1;
+  color: #333;
+}
+
+.sidebar-item.active {
+  background-color: rgba(108, 43, 179, 0.1);
+  font-weight: 500;
+}
+
+.notes-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.notes-textarea:focus {
+  outline: none;
+  border-color: #6c2bb3;
+  box-shadow: 0 0 0 2px rgba(108, 43, 179, 0.1);
+}
+
+.downloads-content {
+  color: #777;
+  padding: 16px 0;
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: white; /* Solid white background */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(108, 43, 179, 0.1);
+  border-radius: 50%;
+  border-top-color: #6c2bb3;
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    border-right: none;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  
+  .main-content {
+    padding: 16px;
+  }
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.error-container h2 {
+  color: #6c2bb3;
+  margin-bottom: 16px;
+  font-size: 24px;
+}
+
+.error-container p {
+  color: #666;
+  max-width: 500px;
+} 

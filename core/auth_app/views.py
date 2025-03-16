@@ -54,6 +54,14 @@ class LoginView(APIView):
         password = data.get('password')
 
         user = CustomUser.objects.filter(username=username).first()
+        if not user.is_email_verified:
+            return Response(
+                {
+                    'status': False,
+                    'message': 'Email is not verified',
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
         if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
             return Response(
