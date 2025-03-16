@@ -58,7 +58,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',   TODO uncomment this
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -185,3 +185,31 @@ EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
+
+
+
+SSLCOMMERZ = {
+    'STORE_ID': 'testbox',  # Sandbox store ID (replace with production ID when deploying)
+    'STORE_PASSWORD': 'qwerty',  # Sandbox store password (replace with production password)
+    'IS_SANDBOX': True,  # Set to False for production
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
+PAYMENT_REDIRECT_URLS = {
+    'SUCCESS': '/dashboard/my-courses/',
+    'FAILED': '/dashboard/payment-failed/',
+    'CANCELLED': '/dashboard/payment-cancelled/',
+}
