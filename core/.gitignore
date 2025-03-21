@@ -19,6 +19,7 @@ venv/
 .env/
 .venv/
 ENV/
+env/
 # Exclude libraries in environment directories
 venv/lib/
 .env/lib/
