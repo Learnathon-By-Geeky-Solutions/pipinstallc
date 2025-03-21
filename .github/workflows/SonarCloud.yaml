@@ -27,7 +27,7 @@ jobs:
 
       - name: Run tests and generate coverage report
         run: |
-          coverage run manage.py test
+          coverage run core/manage.py test
           coverage xml
 
       - name: SonarCloud Scan
