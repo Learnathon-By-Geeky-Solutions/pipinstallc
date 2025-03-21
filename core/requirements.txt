@@ -9,3 +9,11 @@ PyJWT==2.10.1
 python-dotenv==1.0.1
 sqlparse==0.5.3
 tzdata==2025.1
+coverage==7.6.7
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.16.1
+pytest-django==4.5.0
+pytest-asyncio==0.21.0
+pytest-cov==4.1.0
+pytest-asyncio==0.21.0
