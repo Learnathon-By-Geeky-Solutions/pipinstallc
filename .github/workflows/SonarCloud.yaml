@@ -29,6 +29,8 @@ jobs:
         run: |
           coverage run core/manage.py test
           coverage xml
+        env:
+          DJANGO_SETTINGS_MODULE: core.settings
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2
