@@ -19,6 +19,11 @@ venv/
 .env/
 .venv/
 ENV/
+# Exclude libraries in environment directories
+venv/lib/
+.env/lib/
+.venv/lib/
+ENV/lib/
 
 # Django
 *.log
