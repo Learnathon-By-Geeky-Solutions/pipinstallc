@@ -12,4 +12,5 @@ tzdata==2025.1
 coverage==7.6.7
 pytest==7.4.3
 pytest-cov==4.1.0
+sslcommerz_lib==1.0.0
 
