@@ -25,6 +25,7 @@ venv/lib/
 .env/lib/
 .venv/lib/
 ENV/lib/
+env/Lib/
 
 # Django
 *.log
