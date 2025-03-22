@@ -38,6 +38,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         with:
-          organization: "learnathon-by-geeky-solutions"
-          projectKey: "Learnathon-By-Geeky-Solutions_pipinstallc"
+          # organization: "learnathon-by-geeky-solutions"
+          # projectKey: "Learnathon-By-Geeky-Solutions_pipinstallc"
           args: -Dsonar.python.coverage.reportPaths=coverage.xml
