@@ -27,7 +27,8 @@ jobs:
 
       - name: Run tests and generate coverage report
         run: |
-          coverage run core/manage.py test
+          cd core
+          coverage run manage.py test
           coverage xml
         env:
           DJANGO_SETTINGS_MODULE: core.settings
@@ -41,4 +42,4 @@ jobs:
           args: >
             -Dsonar.organization=learnathon-by-geeky-solutions
             -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_pipinstallc
-            -Dsonar.python.coverage.reportPaths="coverage.xml"
+            -Dsonar.python.coverage.reportPaths=coverage.xml
