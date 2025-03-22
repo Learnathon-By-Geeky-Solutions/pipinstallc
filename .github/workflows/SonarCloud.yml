@@ -32,6 +32,10 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: core.settings
 
+      - name: Debug Secrets
+        run: env | grep SONAR
+        
+
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v3
         env:
