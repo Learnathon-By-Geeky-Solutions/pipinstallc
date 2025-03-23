@@ -51,6 +51,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         with:
           args: >
-            -Dsonar.organization="lutions"
-            -Dsonar.projectKey="Learnathons_pipinstallc"
+            -Dsonar.organization=learnathon-by-geeky-solutions
+            -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_pipinstallc
             -Dsonar.python.coverage.reportPaths="coverage.xml"
