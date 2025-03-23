@@ -35,12 +35,6 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: core.settings
 
-      - name: Upload coverage reports to Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-reports
-          path: coverage.xml
-
       - name: Debug environment variables
         run: env
 
