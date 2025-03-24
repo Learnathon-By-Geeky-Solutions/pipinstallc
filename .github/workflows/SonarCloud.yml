@@ -40,4 +40,6 @@ jobs:
           SONAR_HOST_URL: "https://sonarcloud.io"
         with:
           args: >
+            -Dsonar.organization=learnathon-by-geeky-solutions
+            -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_pipinstallc
             -Dsonar.python.coverage.reportPaths=coverage.xml
