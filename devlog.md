@@ -197,3 +197,70 @@
 **Progress:**
 * Updated the readme.md file with the latest information.
 * Added the devlog to track the project's progress.
+
+## 2025-03-16: Payment Integration and Code Hotspots
+
+**Focus:**
+
+* Integrating SSLCommerz payment method for enrollments.
+* Addressing code hotspot issues.
+
+**Progress:**
+
+* Reshad: Integrated the SSLCommerz payment method into the enrollment process (branch: `payment`).
+* Team: Discussed code hotspot issues related to string-based attributes with the mentor and added null checks.
+
+## 2025-03-20: Authentication Testing (Tasnia)
+
+**Focus:**
+
+* Testing the authentication system using pytest.
+
+**Progress:**
+
+* Tasnia: Conducted tests on the authentication system using pytest.
+
+## 2025-03-21: Coverage Report and CI Setup (Tasnia)
+
+**Focus:**
+
+* Generating a coverage report.
+* Attempting to set up a CI pipeline for test coverage integration with SonarQube.
+
+**Progress:**
+
+* Tasnia: Generated a coverage report for the test suite.
+* Began the process of setting up a CI pipeline to integrate test coverage into SonarQube.
+
+## 2025-03-22: CI Pipeline Troubleshooting
+
+**Focus:**
+
+* Resolving issues encountered during CI pipeline integration.
+
+**Progress:**
+
+* Tasnia: Encountered problems during the CI pipeline setup.
+* Team: Sought assistance from peers on Discord and participated in a group discussion with the mentor.
+
+## 2025-03-24: Successful CI Pipeline Setup (Tasnia)
+
+**Focus:**
+
+* Successfully configuring the CI pipeline.
+
+**Progress:**
+
+* Successfully set up the CI pipeline after disabling automatic analysis.
+
+  ## 2025-03-25: Team Meeting and Next Steps
+
+**Focus:**
+
+* Discussing and planning the next steps for the project.
+* Updating the project devlog.
+
+**Progress:**
+
+* Held a team meeting to determine the next development priorities.
+* Tasnia: Updated the project devlog with the latest progress and decisions made.
