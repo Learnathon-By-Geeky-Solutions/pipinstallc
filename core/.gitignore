@@ -15,10 +15,13 @@ develop-eggs/
 .installed.cfg
 lib/
 lib64/
-venv/
-.env/
-.venv/
-ENV/
+
+# Virtual environments - exclude completely
+/venv/
+/.env/
+/.venv/
+/ENV/
+/env/
 
 # Django
 *.log
