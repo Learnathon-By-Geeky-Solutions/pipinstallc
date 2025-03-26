@@ -16,3 +16,10 @@ media
 
 package-lock.json
 package.json
+core/__pycache__
+core/migrations
+core/media
+core/static
+core/templates
+core/uploads
+
