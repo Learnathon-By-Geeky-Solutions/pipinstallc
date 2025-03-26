@@ -23,3 +23,10 @@ core/static
 core/templates
 core/uploads
 
+api/__pycache__
+api/migrations
+api/media
+api/static
+api/templates
+api/uploads
+
