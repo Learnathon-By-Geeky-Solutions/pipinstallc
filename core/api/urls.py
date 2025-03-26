@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     ProfileView, UserInfoView, UserContributionView,
     ContributionAdsView, EnrollmentView, ContributionDetailsView,CreateEnrollmentView,
-    payment_success, payment_fail, payment_cancel
+    payment_success, payment_fail, payment_cancel, ContributionCommentView
 )
 
 urlpatterns = [
@@ -21,5 +21,11 @@ urlpatterns = [
     path('payment/success/<uuid:enrollment_id>/', payment_success, name='payment_success'),
     path('payment/fail/<uuid:enrollment_id>/', payment_fail, name='payment_fail'),
     path('payment/cancel/<uuid:enrollment_id>/', payment_cancel, name='payment_cancel'),
+
+    # contribution comment urls
+    path('contribution-comments/<uuid:contribution_id>/', ContributionCommentView.as_view(), name='contribution-comments'), #view all comments inside a contribution
+    path('contribution-comments/<uuid:contribution_id>/<uuid:comment_id>/', ContributionCommentView.as_view(), name='contribution-comments'), #delete or update a comment 
+    path('contribution-comments/', ContributionCommentView.as_view(), name='contribution-comments'), #view all comments or create a new comment
+    
 ]
 

@@ -39,6 +39,8 @@ class Contribution_notes(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+
 class Contributions(models.Model):
     """
     Model for storing contributions of users.
@@ -56,6 +58,32 @@ class Contributions(models.Model):
     rating = models.DecimalField(max_digits=3, decimal_places=2,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        if self.title:
+            return self.title
+        return f"Contribution {self.id}"
+    
+
+class Contributions_comments(models.Model):
+    """
+    Model for storing comments of contributions.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    comment = models.TextField(null=True,blank=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
+    contribution = models.ForeignKey(Contributions, on_delete=models.CASCADE, related_name='comments')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        if self.user and self.user.username:
+            return self.user.username
+        return f"Comment {self.id}"
+
+
+  
+
 
 class Enrollment(models.Model):
     """

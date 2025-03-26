@@ -101,3 +101,4 @@ yarn.lock
 build/
 dist/
 
+migrations

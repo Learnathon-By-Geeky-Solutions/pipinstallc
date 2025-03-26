@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from auth_app.models import CustomUser
-from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, Enrollment
+from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, Enrollment, Contributions_comments
 from django.shortcuts import get_object_or_404
 
 
@@ -41,6 +41,13 @@ class ContributionNoteSerializer(serializers.ModelSerializer):
         model = Contribution_notes
         fields = '__all__'
 
+class ContributionCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contributions_comments
+        fields = '__all__'
+
+
+    
 class ContributionSerializer(serializers.ModelSerializer):
     '''
     Serializer for Contribution model.
@@ -49,6 +56,7 @@ class ContributionSerializer(serializers.ModelSerializer):
     tags = ContributionTagSerializer(many=True, required=False)
     origine = ContributionOriginSerializer(many=True, required=False)
     notes = ContributionNoteSerializer(many=True, required=False)
+    comments = ContributionCommentSerializer(many=True, required=False)
 
     class Meta:
         model = Contributions
@@ -135,12 +143,14 @@ class ContributionSerializer(serializers.ModelSerializer):
         return instance
 
 
+
 class ContributionBasicAdsSerializer(serializers.ModelSerializer):
     tags = ContributionTagSerializer(many=True, required=False)
     origine = ContributionOriginSerializer(many=True, required=False)
+    comments = ContributionCommentSerializer(many=True, required=False)
     class Meta:
         model = Contributions
-        fields = ['id', 'title', 'description' ,'price','thumbnail_image','tags','origine','rating']
+        fields = ['id', 'title', 'description' ,'price','thumbnail_image','tags','origine','rating','comments']
 
 class ContributionDetailSerializer(serializers.ModelSerializer):
     """

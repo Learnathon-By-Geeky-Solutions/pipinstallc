@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, ContributionSerializer, ContributionBasicAdsSerializer, EnrollmentSerializer, ContributionDetailSerializer
-from .models import Contributions, Enrollment
+from .serializers import UserSerializer, ContributionSerializer, ContributionBasicAdsSerializer, EnrollmentSerializer, ContributionDetailSerializer, ContributionCommentSerializer
+from .models import Contributions, Enrollment, Contributions_comments
 
 from sslcommerz_lib import SSLCOMMERZ
 from django.conf import settings
@@ -446,3 +446,102 @@ def payment_cancel(request, enrollment_id):
         'message': 'Payment canceled',
         'redirect_url': '/dashboard/payment-cancelled/'
     })
+
+
+class ContributionCommentView(APIView):
+    """
+    Handle contribution comments
+    user can add comments to a contribution
+    user can view comments of a contribution
+    user can delete comments of a contribution
+    user can update comments of a contribution
+
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, contribution_id=None):
+        """
+        if contribution_id is provided, get all comments of a contribution
+        if no contribution_id is provided, get all comments
+        """
+        if contribution_id:
+            contribution = get_object_or_404(Contributions, id=contribution_id)
+            comments = Contributions_comments.objects.filter(contribution=contribution)
+            serializer = ContributionCommentSerializer(comments, many=True)
+        else:
+            comments = Contributions_comments.objects.all()
+            serializer = ContributionCommentSerializer(comments, many=True)
+        return Response(
+            {
+                'status': True,
+                'message': 'Comments fetched successfully',
+                'data': serializer.data
+            }, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        """
+        create a new comment
+        """
+        serializer = ContributionCommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Comment Posted successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                'status': False,
+                'message': 'Invalid data',
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, contribution_id, comment_id):
+        """
+        delete a comment
+        """
+        contribution = get_object_or_404(Contributions, id=contribution_id)
+        comment = get_object_or_404(Contributions_comments, id=comment_id, contribution=contribution)
+        if comment.user.id == request.user.id:
+            comment.delete()
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Comment deleted successfully',
+                }, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {
+                    'status': False,
+                    'message': 'You do not have permission to delete this comment',
+                }, status=status.HTTP_403_FORBIDDEN)
+        
+    def put(self, request, contribution_id, comment_id):
+        """
+        update a comment
+        """
+        contribution = get_object_or_404(Contributions, id=contribution_id)
+        comment = get_object_or_404(Contributions_comments, id=comment_id, contribution=contribution)
+        if comment.user.id == request.user.id:
+            serializer = ContributionCommentSerializer(comment, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        'status': True,
+                        'message': 'Comment updated successfully',
+                        'data': serializer.data
+                    }, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {
+                    'status': False,
+                    'message': 'You do not have permission to update this comment',
+                }, status=status.HTTP_403_FORBIDDEN)
+        
+
+
+
+
