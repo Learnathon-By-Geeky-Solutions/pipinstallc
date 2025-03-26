@@ -1,32 +1,68 @@
-env
-node_modules
+# Virtual Environment
+env/
 .env
-migrations
-__pycache__
-__pycache__/*
+venv/
+.venv/
+
+# Python & Django
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+migrations/
+db.sqlite3
+db.sqlite3-journal
+
+# Static and Media
+media/
+static/
+uploads/
+core/media/
+core/static/
+core/uploads/
+api/media/
+api/static/
+api/uploads/
+
+# Node.js & React
+node_modules/
+package-lock.json
+package.json
+dist/
+dist-ssr/
+build/
+.cache/
+*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Project specific
+core/__pycache__/
+core/migrations/
+core/templates/
+api/__pycache__/
+api/migrations/
+api/templates/
+
+# Compiled Python files
 *.pyc
 *.pyo
 *.pyd
 *.pyw
 *.pyz
-*.pywz
 *.pyzw
-__init__.py
-media
 
-package-lock.json
-package.json
-core/__pycache__
-core/migrations
-core/media
-core/static
-core/templates
-core/uploads
-
-api/__pycache__
-api/migrations
-api/media
-api/static
-api/templates
-api/uploads
-
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
