@@ -2,8 +2,8 @@
 env/
 .env
 venv/
-.venv/
-
+.env/
+env
 # Python & Django
 __pycache__/
 *.py[cod]
