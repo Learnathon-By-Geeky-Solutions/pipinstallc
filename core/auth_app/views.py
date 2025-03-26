@@ -241,8 +241,7 @@ class ForgotPasswordView(APIView):
                         'status': True,
                         'message': 'Password reset OTP sent successfully',
                         'data': {
-                            'email': user.email,
-                            'otp': otp
+                            'email': user.email
                         }
                     },
                     status=status.HTTP_200_OK

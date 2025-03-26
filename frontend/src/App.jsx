@@ -9,6 +9,11 @@ import Contributions from './pages/Contributions'
 import ContributionView from './pages/ContributionView'
 import { ThreeDots } from 'react-loader-spinner'
 import Navbar from './Components/Navbar'
+import SignupForm from './Components/SignupForm'
+import LoginForm from './Components/LoginForm'
+import ConfirmOtp from './pages/ConfirmOtp'
+import ForgotPass from './pages/ForgotPass'
+import ResetPassword from './pages/ResetPassword'
 
 // RouteChangeTracker component to handle route changes
 const RouteChangeTracker = ({ setLoading }) => {
@@ -49,11 +54,13 @@ function App() {
         <div className="content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/signup" element={<SignupForm />} />
             <Route path="/contributions" element={<Contributions />} />
             <Route path="/contributions/:id" element={<ContributionView />} />
-
+            <Route path="/verify-otp" element={<ConfirmOtp />} />
+            <Route path="/forgot-password" element={<ForgotPass />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Routes>
         </div>
         <Footer />
