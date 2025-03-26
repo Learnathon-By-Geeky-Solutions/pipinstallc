@@ -28,23 +28,14 @@ jobs:
       - name: Create .env file
         run: |
           touch .env
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> .env
-          echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> .env
-          echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env
-          echo "DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL }}" >> .env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-          echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> .env
-          echo "JITSI_APP_ID=${{ secrets.JITSI_APP_ID }}" >> .env
-          echo "JITSI_SECRET=${{ secrets.JITSI_SECRET }}" >> .env
-          echo "CLOUDINARY_NAME=${{ secrets.CLOUDINARY_NAME }}" >> .env
-          echo "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" >> .env
-          echo "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" >> .env
-          echo "TEST_PASS=${{ secrets.TEST_PASS }}" >> .env
-          echo "NPM_BIN_PATH=${{ secrets.NPM_BIN_PATH }}" >> .env
-        shell: bash
+          echo "SECRET_KEY=django-insecure-slfkjhbehjrbksljladheb24u3475y3847rh2u32o3ye2erhwbef3r53oy4r2o87ryw" >> .env
+          echo "DEBUG=True" >> .env
+          echo "EMAIL_HOST=smtp.gmail.com" >> .env
+          echo "EMAIL_PORT=587" >> .env
+          echo "EMAIL_HOST_USER=editreshad@gmail.com" >> .env
+          echo "EMAIL_HOST_PASSWORD=lgnb wukn qcge ykvt" >> .env
+          echo "EMAIL_USE_TLS=True" >> .env
+          # echo "EMAIL_USE_SSL=False" >> .env
 
       - name: Run tests and generate coverage report
         run: |
