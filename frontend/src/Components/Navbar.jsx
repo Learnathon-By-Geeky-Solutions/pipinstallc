@@ -9,7 +9,11 @@ function Navbar() {
     <nav className="navbar">
       <div className="logo">
         <Link to="/">
-          <img src='./images/EDusphere.png'></img>
+          <img 
+            src="/images/EDusphere.png"
+            alt='EDusphere Logo'
+            className="navbar-logo"
+          />
         </Link>
       </div>
       <div className="nav-links">
