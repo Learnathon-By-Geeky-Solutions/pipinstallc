@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, ContributionSerializer, EnrollmentSerializer, ContributionCommentSerializer, AllContributionSerializer
-from .models import Contributions, Enrollment, Contributions_comments
+from .serializers import UserSerializer, ContributionSerializer, EnrollmentSerializer, ContributionCommentSerializer, AllContributionSerializer, ContributionRatingSerializer
+from .models import Contributions, Enrollment, Contributions_comments, Contribution_ratings
 
 from sslcommerz_lib import SSLCOMMERZ
 from django.conf import settings
@@ -539,7 +539,115 @@ class ContributionCommentView(APIView):
                     'message': 'You do not have permission to update this comment',
                 }, status=status.HTTP_403_FORBIDDEN)
         
-
-
+class ContributionRatingView(APIView):
+    """
+    User can rate a contribution
+    User can view ratings of a contribution
+    Rating is stored as a decimal value between 0 and 5
+    The contribution's rating field is updated with the average of all ratings
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, contribution_id):
+        """
+        Get all ratings for a contribution or the user's rating if exists
+        """
+        contribution = get_object_or_404(Contributions, id=contribution_id)
+        
+        # Check if user wants their own rating
+        user_rating_only = request.query_params.get('user_rating', 'false').lower() == 'true'
+        
+        if user_rating_only:
+            # Get user's rating if it exists
+            rating = Contribution_ratings.objects.filter(
+                user=request.user,
+                contribution=contribution
+            ).first()
+            
+            if rating:
+                serializer = ContributionRatingSerializer(rating)
+                return Response({
+                    'status': True,
+                    'message': 'User rating fetched successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    'status': False,
+                    'message': 'You have not rated this contribution yet'
+                }, status=status.HTTP_404_NOT_FOUND)
+        else:
+            # Get all ratings for the contribution
+            ratings = Contribution_ratings.objects.filter(contribution=contribution)
+            serializer = ContributionRatingSerializer(ratings, many=True)
+            
+            return Response({
+                'status': True,
+                'message': 'Ratings fetched successfully',
+                'data': {
+                    'average_rating': contribution.rating,
+                    'total_ratings': ratings.count(),
+                    'ratings': serializer.data
+                }
+            }, status=status.HTTP_200_OK)
+    
+    def post(self, request, contribution_id):
+        """
+        Create or update a rating for a contribution
+        """
+        contribution = get_object_or_404(Contributions, id=contribution_id)
+        
+        # Check if user is enrolled in this contribution
+        is_enrolled = Enrollment.objects.filter(
+            user=request.user,
+            contribution=contribution,
+            payment_status='COMPLETED'
+        ).exists()
+        
+        if not is_enrolled:
+            return Response({
+                'status': False,
+                'message': 'You must be enrolled in this contribution to rate it'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        # Add user and contribution to request data
+        data = request.data.copy()
+        data['user'] = request.user.id
+        data['contribution'] = contribution_id
+        
+        # Validate rating value
+        rating_value = data.get('rating')
+        try:
+            rating_value = float(rating_value)
+            if rating_value < 0 or rating_value > 5:
+                return Response({
+                    'status': False,
+                    'message': 'Rating must be between 0 and 5'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        except (TypeError, ValueError):
+            return Response({
+                'status': False,
+                'message': 'Rating must be a number between 0 and 5'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = ContributionRatingSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            
+            # The signal handler will update the contribution's rating automatically
+            
+            return Response({
+                'status': True,
+                'message': 'Rating submitted successfully',
+                'data': {
+                    'rating': serializer.data,
+                }
+            }, status=status.HTTP_201_CREATED)
+        
+        return Response({
+            'status': False,
+            'message': 'Invalid data',
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 

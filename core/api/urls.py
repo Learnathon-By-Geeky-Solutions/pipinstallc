@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (
     ProfileView, UserInfoView, UserContributionView, EnrollmentView,CreateEnrollmentView,
-    payment_success, payment_fail, payment_cancel, ContributionCommentView, AllContributionView
+    payment_success, payment_fail, payment_cancel, ContributionCommentView, AllContributionView,
+    ContributionRatingView
 )
 
 urlpatterns = [
@@ -34,5 +35,8 @@ urlpatterns = [
     path('contribution-comments/<uuid:contribution_id>/<uuid:comment_id>/', ContributionCommentView.as_view(), name='contribution-comments'), #delete or update a comment 
     path('contribution-comments/', ContributionCommentView.as_view(), name='contribution-comments'), #view all comments or create a new comment
     
+    # Rating routes
+    path('ratings/', ContributionRatingView.as_view(), name='contribution-ratings'),
+    path('ratings/<uuid:contribution_id>/', ContributionRatingView.as_view(), name='contribution-ratings'),
 ]
 

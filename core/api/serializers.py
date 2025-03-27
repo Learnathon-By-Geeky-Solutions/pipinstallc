@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from auth_app.models import CustomUser
-from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, Enrollment, Contributions_comments
+from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, Enrollment, Contributions_comments, Contribution_ratings
 from django.shortcuts import get_object_or_404
+from django.db import models
 
 
 """
@@ -44,8 +45,42 @@ class ContributionCommentSerializer(serializers.ModelSerializer):
         model = Contributions_comments
         fields = '__all__'
 
-
+class ContributionRatingSerializer(serializers.ModelSerializer):
+    """
+    Serializer for contribution ratings
+    User can rate a contribution once
+    If user already rated, update the existing rating
+    """
+    class Meta:
+        model = Contribution_ratings
+        fields = ['id', 'user', 'contribution', 'rating', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
     
+    def create(self, validated_data):
+        """
+        Create or update a rating
+        """
+        user = validated_data.get('user')
+        contribution = validated_data.get('contribution')
+        
+        # Check if user already rated this contribution
+        existing_rating = Contribution_ratings.objects.filter(
+            user=user, 
+            contribution=contribution
+        ).first()
+        
+        if existing_rating:
+            # Update existing rating
+            existing_rating.rating = validated_data.get('rating')
+            existing_rating.save()
+            return existing_rating
+        else:
+            # Create new rating
+            rating = Contribution_ratings.objects.create(**validated_data)
+            return rating
+
+
+
 class ContributionSerializer(serializers.ModelSerializer):
     '''
     Serializer for Contribution model.
@@ -62,6 +97,7 @@ class ContributionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributions
         fields = '__all__'
+        read_only_fields = ['rating']
 
     def create(self, validated_data):
         # Pop nested data
