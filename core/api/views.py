@@ -11,7 +11,7 @@ from .models import Contributions, Enrollment, Contributions_comments, Contribut
 
 from sslcommerz_lib import SSLCOMMERZ
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import logging
 
 
@@ -342,11 +342,6 @@ class CreateEnrollmentView(APIView):
 def payment_success(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
-    # Log all received parameters for debugging
-    # logger.info(f"Payment callback received for enrollment {enrollment_id}")
-    # logger.info(f"Request GET params: {request.GET}")
-    # logger.info(f"Request POST params: {request.POST}")
-    
     # In sandbox/development mode, be very lenient
     if settings.SSLCOMMERZ['IS_SANDBOX']:
         logger.info("Running in sandbox mode - auto-completing payment")
@@ -355,11 +350,60 @@ def payment_success(request, enrollment_id):
         enrollment.payment_method = 'SANDBOX'
         enrollment.save()
         logger.info(f"Payment marked as completed for enrollment {enrollment_id}")
-        return JsonResponse({
-            'status': 'success',
-            'message': 'Payment completed successfully',
-            'redirect_url': settings.PAYMENT_REDIRECT_URLS['SUCCESS']
-        })
+        
+        # Get the contribution ID for the redirect
+        contribution_id = str(enrollment.contribution.id)
+        
+        # Get the redirect URL from settings
+        redirect_url = settings.PAYMENT_REDIRECT_URLS['SUCCESS']
+        
+        # Return HTML response with redirect button and embedded data
+        html_content = f"""
+        <html>
+        <head>
+            <title>Payment Success</title>
+            <style>
+                .container {{
+                    text-align: center;
+                    margin-top: 50px;
+                }}
+                .redirect-btn {{
+                    padding: 10px 20px;
+                    background-color: #6c2bb3;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    text-decoration: none;
+                    display: inline-block;
+                    margin-top: 20px;
+                }}
+                .hidden-data {{
+                    display: none;
+                }}
+            </style>
+            <script>
+                // Auto-redirect after 3 seconds
+                window.onload = function() {{
+                    setTimeout(function() {{
+                        window.location.href = "{redirect_url}";
+                    }}, 3000);
+                }};
+            </script>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Payment Completed Successfully!</h2>
+                <p>You will be redirected in a few seconds...</p>
+                <a href="{redirect_url}" class="redirect-btn">
+                    Continue Now
+                </a>
+                <div id="payment-data" class="hidden-data" data-contribution-id="{contribution_id}" data-redirect-url="{redirect_url}"></div>
+            </div>
+        </body>
+        </html>
+        """
+        return HttpResponse(html_content)
     
     # Production mode validation
     val_id = request.GET.get('val_id', '') or request.POST.get('val_id', '')
