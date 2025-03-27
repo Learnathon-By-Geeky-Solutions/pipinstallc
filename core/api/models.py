@@ -1,6 +1,8 @@
 from django.db import models
 from uuid import uuid4
 from auth_app.models import CustomUser
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 
 
@@ -38,7 +40,6 @@ class Contribution_notes(models.Model):
     note_file = models.FileField(upload_to='contribution_notes/',null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
 
 
 class Contributions(models.Model):
@@ -81,6 +82,26 @@ class Contributions_comments(models.Model):
             return self.user.username
         return f"Comment {self.id}"
 
+class Contribution_ratings(models.Model):
+    """
+    Model for storing ratings of contributions.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ratings')
+    contribution = models.ForeignKey(Contributions, on_delete=models.CASCADE, related_name='ratings')
+    rating = models.DecimalField(max_digits=3, decimal_places=2,null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        if self.user and self.user.username:
+            return self.user.username
+        return f"Rating {self.id}"
+    
+    class Meta:
+        unique_together = ['user', 'contribution']  # Prevent duplicate ratings
+
+
 
   
 
@@ -105,6 +126,31 @@ class Enrollment(models.Model):
     
     class Meta:
         unique_together = ['user', 'contribution']  # Prevent duplicate enrollments
+
+
+
+
+
+
+@receiver([post_save, post_delete], sender='api.Contribution_ratings')
+def update_contribution_rating(sender, instance, **kwargs):
+    """
+    Update the contribution's average rating whenever a rating is added, updated, or deleted
+    """
+    contribution = instance.contribution
+    ratings = Contribution_ratings.objects.filter(contribution=contribution)
+    
+    if ratings.exists():
+        # Calculate average rating
+        from django.db.models import Avg
+        avg_rating = ratings.aggregate(Avg('rating'))['rating__avg']
+        # Round to 2 decimal places
+        contribution.rating = round(avg_rating, 2)
+    else:
+        # No ratings, set to None
+        contribution.rating = None
+    
+    contribution.save(update_fields=['rating'])
 
 
 
