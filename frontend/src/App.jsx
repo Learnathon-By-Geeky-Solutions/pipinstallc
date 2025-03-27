@@ -14,6 +14,9 @@ import LoginForm from './Components/LoginForm'
 import ConfirmOtp from './pages/ConfirmOtp'
 import ForgotPass from './pages/ForgotPass'
 import ResetPassword from './pages/ResetPassword'
+import PaymentSuccess from './pages/PaymentSuccess'
+import PaymentFail from './pages/PaymentFail'
+import PaymentCancel from './pages/PaymentCancel'
 
 // RouteChangeTracker component to handle route changes
 const RouteChangeTracker = ({ setLoading }) => {
@@ -61,6 +64,9 @@ function App() {
             <Route path="/verify-otp" element={<ConfirmOtp />} />
             <Route path="/forgot-password" element={<ForgotPass />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-fail" element={<PaymentFail />} />
+            <Route path="/payment-cancel" element={<PaymentCancel />} />
           </Routes>
         </div>
         <Footer />

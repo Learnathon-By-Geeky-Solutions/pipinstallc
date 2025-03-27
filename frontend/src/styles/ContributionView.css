@@ -637,4 +637,51 @@
 
 .note-name {
   font-weight: 500;
+}
+
+/* Add these styles for the enrollment process */
+
+.enrollment-error {
+  background-color: #fce8e8;
+  color: #d93025;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 15px 0;
+  font-size: 0.9rem;
+}
+
+.enrolled-message {
+  background-color: #e6f7e6;
+  color: #1e7e34;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.enrolled-message p {
+  margin: 5px 0;
+  font-weight: 700;
+}
+
+.access-info {
+  font-size: 0.9rem;
+  font-weight: normal !important;
+  color: #4d4d4d;
+}
+
+.payment-info {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #6a6f73;
+}
+
+.payment-methods {
+  margin-top: 10px;
+}
+
+.payment-methods img {
+  max-width: 100%;
+  height: auto;
 } 

@@ -97,8 +97,15 @@ function ContributionView() {
 
   // Handle enrollment
   const handleEnroll = async () => {
+    // Check if user is logged in
     if (!isLoggedIn()) {
-      navigate('/login', { state: { returnUrl: `/contributions/${id}` } });
+      // Save the current page URL to redirect back after login
+      navigate('/login', { 
+        state: { 
+          returnUrl: `/contributions/${id}`,
+          message: 'Please log in to enroll in this course'
+        } 
+      });
       return;
     }
 
@@ -108,6 +115,7 @@ function ContributionView() {
       
       const accessToken = localStorage.getItem('access_token');
       
+      // Make the enrollment API call
       const response = await fetch(`${BaseUrl}/api/create-enrollments/${id}/`, {
         method: 'POST',
         headers: {
@@ -116,24 +124,55 @@ function ContributionView() {
         }
       });
       
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const result = await response.json();
+      console.log("Enrollment API response:", result);
       
       if (result.status) {
-        if (result.data && result.data.payment_url) {
-          window.location.href = result.data.payment_url;
+        // Check for payment URL in the response
+        if (result.payment_url) {
+          console.log("Payment URL received:", result.payment_url);
+          
+          // Show a message before redirecting
+          setEnrollmentStatus('redirecting');
+          
+          // Redirect to SSLCommerz payment page
+          setTimeout(() => {
+            window.location.href = result.payment_url;
+          }, 1000);
+        } else if (result.data && result.data.payment_url) {
+          console.log("Payment URL received in data:", result.data.payment_url);
+          
+          // Show a message before redirecting
+          setEnrollmentStatus('redirecting');
+          
+          // Redirect to SSLCommerz payment page
+          setTimeout(() => {
+            window.location.href = result.data.payment_url;
+          }, 1000);
         } else {
+          // If no payment is required (free course)
           setIsEnrolled(true);
           setEnrollmentStatus('enrolled');
+          
+          // Show success message
+          alert('You have successfully enrolled in this course!');
+          
+          // Reload the page to get updated content
           window.location.reload();
         }
       } else {
+        // Handle enrollment failure
         setEnrollmentStatus('failed');
         setEnrollmentError(result.message || 'Failed to enroll in this course');
       }
     } catch (error) {
       console.error("Error enrolling in course:", error);
       setEnrollmentStatus('failed');
-      setEnrollmentError('An error occurred while enrolling in this course');
+      setEnrollmentError('An error occurred while enrolling in this course. ' + error.message);
     }
   };
 
@@ -473,22 +512,28 @@ function ContributionView() {
         
         {/* Right column - enrollment card */}
         <div className="enrollment-card">
-          <div className="card-price">${contribution.price}</div>
+          <div className="card-price">
+            {contribution.price ? `$${contribution.price}` : 'Free'}
+          </div>
           
           {!isEnrolled ? (
             <>
               <button 
                 className="enroll-btn"
                 onClick={handleEnroll}
-                disabled={enrollmentStatus === 'enrolling'}
+                disabled={enrollmentStatus === 'enrolling' || enrollmentStatus === 'redirecting'}
               >
-                {enrollmentStatus === 'enrolling' ? 'Processing...' : 'Enroll Now'}
+                {enrollmentStatus === 'enrolling' ? 'Processing...' : 
+                 enrollmentStatus === 'redirecting' ? 'Redirecting to payment...' : 
+                 'Enroll Now'}
               </button>
               
               {!isLoggedIn() && (
                 <button 
                   className="login-redirect-btn"
-                  onClick={() => navigate('/login', { state: { returnUrl: `/contributions/${id}` } })}
+                  onClick={() => navigate('/login', { 
+                    state: { returnUrl: `/contributions/${id}` } 
+                  })}
                 >
                   Log in to Enroll
                 </button>
@@ -499,10 +544,18 @@ function ContributionView() {
                   {enrollmentError}
                 </div>
               )}
+              
+              <div className="payment-info">
+                <p>Secure payment processed by SSLCommerz</p>
+                <div className="payment-methods">
+                  <img src="/images/payment-methods.png" alt="Payment methods" />
+                </div>
+              </div>
             </>
           ) : (
             <div className="enrolled-message">
-              <p>You are enrolled in this course</p>
+              <p>✓ You are enrolled in this course</p>
+              <p className="access-info">You have full access to this course</p>
             </div>
           )}
           
