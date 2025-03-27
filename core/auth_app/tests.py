@@ -76,7 +76,7 @@ class AuthenticationTest(APITestCase):
     def test_resend_otp(self):
         """Test resend OTP functionality"""
         data = {
-            'email': 'test@example1.com'
+            'email': 'test@example.com'
         }
         response = self.client.post(self.resend_otp_url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
