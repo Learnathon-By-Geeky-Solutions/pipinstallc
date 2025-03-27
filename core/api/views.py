@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, ContributionSerializer, ContributionBasicAdsSerializer, EnrollmentSerializer, ContributionDetailSerializer, ContributionCommentSerializer
+from .serializers import UserSerializer, ContributionSerializer, EnrollmentSerializer, ContributionCommentSerializer, AllContributionSerializer
 from .models import Contributions, Enrollment, Contributions_comments
 
 from sslcommerz_lib import SSLCOMMERZ
@@ -68,13 +68,20 @@ class UserContributionView(APIView):
     """
     Get all contributions that user have created.
     user must be authenticated to view their uploaded contribution
+    if pk is provided, get a single contribution by id
+    if no pk is provided, get all contributions
 
     """
     permission_classes = [IsAuthenticated]
-    def get(self, request):
-        user = request.user
-        contributions = Contributions.objects.filter(user=user)
-        serializer = ContributionSerializer(contributions, many=True)
+    def get(self, request, pk=None):
+        if pk:
+            user = request.user
+            contribution = Contributions.objects.get(id=pk)
+            serializer = ContributionSerializer(contribution)
+        else:
+            user = request.user
+            contributions = Contributions.objects.filter(user=user)
+            serializer = ContributionSerializer(contributions, many=True)
         return Response(
             {
                 'status': True,
@@ -178,41 +185,29 @@ class UserContributionView(APIView):
                 'message': 'Contribution deleted successfully',
             }, status=status.HTTP_200_OK)
     
-
-
-class ContributionAdsView(APIView):
+class AllContributionView(APIView):
     """
-    Get all contributions with basic ads data.
-    user does not need to be authenticated to view the contributions
-    this will show the basic data of the contribution. but the videos will be hidden.
+    get all contributions
+    show only title, description, price, thumbnail_image, tags, origine, rating, comments
+    if user is authenticated, show the enrollment status and if enrolled show with all the elements available
+    if user is not authenticated, show only the basic elements
+
     """
-    def get(self,request):
-        contributions = Contributions.objects.all()
-        serializer = ContributionBasicAdsSerializer(contributions, many=True)
+    def get(self, request, pk=None):
+        if pk:
+            contribution = Contributions.objects.get(id=pk)
+            serializer = AllContributionSerializer(contribution, context={'request': request})
+        else:
+            contributions = Contributions.objects.all()
+            serializer = AllContributionSerializer(contributions, many=True, context={'request': request})
         return Response(
             {
                 'status': True,
                 'message': 'Contributions fetched successfully',
                 'data': serializer.data
-            },
-            status=status.HTTP_200_OK
-        )
+            }, status=status.HTTP_200_OK)
+    
 
-class ContributionDetailsView(APIView):
-    """
-    Get single contribution details with content based on enrollment status
-    """
-    def get(self, request, pk):
-        contribution = get_object_or_404(Contributions, id=pk)
-        serializer = ContributionDetailSerializer(
-            contribution,
-            context={'request': request}
-        )
-        return Response({
-            'status': True,
-            'message': 'Contribution details fetched successfully',
-            'data': serializer.data
-        }, status=status.HTTP_200_OK)
 
 
 
@@ -227,6 +222,9 @@ logger = logging.getLogger(__name__)
 class EnrollmentView(APIView):
     """
     Handle contribution enrollments and payment integration
+    user can view their enrollments and create new enrollments
+    user must be authenticated to enroll in a contribution
+    user can view a single enrollment by id
     """
     permission_classes = [IsAuthenticated]
 
