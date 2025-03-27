@@ -17,9 +17,9 @@ class AuthenticationTest(APITestCase):
     def setUp(self):
         # Create a test user
         self.user = User.objects.create_user(
-            username='testuser1',
-            email='test@example1.com',
-            password='testpassword1234'
+            username='testuser',
+            email='test@example.com',
+            password='testpassword123'
         )
         self.user.is_email_verified = True
         self.user.save()
@@ -36,10 +36,10 @@ class AuthenticationTest(APITestCase):
     def test_register_user(self):
         """Test user registration"""
         data = {
-            'username': 'newuser1',
+            'username': 'newuser',
             'email': 'newuser1@example.com',
-            'password': 'newpassword1234',
-            'password2': 'newpassword1234'
+            'password': 'newpassword123',
+            'password2': 'newpassword123'
         }
         response = self.client.post(self.register_url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -50,8 +50,8 @@ class AuthenticationTest(APITestCase):
     def test_login_success(self):
         """Test successful login"""
         data = {
-            'username': 'testuser1',
-            'password': 'testpassword1234'
+            'username': 'testuser',
+            'password': 'testpassword123'
         }
         response = self.client.post(self.login_url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -65,7 +65,7 @@ class AuthenticationTest(APITestCase):
         self.user.save()
         
         data = {
-            'username': 'testuser1',
+            'username': 'testuser',
             'password': 'testpassword1234'
         }
         response = self.client.post(self.login_url, data)
@@ -100,7 +100,7 @@ class AuthenticationTest(APITestCase):
     def test_forgot_password(self):
         """Test forgot password functionality"""
         data = {
-            'email': 'test@example1.com'
+            'email': 'test@example.com'
         }
         response = self.client.post(self.forgot_password_url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -128,8 +128,8 @@ class AuthenticationTest(APITestCase):
         """Test user logout"""
         # First login to get the refresh token
         login_data = {
-            'username': 'testuser1',
-            'password': 'testpassword1234'
+            'username': 'testuser',
+            'password': 'testpassword123'
         }
         login_response = self.client.post(self.login_url, login_data)
         refresh_token = login_response.data['refresh']
