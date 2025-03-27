@@ -6,12 +6,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, ContributionSerializer, ContributionBasicAdsSerializer, EnrollmentSerializer, ContributionDetailSerializer, ContributionCommentSerializer
-from .models import Contributions, Enrollment, Contributions_comments
+from .serializers import UserSerializer, ContributionSerializer, EnrollmentSerializer, ContributionCommentSerializer, AllContributionSerializer, ContributionRatingSerializer
+from .models import Contributions, Enrollment, Contributions_comments, Contribution_ratings
 
 from sslcommerz_lib import SSLCOMMERZ
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import logging
 
 
@@ -68,13 +68,20 @@ class UserContributionView(APIView):
     """
     Get all contributions that user have created.
     user must be authenticated to view their uploaded contribution
+    if pk is provided, get a single contribution by id
+    if no pk is provided, get all contributions
 
     """
     permission_classes = [IsAuthenticated]
-    def get(self, request):
-        user = request.user
-        contributions = Contributions.objects.filter(user=user)
-        serializer = ContributionSerializer(contributions, many=True)
+    def get(self, request, pk=None):
+        if pk:
+            user = request.user
+            contribution = Contributions.objects.get(id=pk)
+            serializer = ContributionSerializer(contribution)
+        else:
+            user = request.user
+            contributions = Contributions.objects.filter(user=user)
+            serializer = ContributionSerializer(contributions, many=True)
         return Response(
             {
                 'status': True,
@@ -178,41 +185,29 @@ class UserContributionView(APIView):
                 'message': 'Contribution deleted successfully',
             }, status=status.HTTP_200_OK)
     
-
-
-class ContributionAdsView(APIView):
+class AllContributionView(APIView):
     """
-    Get all contributions with basic ads data.
-    user does not need to be authenticated to view the contributions
-    this will show the basic data of the contribution. but the videos will be hidden.
+    get all contributions
+    show only title, description, price, thumbnail_image, tags, origine, rating, comments
+    if user is authenticated, show the enrollment status and if enrolled show with all the elements available
+    if user is not authenticated, show only the basic elements
+
     """
-    def get(self,request):
-        contributions = Contributions.objects.all()
-        serializer = ContributionBasicAdsSerializer(contributions, many=True)
+    def get(self, request, pk=None):
+        if pk:
+            contribution = Contributions.objects.get(id=pk)
+            serializer = AllContributionSerializer(contribution, context={'request': request})
+        else:
+            contributions = Contributions.objects.all()
+            serializer = AllContributionSerializer(contributions, many=True, context={'request': request})
         return Response(
             {
                 'status': True,
                 'message': 'Contributions fetched successfully',
                 'data': serializer.data
-            },
-            status=status.HTTP_200_OK
-        )
+            }, status=status.HTTP_200_OK)
+    
 
-class ContributionDetailsView(APIView):
-    """
-    Get single contribution details with content based on enrollment status
-    """
-    def get(self, request, pk):
-        contribution = get_object_or_404(Contributions, id=pk)
-        serializer = ContributionDetailSerializer(
-            contribution,
-            context={'request': request}
-        )
-        return Response({
-            'status': True,
-            'message': 'Contribution details fetched successfully',
-            'data': serializer.data
-        }, status=status.HTTP_200_OK)
 
 
 
@@ -227,6 +222,9 @@ logger = logging.getLogger(__name__)
 class EnrollmentView(APIView):
     """
     Handle contribution enrollments and payment integration
+    user can view their enrollments and create new enrollments
+    user must be authenticated to enroll in a contribution
+    user can view a single enrollment by id
     """
     permission_classes = [IsAuthenticated]
 
@@ -344,11 +342,6 @@ class CreateEnrollmentView(APIView):
 def payment_success(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
-    # Log all received parameters for debugging
-    # logger.info(f"Payment callback received for enrollment {enrollment_id}")
-    # logger.info(f"Request GET params: {request.GET}")
-    # logger.info(f"Request POST params: {request.POST}")
-    
     # In sandbox/development mode, be very lenient
     if settings.SSLCOMMERZ['IS_SANDBOX']:
         logger.info("Running in sandbox mode - auto-completing payment")
@@ -357,11 +350,60 @@ def payment_success(request, enrollment_id):
         enrollment.payment_method = 'SANDBOX'
         enrollment.save()
         logger.info(f"Payment marked as completed for enrollment {enrollment_id}")
-        return JsonResponse({
-            'status': 'success',
-            'message': 'Payment completed successfully',
-            'redirect_url': settings.PAYMENT_REDIRECT_URLS['SUCCESS']
-        })
+        
+        # Get the contribution ID for the redirect
+        contribution_id = str(enrollment.contribution.id)
+        
+        # Get the redirect URL from settings
+        redirect_url = settings.PAYMENT_REDIRECT_URLS['SUCCESS']
+        
+        # Return HTML response with redirect button and embedded data
+        html_content = f"""
+        <html>
+        <head>
+            <title>Payment Success</title>
+            <style>
+                .container {{
+                    text-align: center;
+                    margin-top: 50px;
+                }}
+                .redirect-btn {{
+                    padding: 10px 20px;
+                    background-color: #6c2bb3;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    text-decoration: none;
+                    display: inline-block;
+                    margin-top: 20px;
+                }}
+                .hidden-data {{
+                    display: none;
+                }}
+            </style>
+            <script>
+                // Auto-redirect after 3 seconds
+                window.onload = function() {{
+                    setTimeout(function() {{
+                        window.location.href = "{redirect_url}";
+                    }}, 3000);
+                }};
+            </script>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Payment Completed Successfully!</h2>
+                <p>You will be redirected in a few seconds...</p>
+                <a href="{redirect_url}" class="redirect-btn">
+                    Continue Now
+                </a>
+                <div id="payment-data" class="hidden-data" data-contribution-id="{contribution_id}" data-redirect-url="{redirect_url}"></div>
+            </div>
+        </body>
+        </html>
+        """
+        return HttpResponse(html_content)
     
     # Production mode validation
     val_id = request.GET.get('val_id', '') or request.POST.get('val_id', '')
@@ -541,7 +583,115 @@ class ContributionCommentView(APIView):
                     'message': 'You do not have permission to update this comment',
                 }, status=status.HTTP_403_FORBIDDEN)
         
-
-
+class ContributionRatingView(APIView):
+    """
+    User can rate a contribution
+    User can view ratings of a contribution
+    Rating is stored as a decimal value between 0 and 5
+    The contribution's rating field is updated with the average of all ratings
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, contribution_id):
+        """
+        Get all ratings for a contribution or the user's rating if exists
+        """
+        contribution = get_object_or_404(Contributions, id=contribution_id)
+        
+        # Check if user wants their own rating
+        user_rating_only = request.query_params.get('user_rating', 'false').lower() == 'true'
+        
+        if user_rating_only:
+            # Get user's rating if it exists
+            rating = Contribution_ratings.objects.filter(
+                user=request.user,
+                contribution=contribution
+            ).first()
+            
+            if rating:
+                serializer = ContributionRatingSerializer(rating)
+                return Response({
+                    'status': True,
+                    'message': 'User rating fetched successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    'status': False,
+                    'message': 'You have not rated this contribution yet'
+                }, status=status.HTTP_404_NOT_FOUND)
+        else:
+            # Get all ratings for the contribution
+            ratings = Contribution_ratings.objects.filter(contribution=contribution)
+            serializer = ContributionRatingSerializer(ratings, many=True)
+            
+            return Response({
+                'status': True,
+                'message': 'Ratings fetched successfully',
+                'data': {
+                    'average_rating': contribution.rating,
+                    'total_ratings': ratings.count(),
+                    'ratings': serializer.data
+                }
+            }, status=status.HTTP_200_OK)
+    
+    def post(self, request, contribution_id):
+        """
+        Create or update a rating for a contribution
+        """
+        contribution = get_object_or_404(Contributions, id=contribution_id)
+        
+        # Check if user is enrolled in this contribution
+        is_enrolled = Enrollment.objects.filter(
+            user=request.user,
+            contribution=contribution,
+            payment_status='COMPLETED'
+        ).exists()
+        
+        if not is_enrolled:
+            return Response({
+                'status': False,
+                'message': 'You must be enrolled in this contribution to rate it'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        # Add user and contribution to request data
+        data = request.data.copy()
+        data['user'] = request.user.id
+        data['contribution'] = contribution_id
+        
+        # Validate rating value
+        rating_value = data.get('rating')
+        try:
+            rating_value = float(rating_value)
+            if rating_value < 0 or rating_value > 5:
+                return Response({
+                    'status': False,
+                    'message': 'Rating must be between 0 and 5'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        except (TypeError, ValueError):
+            return Response({
+                'status': False,
+                'message': 'Rating must be a number between 0 and 5'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = ContributionRatingSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            
+            # The signal handler will update the contribution's rating automatically
+            
+            return Response({
+                'status': True,
+                'message': 'Rating submitted successfully',
+                'data': {
+                    'rating': serializer.data,
+                }
+            }, status=status.HTTP_201_CREATED)
+        
+        return Response({
+            'status': False,
+            'message': 'Invalid data',
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 

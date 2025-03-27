@@ -1,0 +1,126 @@
+.forgot-password-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 2rem;
+  margin-top: 60px;
+}
+
+.forgot-password-card {
+  background: white;
+  box-shadow: 0 8px 32px rgba(108, 43, 179, 0.15);
+  border: 1px solid rgba(108, 43, 179, 0.1);
+  padding: 3rem;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 500px;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+
+.forgot-password-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  transform: translateY(-2px);
+}
+
+.forgot-password-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #6c2bb3;
+}
+
+.forgot-password-header h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #6c2bb3;
+}
+
+.forgot-password-instruction {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #6c2bb3;
+  box-shadow: 0 0 0 2px rgba(108, 43, 179, 0.2);
+}
+
+.reset-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #6c2bb3;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.reset-btn:hover {
+  background: #9b4de0;
+}
+
+.reset-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.back-to-login {
+  text-align: center;
+  margin-top: 2rem;
+  color: #6c2bb3;
+}
+
+.back-to-login a {
+  color: #6c2bb3;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.back-to-login a:hover {
+  color: #9b4de0;
+}
+
+.message {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+} 

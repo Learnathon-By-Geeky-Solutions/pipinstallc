@@ -1,24 +1,23 @@
 from rest_framework import serializers
 from auth_app.models import CustomUser
-from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, Enrollment, Contributions_comments
+from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, Enrollment, Contributions_comments, Contribution_ratings
 from django.shortcuts import get_object_or_404
+from django.db import models
 
 
 """
 Serializer for custom User model.
 """
 class UserSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for custom User model.
+    user can view their profile and update their profile
+    user must be authenticated to view their profile
+    user can view a single user by id
+    '''
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number', 'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject']
-
-
-
-
-
-
-
-
 
 
 class ContributionVideoSerializer(serializers.ModelSerializer):
@@ -46,11 +45,48 @@ class ContributionCommentSerializer(serializers.ModelSerializer):
         model = Contributions_comments
         fields = '__all__'
 
-
+class ContributionRatingSerializer(serializers.ModelSerializer):
+    """
+    Serializer for contribution ratings
+    User can rate a contribution once
+    If user already rated, update the existing rating
+    """
+    class Meta:
+        model = Contribution_ratings
+        fields = ['id', 'user', 'contribution', 'rating', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
     
+    def create(self, validated_data):
+        """
+        Create or update a rating
+        """
+        user = validated_data.get('user')
+        contribution = validated_data.get('contribution')
+        
+        # Check if user already rated this contribution
+        existing_rating = Contribution_ratings.objects.filter(
+            user=user, 
+            contribution=contribution
+        ).first()
+        
+        if existing_rating:
+            # Update existing rating
+            existing_rating.rating = validated_data.get('rating')
+            existing_rating.save()
+            return existing_rating
+        else:
+            # Create new rating
+            rating = Contribution_ratings.objects.create(**validated_data)
+            return rating
+
+
+
 class ContributionSerializer(serializers.ModelSerializer):
     '''
     Serializer for Contribution model.
+    user can view their contributions and create new contributions
+    user must be authenticated to view their contributions
+    user can view a single contribution by id
     '''
     videos = ContributionVideoSerializer(many=True, required=False)
     tags = ContributionTagSerializer(many=True, required=False)
@@ -61,6 +97,7 @@ class ContributionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributions
         fields = '__all__'
+        read_only_fields = ['rating']
 
     def create(self, validated_data):
         # Pop nested data
@@ -142,48 +179,66 @@ class ContributionSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-
-
-class ContributionBasicAdsSerializer(serializers.ModelSerializer):
-    tags = ContributionTagSerializer(many=True, required=False)
-    origine = ContributionOriginSerializer(many=True, required=False)
-    comments = ContributionCommentSerializer(many=True, required=False)
-    class Meta:
-        model = Contributions
-        fields = ['id', 'title', 'description' ,'price','thumbnail_image','tags','origine','rating','comments']
-
-class ContributionDetailSerializer(serializers.ModelSerializer):
+class AllContributionSerializer(serializers.ModelSerializer):
     """
-    Serializer for detailed contribution view based on enrollment status
+    get all contributions
+    show only title, description, price, thumbnail_image, tags, origine, rating, comments
+    if user is authenticated, show the enrollment status and if enrolled show with all the elements available
+    if user is not authenticated, show only the basic elements
     """
-    videos = ContributionVideoSerializer(many=True, required=False)
-    tags = ContributionTagSerializer(many=True, required=False)
-    origine = ContributionOriginSerializer(many=True, required=False)
-    notes = ContributionNoteSerializer(many=True, required=False)
+    tags = ContributionTagSerializer(many=True, read_only=True)
+    origine = ContributionOriginSerializer(many=True, read_only=True)
+    comments = ContributionCommentSerializer(many=True, read_only=True)
+    videos = serializers.SerializerMethodField()
+    notes = serializers.SerializerMethodField()
     is_enrolled = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = Contributions
-        fields = '__all__'
-
+        fields = ['id', 'title', 'description', 'price', 'thumbnail_image', 
+                  'tags', 'origine', 'rating', 'comments', 'videos', 
+                  'notes', 'is_enrolled', 'created_at', 'updated_at']
+    
     def get_is_enrolled(self, obj):
+        """Check if the requesting user is enrolled in this contribution"""
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return obj.enrollments.filter(
+            return Enrollment.objects.filter(
                 user=request.user,
+                contribution=obj,
                 payment_status='COMPLETED'
             ).exists()
         return False
-
+    
+    def get_videos(self, obj):
+        """Return videos only if user is enrolled"""
+        if self.get_is_enrolled(obj):
+            videos = obj.videos.all()
+            return ContributionVideoSerializer(videos, many=True).data
+        return None
+    
+    def get_notes(self, obj):
+        """Return notes only if user is enrolled"""
+        if self.get_is_enrolled(obj):
+            notes = obj.notes.all()
+            return ContributionNoteSerializer(notes, many=True).data
+        return None
+    
     def to_representation(self, instance):
+        """Customize the representation based on user authentication and enrollment"""
         data = super().to_representation(instance)
         
-        # Remove sensitive data if user is not enrolled
-        if not self.get_is_enrolled(instance):
-            data.pop('videos', None)
-            data.pop('notes', None)
-        
+        # If videos and notes are None (user not enrolled), remove them from response
+        if data['videos'] is None:
+            data.pop('videos')
+        if data['notes'] is None:
+            data.pop('notes')
+            
         return data
+
+
+
+
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     """
@@ -193,7 +248,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     
     """
     user = UserSerializer(read_only=True)
-    contribution = ContributionDetailSerializer(read_only=True)
+    contribution = AllContributionSerializer(read_only=True)
 
     class Meta:
         model = Enrollment

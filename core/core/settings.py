@@ -208,8 +208,10 @@ LOGGING = {
     },
 }
 
+FRONTEND_URL = 'http://localhost:5173'
+
 PAYMENT_REDIRECT_URLS = {
-    'SUCCESS': '/dashboard/my-courses/',
-    'FAILED': '/dashboard/payment-failed/',
-    'CANCELLED': '/dashboard/payment-cancelled/',
+    'SUCCESS': f'{FRONTEND_URL}/payment-success/',
+    'FAILED': f'{FRONTEND_URL}/payment-fail/',
+    'CANCELLED': f'{FRONTEND_URL}/payment-cancel/',
 }
