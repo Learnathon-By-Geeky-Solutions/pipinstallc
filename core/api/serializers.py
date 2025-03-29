@@ -19,13 +19,21 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number', 'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject']
 
-
 class ContributionVideoSerializer(serializers.ModelSerializer):
+    """
+    Serializer for contribution videos
+    """
+    video_file = serializers.FileField(required=False, allow_null=True)  # Make file optional
+
     class Meta:
         model = contribution_videos
-        fields = '__all__'
+        fields = ['id', 'title', 'video_file']
 
 class ContributionTagSerializer(serializers.ModelSerializer):
+    """
+    Serializer for contribution tags
+    """
+
     class Meta:
         model = Contribution_tags
         fields = '__all__'
@@ -33,12 +41,14 @@ class ContributionTagSerializer(serializers.ModelSerializer):
 class ContributionOriginSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contribution_origines
-        fields = '__all__'
+        fields = ['id', 'related_University', 'related_Department', 'related_Major_Subject']
 
 class ContributionNoteSerializer(serializers.ModelSerializer):
+    note_file = serializers.FileField(required=False, allow_null=True)  # Make file optional
+
     class Meta:
         model = Contribution_notes
-        fields = '__all__'
+        fields = ['id', 'note_file']
 
 class ContributionCommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -80,27 +90,18 @@ class ContributionRatingSerializer(serializers.ModelSerializer):
             return rating
 
 
-
 class ContributionSerializer(serializers.ModelSerializer):
-    '''
-    Serializer for Contribution model.
-    user can view their contributions and create new contributions
-    user must be authenticated to view their contributions
-    user can view a single contribution by id
-    '''
     videos = ContributionVideoSerializer(many=True, required=False)
     tags = ContributionTagSerializer(many=True, required=False)
     origine = ContributionOriginSerializer(many=True, required=False)
     notes = ContributionNoteSerializer(many=True, required=False)
-    comments = ContributionCommentSerializer(many=True, required=False)
+    comments = ContributionCommentSerializer(many=True, required=False, read_only=True)
 
     class Meta:
         model = Contributions
         fields = '__all__'
-        read_only_fields = ['rating']
-
+    
     def create(self, validated_data):
-        # Pop nested data
         videos_data = validated_data.pop('videos', [])
         tags_data = validated_data.pop('tags', [])
         origine_data = validated_data.pop('origine', [])
@@ -109,76 +110,109 @@ class ContributionSerializer(serializers.ModelSerializer):
         # Create the contribution
         contribution = Contributions.objects.create(**validated_data)
 
-        # Create and add related objects only if they exist and aren't None
-        if videos_data:
-            for video_data in videos_data:
-                if video_data:  # Check if video data is not None
-                    video = contribution_videos.objects.create(**video_data)
-                    contribution.videos.add(video)
+        # Create related objects
+        for video_data in videos_data:
+            # Create video even if no file is present
+            contribution_videos.objects.create(
+                contribution=contribution, 
+                **video_data
+            )
 
-        if tags_data:
-            for tag_data in tags_data:
-                if tag_data:  # Check if tag data is not None
-                    tag = Contribution_tags.objects.create(**tag_data)
-                    contribution.tags.add(tag)
+        # Create tags
+        for tag_data in tags_data:
+            tag, _ = Contribution_tags.objects.get_or_create(**tag_data)
+            contribution.tags.add(tag)
 
-        if origine_data:
-            for origin_data in origine_data:
-                if origin_data:  # Check if origin data is not None
-                    origin = Contribution_origines.objects.create(**origin_data)
-                    contribution.origine.add(origin)
+        # Create origins
+        for origin_data in origine_data:
+            Contribution_origines.objects.create(
+                contribution=contribution, 
+                **origin_data
+            )
 
-        if notes_data:
-            for note_data in notes_data:
-                if note_data:  # Check if note data is not None
-                    note = Contribution_notes.objects.create(**note_data)
-                    contribution.notes.add(note)
+        # Create notes
+        for note_data in notes_data:
+            # Create note even if no file is present
+            Contribution_notes.objects.create(
+                contribution=contribution, 
+                **note_data
+            )
 
         return contribution
 
     def update(self, instance, validated_data):
-        # Handle nested updates
-        videos_data = validated_data.pop('videos', [])
-        tags_data = validated_data.pop('tags', [])
-        origine_data = validated_data.pop('origine', [])
-        notes_data = validated_data.pop('notes', [])
+        videos_data = validated_data.pop('videos', None)
+        tags_data = validated_data.pop('tags', None)
+        origine_data = validated_data.pop('origine', None)
+        notes_data = validated_data.pop('notes', None)
 
         # Update the main instance fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+        instance.save()
 
-        # Update related objects only if they exist and aren't None
+        # Update videos if provided
         if videos_data is not None:
-            instance.videos.clear()
+            # Delete existing videos
+            instance.videos.all().delete()
+            
+            # Create new videos
             for video_data in videos_data:
-                if video_data:
-                    video = contribution_videos.objects.create(**video_data)
-                    instance.videos.add(video)
+                contribution_videos.objects.create(
+                    contribution=instance,
+                    **video_data
+                )
 
+        # Update tags if provided
         if tags_data is not None:
             instance.tags.clear()
             for tag_data in tags_data:
-                if tag_data:
-                    tag = Contribution_tags.objects.create(**tag_data)
-                    instance.tags.add(tag)
+                tag, _ = Contribution_tags.objects.get_or_create(**tag_data)
+                instance.tags.add(tag)
 
+        # Update origins if provided
         if origine_data is not None:
-            instance.origine.clear()
+            instance.origine.all().delete()
             for origin_data in origine_data:
-                if origin_data:
-                    origin = Contribution_origines.objects.create(**origin_data)
-                    instance.origine.add(origin)
+                Contribution_origines.objects.create(
+                    contribution=instance,
+                    **origin_data
+                )
 
+        # Update notes if provided
         if notes_data is not None:
-            instance.notes.clear()
+            instance.notes.all().delete()
             for note_data in notes_data:
-                if note_data:
-                    note = Contribution_notes.objects.create(**note_data)
-                    instance.notes.add(note)
+                Contribution_notes.objects.create(
+                    contribution=instance,
+                    **note_data
+                )
 
-        instance.save()
         return instance
 
+    def validate(self, data):
+        """
+        Custom validation to handle file uploads more gracefully
+        """
+        # If videos are present but don't have files, don't require them
+        if 'videos' in data:
+            for video in data['videos']:
+                if 'video_file' not in video or video['video_file'] is None:
+                    # If using a FileField with required=True, we need to handle this
+                    pass  # We've already made it optional, so no action needed
+        
+        # If notes are present but don't have files, don't require them
+        if 'notes' in data:
+            for note in data['notes']:
+                if 'note_file' not in note or note['note_file'] is None:
+                    # If using a FileField with required=True, we need to handle this
+                    pass  # We've already made it optional, so no action needed
+        
+        return data
+
+
+
+        
 class AllContributionSerializer(serializers.ModelSerializer):
     """
     get all contributions
