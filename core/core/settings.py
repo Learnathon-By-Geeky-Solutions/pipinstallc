@@ -169,7 +169,12 @@ SIMPLE_JWT = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',  # ✅ Required for file uploads
+        'rest_framework.parsers.FormParser',
+    ],
 }
 
 AUTH_USER_MODEL = 'auth_app.CustomUser'
