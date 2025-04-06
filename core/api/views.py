@@ -95,6 +95,9 @@ class UserContributionView(APIView):
             'title': request.data.get('title', ''),
             'description': request.data.get('description', ''),
             'price': request.data.get('price', 0),
+            'related_University': request.data.get('related_University', ''),
+            'related_Department': request.data.get('related_Department', ''),
+            'related_Major_Subject': request.data.get('related_Major_Subject', ''),
         }
         
         # Handle thumbnail image
@@ -138,35 +141,6 @@ class UserContributionView(APIView):
         
         if videos:
             parsed_data['videos'] = videos
-        
-        # Handle origins
-        origins = []
-        for key in request.data:
-            if 'origin_data[' in key:
-                index = key.split('[')[1].split(']')[0]
-                field = key.split('.[')[1].split(']')[0]
-                
-                # Find or create origin object for this index
-                origin_obj = None
-                for origin in origins:
-                    if origin.get('index') == index:
-                        origin_obj = origin
-                        break
-                
-                if not origin_obj:
-                    origin_obj = {'index': index}
-                    origins.append(origin_obj)
-                
-                origin_obj[field] = request.data[key]
-        
-        # Clean up origins and add to parsed data
-        if origins:
-            clean_origins = []
-            for origin in origins:
-                if 'index' in origin:
-                    del origin['index']
-                clean_origins.append(origin)
-            parsed_data['origine'] = clean_origins
         
         # Handle notes
         notes = []
@@ -212,7 +186,7 @@ class UserContributionView(APIView):
         logger.info(f"Request FILES: {request.FILES}")
         logger.info(f"Request DATA: {request.data}")
         
-        # Create a properly structured data dictionary (similar to post method)
+        # Create a properly structured data dictionary
         parsed_data = {
             'title': request.data.get('title', contribution.title),
             'description': request.data.get('description', contribution.description),
@@ -223,8 +197,50 @@ class UserContributionView(APIView):
         if 'thumbnail_image' in request.FILES:
             parsed_data['thumbnail_image'] = request.FILES['thumbnail_image']
         
-        # Handle tags, videos, origins, notes (similar to post method)
-        # ... (copy the same parsing logic from the post method)
+        # Handle tags, videos, notes (similar to post method)
+        # Handle tags
+        tags = []
+        for key in request.data:
+            if key.startswith('tags[') and key.endswith('][name]'):
+                tags.append({'name': request.data[key]})
+        if tags:
+            parsed_data['tags'] = tags
+            
+        # Handle videos
+        videos = []
+        video_titles = {}
+        video_files = {}
+        
+        for key in request.data:
+            if key.startswith('videos[') and '][title]' in key:
+                index = key.split('[')[1].split(']')[0]
+                video_titles[index] = request.data[key]
+        
+        for key in request.FILES:
+            if 'video_file' in key:
+                index = key.split('[')[1].split(']')[0]
+                video_files[index] = request.FILES[key]
+        
+        for index in set(list(video_titles.keys()) + list(video_files.keys())):
+            video = {}
+            if index in video_titles:
+                video['title'] = video_titles[index]
+            if index in video_files:
+                video['video_file'] = video_files[index]
+            if video:
+                videos.append(video)
+        
+        if videos:
+            parsed_data['videos'] = videos
+            
+        # Handle notes
+        notes = []
+        for key in request.FILES:
+            if 'note_file' in key:
+                notes.append({'note_file': request.FILES[key]})
+        
+        if notes:
+            parsed_data['notes'] = notes
         
         logger.info(f"Parsed data for update: {parsed_data}")
         
