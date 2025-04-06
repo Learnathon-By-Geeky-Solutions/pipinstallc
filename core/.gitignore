@@ -102,3 +102,13 @@ build/
 dist/
 
 migrations
+.env
+migrations/
+
+# Ignore all files in the uploads directory
+uploads/*
+
+# Ignore all files in the media directory
+media/*
+
+migrations/*
