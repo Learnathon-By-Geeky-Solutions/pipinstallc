@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from auth_app.models import CustomUser
-from .models import Contributions, contribution_videos, Contribution_tags, Contribution_origines, Contribution_notes, Enrollment, Contributions_comments, Contribution_ratings
+from .models import Contributions, contribution_videos, Contribution_tags, Contribution_notes, Enrollment, Contributions_comments, Contribution_ratings
 from django.shortcuts import get_object_or_404
 from django.db import models
 
@@ -38,10 +38,6 @@ class ContributionTagSerializer(serializers.ModelSerializer):
         model = Contribution_tags
         fields = '__all__'
 
-class ContributionOriginSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Contribution_origines
-        fields = ['id', 'related_University', 'related_Department', 'related_Major_Subject']
 
 class ContributionNoteSerializer(serializers.ModelSerializer):
     note_file = serializers.FileField(required=False, allow_null=True)  # Make file optional
@@ -93,7 +89,6 @@ class ContributionRatingSerializer(serializers.ModelSerializer):
 class ContributionSerializer(serializers.ModelSerializer):
     videos = ContributionVideoSerializer(many=True, required=False)
     tags = ContributionTagSerializer(many=True, required=False)
-    origine = ContributionOriginSerializer(many=True, required=False)
     notes = ContributionNoteSerializer(many=True, required=False)
     comments = ContributionCommentSerializer(many=True, required=False, read_only=True)
 
@@ -104,7 +99,6 @@ class ContributionSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         videos_data = validated_data.pop('videos', [])
         tags_data = validated_data.pop('tags', [])
-        origine_data = validated_data.pop('origine', [])
         notes_data = validated_data.pop('notes', [])
 
         # Create the contribution
@@ -112,7 +106,6 @@ class ContributionSerializer(serializers.ModelSerializer):
 
         # Create related objects
         for video_data in videos_data:
-            # Create video even if no file is present
             contribution_videos.objects.create(
                 contribution=contribution, 
                 **video_data
@@ -123,16 +116,8 @@ class ContributionSerializer(serializers.ModelSerializer):
             tag, _ = Contribution_tags.objects.get_or_create(**tag_data)
             contribution.tags.add(tag)
 
-        # Create origins
-        for origin_data in origine_data:
-            Contribution_origines.objects.create(
-                contribution=contribution, 
-                **origin_data
-            )
-
         # Create notes
         for note_data in notes_data:
-            # Create note even if no file is present
             Contribution_notes.objects.create(
                 contribution=contribution, 
                 **note_data
@@ -143,7 +128,6 @@ class ContributionSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         videos_data = validated_data.pop('videos', None)
         tags_data = validated_data.pop('tags', None)
-        origine_data = validated_data.pop('origine', None)
         notes_data = validated_data.pop('notes', None)
 
         # Update the main instance fields
@@ -170,15 +154,6 @@ class ContributionSerializer(serializers.ModelSerializer):
                 tag, _ = Contribution_tags.objects.get_or_create(**tag_data)
                 instance.tags.add(tag)
 
-        # Update origins if provided
-        if origine_data is not None:
-            instance.origine.all().delete()
-            for origin_data in origine_data:
-                Contribution_origines.objects.create(
-                    contribution=instance,
-                    **origin_data
-                )
-
         # Update notes if provided
         if notes_data is not None:
             instance.notes.all().delete()
@@ -192,22 +167,24 @@ class ContributionSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Custom validation to handle file uploads more gracefully
+        Custom validation to handle file uploads
         """
-        # If videos are present but don't have files, don't require them
+        # Video validation
         if 'videos' in data:
             for video in data['videos']:
-                if 'video_file' not in video or video['video_file'] is None:
-                    # If using a FileField with required=True, we need to handle this
-                    pass  # We've already made it optional, so no action needed
-        
-        # If notes are present but don't have files, don't require them
+                if 'video_file' not in video and 'title' not in video:
+                    raise serializers.ValidationError({
+                        'videos': 'Both video file and title are required for each video'
+                    })
+
+        # Notes validation
         if 'notes' in data:
             for note in data['notes']:
-                if 'note_file' not in note or note['note_file'] is None:
-                    # If using a FileField with required=True, we need to handle this
-                    pass  # We've already made it optional, so no action needed
-        
+                if 'note_file' not in note:
+                    raise serializers.ValidationError({
+                        'notes': 'Note file is required for each note'
+                    })
+
         return data
 
 
@@ -221,7 +198,6 @@ class AllContributionSerializer(serializers.ModelSerializer):
     if user is not authenticated, show only the basic elements
     """
     tags = ContributionTagSerializer(many=True, read_only=True)
-    origine = ContributionOriginSerializer(many=True, read_only=True)
     comments = ContributionCommentSerializer(many=True, read_only=True)
     videos = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
@@ -230,7 +206,7 @@ class AllContributionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributions
         fields = ['id', 'title', 'description', 'price', 'thumbnail_image', 
-                  'tags', 'origine', 'rating', 'comments', 'videos', 
+                  'tags', 'related_University', 'related_Department', 'related_Major_Subject', 'rating', 'comments', 'videos', 
                   'notes', 'is_enrolled', 'created_at', 'updated_at']
     
     def get_is_enrolled(self, obj):

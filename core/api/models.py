@@ -17,6 +17,9 @@ class Contributions(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     tags = models.ManyToManyField('Contribution_tags', related_name='contributions')
     rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    related_University = models.CharField(max_length=255, null=True, blank=True)
+    related_Department = models.CharField(max_length=255, null=True, blank=True)
+    related_Major_Subject = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -45,16 +48,6 @@ class Contribution_tags(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=255, null=True, blank=True)
 
-
-class Contribution_origines(models.Model):
-    """
-    Model for storing origins of contributions.
-    """
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    contribution = models.ForeignKey(Contributions, related_name='origine', on_delete=models.CASCADE)
-    related_University = models.CharField(max_length=255, null=True, blank=True)
-    related_Department = models.CharField(max_length=255, null=True, blank=True)
-    related_Major_Subject = models.CharField(max_length=255, null=True, blank=True)
 
 
 class Contribution_notes(models.Model):
