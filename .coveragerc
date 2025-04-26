@@ -1,0 +1,16 @@
+[run]
+source = core
+
+[report]
+omit =
+    */migrations/*
+    */venv/*
+    */manage.py
+
+[paths]
+source =
+    core
+    */core
+
+[xml]
+output = core/coverage.xml
