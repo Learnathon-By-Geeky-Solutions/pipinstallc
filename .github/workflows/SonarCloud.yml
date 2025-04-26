@@ -38,9 +38,10 @@ jobs:
           # echo "EMAIL_USE_SSL=False" >> .env
 
       - name: Run tests and generate coverage report
+        working-directory: core
         run: |
-          cd core
-          coverage run --source . manage.py test
+          coverage erase
+          coverage run --source=. manage.py test
           coverage xml
           ls -l coverage.xml 
         env:
