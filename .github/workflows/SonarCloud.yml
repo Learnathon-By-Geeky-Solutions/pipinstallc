@@ -60,4 +60,5 @@ jobs:
             -Dsonar.projectBaseDir=core
             -Dsonar.sources=.
             -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.python.version=3.12
                 
