@@ -2,15 +2,15 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Contributions, Contribution_tags, Contribution_origines, contribution_videos, Contribution_notes, Enrollment, Contributions_comments, Contribution_ratings
+from .models import Contribution, ContributionTags, ContributionOrigines, ContributionVideos, ContributionNotes, Enrollment, ContributionComments, ContributionRatings
 
-admin.site.register(Contributions)
-admin.site.register(Contribution_tags)
-admin.site.register(Contribution_origines)
-admin.site.register(contribution_videos)
-admin.site.register(Contribution_notes)
+admin.site.register(Contribution)
+admin.site.register(ContributionTags)
+admin.site.register(ContributionOrigines)
+admin.site.register(ContributionVideos)
+admin.site.register(ContributionNotes)
 admin.site.register(Enrollment)
-admin.site.register(Contributions_comments)
+admin.site.register(ContributionComments)
 
 
-admin.site.register(Contribution_ratings)
+admin.site.register(ContributionRatings)

@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 
@@ -7,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, ContributionSerializer, EnrollmentSerializer, ContributionCommentSerializer, AllContributionSerializer, ContributionRatingSerializer
-from .models import Contributions, Enrollment, Contributions_comments, Contribution_ratings
+from .models import Contribution, Enrollment, ContributionComments, ContributionRatings
 
 from sslcommerz_lib import SSLCOMMERZ
 from django.conf import settings
@@ -76,11 +78,11 @@ class UserContributionView(APIView):
     def get(self, request, pk=None):
         if pk:
             user = request.user
-            contribution = Contributions.objects.get(id=pk)
+            contribution = Contribution.objects.get(id=pk)
             serializer = ContributionSerializer(contribution)
         else:
             user = request.user
-            contributions = Contributions.objects.filter(user=user)
+            contributions = Contribution.objects.filter(user=user)
             serializer = ContributionSerializer(contributions, many=True)
         return Response(
             {
@@ -93,7 +95,23 @@ class UserContributionView(APIView):
     
     def post(self, request):
         try:
-            serializer = ContributionSerializer(data=request.data)
+            # Add user to request data
+            data = request.data.copy()
+            data['user'] = request.user.id
+
+            # Check if required fields are present and not empty
+            required_fields = ['title', 'description']
+            for field in required_fields:
+                if field not in data or not data[field]:
+                    return Response(
+                        {
+                            'status': False,
+                            'message': f'{field} is required and cannot be empty'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            serializer = ContributionSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(
@@ -127,7 +145,7 @@ class UserContributionView(APIView):
         '''
         try:
             user = request.user
-            contribution = Contributions.objects.get(id=pk)
+            contribution = Contribution.objects.get(id=pk)
             
             # Check if user owns the contribution
             if contribution.user != user:
@@ -159,7 +177,7 @@ class UserContributionView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        except Contributions.DoesNotExist:
+        except Contribution.DoesNotExist:
             return Response(
                 {
                     'status': False,
@@ -177,7 +195,7 @@ class UserContributionView(APIView):
             )
 
     def delete(self, request, pk):
-        contribution = Contributions.objects.get(id=pk)
+        contribution = Contribution.objects.get(id=pk)
         contribution.delete()
         return Response(
             {
@@ -195,10 +213,10 @@ class AllContributionView(APIView):
     """
     def get(self, request, pk=None):
         if pk:
-            contribution = Contributions.objects.get(id=pk)
+            contribution = Contribution.objects.get(id=pk)
             serializer = AllContributionSerializer(contribution, context={'request': request})
         else:
-            contributions = Contributions.objects.all()
+            contributions = Contribution.objects.all()
             serializer = AllContributionSerializer(contributions, many=True, context={'request': request})
         return Response(
             {
@@ -259,7 +277,7 @@ class CreateEnrollmentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, contribution_id):
-        contribution = get_object_or_404(Contributions, id=contribution_id)
+        contribution = get_object_or_404(Contribution, id=contribution_id)
 
         # Check if already enrolled or has pending enrollment
         existing_enrollment = Enrollment.objects.filter(
@@ -339,6 +357,8 @@ class CreateEnrollmentView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
 
+@csrf_exempt
+@require_POST
 def payment_success(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
@@ -455,6 +475,8 @@ def payment_success(request, enrollment_id):
         }
     }, status=400)
 
+@csrf_exempt
+@require_POST
 def payment_fail(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
@@ -472,6 +494,8 @@ def payment_fail(request, enrollment_id):
         'redirect_url': '/dashboard/payment-failed/'
     })
 
+@csrf_exempt
+@require_POST
 def payment_cancel(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
@@ -507,11 +531,11 @@ class ContributionCommentView(APIView):
         if no contribution_id is provided, get all comments
         """
         if contribution_id:
-            contribution = get_object_or_404(Contributions, id=contribution_id)
-            comments = Contributions_comments.objects.filter(contribution=contribution)
+            contribution = get_object_or_404(Contribution, id=contribution_id)
+            comments = ContributionComments.objects.filter(contribution=contribution)
             serializer = ContributionCommentSerializer(comments, many=True)
         else:
-            comments = Contributions_comments.objects.all()
+            comments = ContributionComments.objects.all()
             serializer = ContributionCommentSerializer(comments, many=True)
         return Response(
             {
@@ -544,8 +568,8 @@ class ContributionCommentView(APIView):
         """
         delete a comment
         """
-        contribution = get_object_or_404(Contributions, id=contribution_id)
-        comment = get_object_or_404(Contributions_comments, id=comment_id, contribution=contribution)
+        contribution = get_object_or_404(Contribution, id=contribution_id)
+        comment = get_object_or_404(ContributionComments, id=comment_id, contribution=contribution)
         if comment.user.id == request.user.id:
             comment.delete()
             return Response(
@@ -564,8 +588,8 @@ class ContributionCommentView(APIView):
         """
         update a comment
         """
-        contribution = get_object_or_404(Contributions, id=contribution_id)
-        comment = get_object_or_404(Contributions_comments, id=comment_id, contribution=contribution)
+        contribution = get_object_or_404(Contribution, id=contribution_id)
+        comment = get_object_or_404(ContributionComments, id=comment_id, contribution=contribution)
         if comment.user.id == request.user.id:
             serializer = ContributionCommentSerializer(comment, data=request.data)
             if serializer.is_valid():
@@ -596,14 +620,14 @@ class ContributionRatingView(APIView):
         """
         Get all ratings for a contribution or the user's rating if exists
         """
-        contribution = get_object_or_404(Contributions, id=contribution_id)
+        contribution = get_object_or_404(Contribution, id=contribution_id)
         
         # Check if user wants their own rating
         user_rating_only = request.query_params.get('user_rating', 'false').lower() == 'true'
         
         if user_rating_only:
             # Get user's rating if it exists
-            rating = Contribution_ratings.objects.filter(
+            rating = ContributionRatings.objects.filter(
                 user=request.user,
                 contribution=contribution
             ).first()
@@ -622,7 +646,7 @@ class ContributionRatingView(APIView):
                 }, status=status.HTTP_404_NOT_FOUND)
         else:
             # Get all ratings for the contribution
-            ratings = Contribution_ratings.objects.filter(contribution=contribution)
+            ratings = ContributionRatings.objects.filter(contribution=contribution)
             serializer = ContributionRatingSerializer(ratings, many=True)
             
             return Response({
@@ -639,7 +663,7 @@ class ContributionRatingView(APIView):
         """
         Create or update a rating for a contribution
         """
-        contribution = get_object_or_404(Contributions, id=contribution_id)
+        contribution = get_object_or_404(Contribution, id=contribution_id)
         
         # Check if user is enrolled in this contribution
         is_enrolled = Enrollment.objects.filter(
