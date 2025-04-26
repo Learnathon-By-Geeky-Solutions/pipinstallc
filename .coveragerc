@@ -1,11 +1,4 @@
-[run]
-source = .
-
-
-[report]
-omit =
-    */migrations/*
-    */venv/*
-
-[xml]
-output = core/coverage.xml
+[coverage:run]
+relative_files = True
+source = core
+branch = True
