@@ -1,11 +1,10 @@
 [run]
-source = core
+relative_files = True
 
 [report]
 omit =
     */migrations/*
     */venv/*
-    */manage.py
 
 [paths]
 source =
