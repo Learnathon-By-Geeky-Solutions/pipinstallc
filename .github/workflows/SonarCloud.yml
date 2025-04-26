@@ -39,7 +39,7 @@ jobs:
 
       - name: Run tests and generate coverage report
         run: |
-          cd core/core
+          cd core
           coverage run --source . manage.py test
           coverage xml
           ls -l coverage.xml 
@@ -55,4 +55,4 @@ jobs:
           args: >
             -Dsonar.organization=learnathon-by-geeky-solutions
             -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_pipinstallc
-            -Dsonar.python.coverage.reportPaths=core/core/coverage.xml
+            -Dsonar.python.coverage.reportPaths=core/coverage.xml
