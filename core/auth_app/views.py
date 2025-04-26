@@ -54,7 +54,7 @@ class LoginView(APIView):
         password = data.get('password')
 
         user = CustomUser.objects.filter(username=username).first()
-        if not user.is_email_verified:
+        if user and not user.is_email_verified:
             return Response(
                 {
                     'status': False,

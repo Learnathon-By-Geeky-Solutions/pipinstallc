@@ -64,127 +64,202 @@ class UserInfoView(APIView):
             },
             status=status.HTTP_200_OK
         )
-class UserContributionView(APIView):
-    """
-    Get all contributions that user have created.
-    user must be authenticated to view their uploaded contribution
-    if pk is provided, get a single contribution by id
-    if no pk is provided, get all contributions
 
-    """
+class UserContributionView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request, pk=None):
+        user = request.user
         if pk:
-            user = request.user
-            contribution = Contributions.objects.get(id=pk)
-            serializer = ContributionSerializer(contribution)
-        else:
-            user = request.user
-            contributions = Contributions.objects.filter(user=user)
-            serializer = ContributionSerializer(contributions, many=True)
-        return Response(
-            {
-                'status': True,
-                'message': 'Contributions fetched successfully',
-                'data': serializer.data
-            },
-            status=status.HTTP_200_OK
-        )
-    
+            try:
+                contribution = Contributions.objects.get(id=pk, user=user)
+                serializer = ContributionSerializer(contribution)
+                return Response({'status': True, 'message': 'Success', 'data': serializer.data}, status=status.HTTP_200_OK)
+            except Contributions.DoesNotExist:
+                return Response({'status': False, 'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        contributions = Contributions.objects.filter(user=user)
+        serializer = ContributionSerializer(contributions, many=True)
+        return Response({'status': True, 'message': 'Success', 'data': serializer.data}, status=status.HTTP_200_OK)
+
     def post(self, request):
-        try:
-            serializer = ContributionSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    {
-                        'status': True,
-                        'message': 'Contribution created successfully',
-                        'data': serializer.data
-                    },
-                    status=status.HTTP_201_CREATED
-                )
-            return Response(
-                {
-                    'status': False,
-                    'message': 'Invalid data',
-                    'errors': serializer.errors
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            return Response(
-                {
-                    'status': False,
-                    'message': str(e)
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        import logging
+        import json
+        logger = logging.getLogger(__name__)
+        
+        # Log the incoming data for debugging
+        logger.info(f"Request FILES: {request.FILES}")
+        logger.info(f"Request DATA: {request.data}")
+        
+        # Create a properly structured data dictionary
+        parsed_data = {
+            'title': request.data.get('title', ''),
+            'description': request.data.get('description', ''),
+            'price': request.data.get('price', 0),
+            'related_University': request.data.get('related_University', ''),
+            'related_Department': request.data.get('related_Department', ''),
+            'related_Major_Subject': request.data.get('related_Major_Subject', ''),
+        }
+        
+        # Handle thumbnail image
+        if 'thumbnail_image' in request.FILES:
+            parsed_data['thumbnail_image'] = request.FILES['thumbnail_image']
+        
+        # Handle tags
+        tags = []
+        for key in request.data:
+            if key.startswith('tags[') and key.endswith('][name]'):
+                tags.append({'name': request.data[key]})
+        if tags:
+            parsed_data['tags'] = tags
+        
+        # Handle videos
+        videos = []
+        video_titles = {}
+        video_files = {}
+        
+        # First collect all video data
+        for key in request.data:
+            if key.startswith('videos[') and '][title]' in key:
+                index = key.split('[')[1].split(']')[0]
+                video_titles[index] = request.data[key]
+        
+        for key in request.FILES:
+            if 'video_file' in key:
+                # Extract index from key like 'videos[0].[video_file]'
+                index = key.split('[')[1].split(']')[0]
+                video_files[index] = request.FILES[key]
+        
+        # Now create video objects
+        for index in set(list(video_titles.keys()) + list(video_files.keys())):
+            video = {}
+            if index in video_titles:
+                video['title'] = video_titles[index]
+            if index in video_files:
+                video['video_file'] = video_files[index]
+            if video:
+                videos.append(video)
+        
+        if videos:
+            parsed_data['videos'] = videos
+        
+        # Handle notes
+        notes = []
+        for key in request.FILES:
+            if 'note_file' in key:
+                notes.append({'note_file': request.FILES[key]})
+        
+        if notes:
+            parsed_data['notes'] = notes
+        
+        logger.info(f"Parsed data: {parsed_data}")
+        
+        # Create the serializer with our properly structured data
+        serializer = ContributionSerializer(data=parsed_data)
+        
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response({
+                'status': True, 
+                'message': 'Created', 
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        
+        # Log validation errors for debugging
+        logger.error(f"Validation errors: {serializer.errors}")
+        
+        return Response({
+            'status': False, 
+            'message': 'Invalid data', 
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
-        '''
-        Update a contribution.
-        '''
+        import logging
+        logger = logging.getLogger(__name__)
+        
         try:
-            user = request.user
-            contribution = Contributions.objects.get(id=pk)
-            
-            # Check if user owns the contribution
-            if contribution.user != user:
-                return Response(
-                    {
-                        'status': False,
-                        'message': 'You do not have permission to update this contribution'
-                    },
-                    status=status.HTTP_403_FORBIDDEN
-                )
-
-            serializer = ContributionSerializer(contribution, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    {
-                        'status': True,
-                        'message': 'Contribution updated successfully',
-                        'data': serializer.data
-                    },
-                    status=status.HTTP_200_OK
-                )
-            return Response(
-                {
-                    'status': False,
-                    'message': 'Invalid data',
-                    'errors': serializer.errors
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+            contribution = Contributions.objects.get(id=pk, user=request.user)
         except Contributions.DoesNotExist:
-            return Response(
-                {
-                    'status': False,
-                    'message': f'Contribution with id {pk} does not exist'
-                },
-                status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            return Response(
-                {
-                    'status': False,
-                    'message': str(e)
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response({'status': False, 'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Log the incoming data for debugging
+        logger.info(f"Request FILES: {request.FILES}")
+        logger.info(f"Request DATA: {request.data}")
+        
+        # Create a properly structured data dictionary
+        parsed_data = {
+            'title': request.data.get('title', contribution.title),
+            'description': request.data.get('description', contribution.description),
+            'price': request.data.get('price', contribution.price),
+        }
+        
+        # Handle thumbnail image
+        if 'thumbnail_image' in request.FILES:
+            parsed_data['thumbnail_image'] = request.FILES['thumbnail_image']
+        
+        # Handle tags, videos, notes (similar to post method)
+        # Handle tags
+        tags = []
+        for key in request.data:
+            if key.startswith('tags[') and key.endswith('][name]'):
+                tags.append({'name': request.data[key]})
+        if tags:
+            parsed_data['tags'] = tags
+            
+        # Handle videos
+        videos = []
+        video_titles = {}
+        video_files = {}
+        
+        for key in request.data:
+            if key.startswith('videos[') and '][title]' in key:
+                index = key.split('[')[1].split(']')[0]
+                video_titles[index] = request.data[key]
+        
+        for key in request.FILES:
+            if 'video_file' in key:
+                index = key.split('[')[1].split(']')[0]
+                video_files[index] = request.FILES[key]
+        
+        for index in set(list(video_titles.keys()) + list(video_files.keys())):
+            video = {}
+            if index in video_titles:
+                video['title'] = video_titles[index]
+            if index in video_files:
+                video['video_file'] = video_files[index]
+            if video:
+                videos.append(video)
+        
+        if videos:
+            parsed_data['videos'] = videos
+            
+        # Handle notes
+        notes = []
+        for key in request.FILES:
+            if 'note_file' in key:
+                notes.append({'note_file': request.FILES[key]})
+        
+        if notes:
+            parsed_data['notes'] = notes
+        
+        logger.info(f"Parsed data for update: {parsed_data}")
+        
+        serializer = ContributionSerializer(contribution, data=parsed_data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status': True, 'message': 'Updated', 'data': serializer.data}, status=status.HTTP_200_OK)
+        
+        logger.error(f"Validation errors: {serializer.errors}")
+        return Response({'status': False, 'message': 'Invalid data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        contribution = Contributions.objects.get(id=pk)
-        contribution.delete()
-        return Response(
-            {
-                'status': True,
-                'message': 'Contribution deleted successfully',
-            }, status=status.HTTP_200_OK)
-    
+        try:
+            contribution = Contributions.objects.get(id=pk, user=request.user)
+            contribution.delete()
+            return Response({'status': True, 'message': 'Deleted'}, status=status.HTTP_200_OK)
+        except Contributions.DoesNotExist:
+            return Response({'status': False, 'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+
 class AllContributionView(APIView):
     """
     get all contributions

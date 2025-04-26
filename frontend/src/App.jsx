@@ -17,6 +17,9 @@ import ResetPassword from './pages/ResetPassword'
 import PaymentSuccess from './pages/PaymentSuccess'
 import PaymentFail from './pages/PaymentFail'
 import PaymentCancel from './pages/PaymentCancel'
+import AddContributions from './pages/AddContributions'
+import UserContributions from './pages/UserContributions'
+import UpdateContributions from './pages/UpdateContributions'
 
 // RouteChangeTracker component to handle route changes
 const RouteChangeTracker = ({ setLoading }) => {
@@ -67,6 +70,10 @@ function App() {
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-fail" element={<PaymentFail />} />
             <Route path="/payment-cancel" element={<PaymentCancel />} />
+            
+            <Route path="/add-contributions" element={<AddContributions />} />
+            <Route path="/user-contributions" element={<UserContributions />} />
+            <Route path="/update-contributions/:id" element={<UpdateContributions />} />
           </Routes>
         </div>
         <Footer />
