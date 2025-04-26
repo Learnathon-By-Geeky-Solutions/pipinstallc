@@ -41,10 +41,9 @@ jobs:
         working-directory: core
         run: |
           coverage erase
-          coverage run --rcfile=.coveragerc --source . manage.py test
+          coverage run --rcfile=../.coveragerc --source . manage.py test
           coverage xml -o coverage.xml
-          ls -l coverage.xml 
-          type coverage.xml
+          ls -l coverage.xml
         env:
           DJANGO_SETTINGS_MODULE: core.settings
 
@@ -58,5 +57,5 @@ jobs:
           args: >
             -Dsonar.organization=learnathon-by-geeky-solutions
             -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_pipinstallc
-            -Dsonar.python.coverage.reportPaths=core/coverage.xml
+            -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.sources=core
