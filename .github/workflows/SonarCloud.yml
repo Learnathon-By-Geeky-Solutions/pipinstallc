@@ -47,11 +47,6 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: core.settings
 
-      - name: Modify coverage.xml for SonarCloud
-        run: |
-          SOURCE_ROOT="/home/runner/work/pipinstallc/pipinstallc/core" 
-          TARGET_ROOT="\$(Build.SourcesDirectory)"
-          sed -i "s#${SOURCE_ROOT}#${TARGET_ROOT}#g" core/coverage.xml
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v3
