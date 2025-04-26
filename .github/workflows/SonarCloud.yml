@@ -44,7 +44,6 @@ jobs:
           coverage run --rcfile=.coveragerc --source . manage.py test
           coverage xml -o coverage.xml
           ls -l coverage.xml 
-          find . -name "coverage.xml"
         env:
           DJANGO_SETTINGS_MODULE: core.settings
 
