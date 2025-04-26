@@ -6,10 +6,5 @@ omit =
     */migrations/*
     */venv/*
 
-[paths]
-source =
-    core
-    */core
-
 [xml]
 output = core/coverage.xml
