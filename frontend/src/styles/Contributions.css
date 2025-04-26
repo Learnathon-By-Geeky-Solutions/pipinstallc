@@ -1,8 +1,8 @@
 .contributions-page {
   min-height: 100vh;
-  background: linear-gradient(45deg, #9b4de0, #6c2bb3);
-  color: white;
-  padding-top: 8px;
+  background: white;
+  color: #6c2bb3;
+  padding-top: 70px;
 }
 
 .contributions-content {
@@ -13,14 +13,14 @@ h1 {
   font-size: 2rem;
   text-align: center;
   margin-bottom: 0.5rem;
-  color: white;
+  color: #6c2bb3;
 }
 
 .subtitle {
   text-align: center;
   margin-bottom: 2rem;
   opacity: 0.9;
-  color: white;
+  color: #6c2bb3;
   font-size: 0.9rem;
 }
 
@@ -30,8 +30,9 @@ h1 {
   align-items: center;
   position: sticky;
   top: 60px; /* Height of main navbar */
-  background: transparent; /* Changed to transparent */
-  padding: 1rem 6rem;
+  background: white;
+  box-shadow: 0 2px 10px rgba(108, 43, 179, 0.1);
+  padding: 1rem 2rem;
   z-index: 100;
 }
 
@@ -46,7 +47,7 @@ h1 {
 }
 
 .filter-btn {
-  background: rgba(255, 255, 255, 0.0);
+  background: #6c2bb3;
   border: none;
   padding: 0.5rem 1.5rem;
   border-radius: 5px;
@@ -60,8 +61,9 @@ h1 {
 }
 
 .filter-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  background: #9b4de0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 43, 179, 0.2);
 }
 
 .filter-dropdown {
@@ -71,7 +73,7 @@ h1 {
   margin-top: 0.5rem;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(108, 43, 179, 0.1);
   padding: 1rem;
   min-width: 250px;
   z-index: 1000;
@@ -128,14 +130,14 @@ h1 {
 }
 
 .filter-option:hover {
-  color: #9b4de0;
+  color: #6c2bb3;
 }
 
 .nav-tag {
   background: transparent;
   border: none;
   padding: 0.5rem 1.5rem;
-  color: white;
+  color: rgba(108, 43, 179, 0.7);
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9rem;
@@ -146,14 +148,12 @@ h1 {
 .nav-tag.active {
   color: white;
   background: #6c2bb3;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(108, 43, 179, 0.3);
+  box-shadow: 0 4px 12px rgba(108, 43, 179, 0.2);
 }
 
 .nav-tag:hover {
-  color:  white;
+  color:  whitesmoke;
   text-shadow: 0 0 8px rgba(108, 43, 179, 0.4);
-  transform: translateY(-2px);
 }
 
 .video-grid {
@@ -164,49 +164,90 @@ h1 {
 }
 
 .video-card {
-  background: #6c2bb3;
-  border-radius: 15px;
+  position: relative;
   overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.video-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 220px; /* Standard height for all cards */
+  overflow: hidden;
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This ensures the image covers the area without distortion */
   transition: transform 0.3s ease;
-  border: 2px solid rgba(108, 43, 179, 0.1);
-  min-height: 200px;
-  box-shadow: 0 4px 12px rgba(108, 43, 179, 0.1);
+}
+
+.placeholder-thumbnail {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0e6fa; /* Light purple background */
+  color: #6c2bb3;
+}
+
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 15px;
+  color: white;
+  transition: opacity 0.3s ease;
 }
 
 .video-card:hover {
   transform: translateY(-5px);
-  border-color: rgba(108, 43, 179, 0.3);
-  box-shadow: 0 6px 16px rgba(108, 43, 179, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.video-thumbnail {
-  height: 100%;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+.video-card:hover .thumbnail-image {
+  transform: scale(1.05);
 }
 
-.video-thumbnail h3 {
-  color: white;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+.card-overlay h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.price {
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.rating {
+  margin: 5px 0;
+  color: #ffd700; /* Gold color for stars */
 }
 
 .view-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  padding: 0.5rem 2rem;
-  border-radius: 25px;
+  background: #6c2bb3;
   color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 8px;
+  transition: background-color 0.3s ease;
 }
 
 .view-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #9b4de0;
 }
 
 @media (max-width: 1200px) {
@@ -249,7 +290,7 @@ h1 {
 
 .clear-filter-btn {
   background: white;
-  border: 1px solid #6c2bb3;
+  border: 2px solid #6c2bb3;
   color: #6c2bb3;
 }
 
@@ -260,15 +301,12 @@ h1 {
 }
 
 .apply-filter-btn {
-  background: linear-gradient(45deg, #6c2bb3, #9b4de0);
-  border: none;
+  background: #6c2bb3;
   color: white;
 }
 
 .apply-filter-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(108, 43, 179, 0.3);
-  background: linear-gradient(45deg, #9b4de0, #6c2bb3);
+  background: #9b4de0;
 }
 
 .clear-filter-btn:active, .apply-filter-btn:active {

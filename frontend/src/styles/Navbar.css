@@ -1,79 +1,210 @@
 .navbar {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 6rem;
-    background: transparent;
-    margin: 0;
-    border-bottom: 3px solid rgba(255, 255, 255, 0.8);
-  }
-  /* ... rest of the existing navbar styles ... */
-  
-  .nav-container {
-    width: calc(100% - 3rem);  /* Adjust based on your preference */
-    margin: 0 auto;
-  }
+  background: white;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  border-bottom: 1px solid #6c2bb3;
+}
 
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-  }
-  
-  .nav-links a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s;
-    position: relative;
-    padding-bottom: 5px;
-  }
-  
-  .nav-links a:after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    background: white;
-    left: 0;
-    bottom: 0;
-    transition: width 0.3s ease;
-  }
-  
-  .nav-links a:hover:after {
-    width: 100%;
-  }
-  
-  .nav-links a.active {
-    opacity: 1;
-  }
-  
-  .nav-links a.active:after {
-    width: 100%;
-  }
-  
-  .logo a {
-    text-decoration: none;
-  }
-  
-  .logo h2 {
-    color: white;
-  }
-  
-  .l-btn {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: none;
-    padding: 0.5rem 2rem;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-  }
+.nav-logo {
+  color: #6c2bb3;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
 
-  .l-btn:hover {
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-    transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.3);
-  }
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
 
+.nav-link {
+  color: #6c2bb3;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  padding: 0.2rem 0;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: #6c2bb3;
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: #9b4de0;
+}
+
+.nav-btn {
+  background: #6c2bb3;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 25px;
+  border: 2px solid #6c2bb3;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-btn:hover {
+  background: white;
+  color: #6c2bb3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 43, 179, 0.2);
+}
+
+.nav-container {
+  width: calc(100% - 3rem);  /* Adjust based on your preference */
+  margin: 0 auto;
+}
+
+.nav-links a {
+  color: #6c2bb3;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+  position: relative;
+  padding-bottom: 5px;
+}
+
+.nav-links a:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 3px;
+  background: #6c2bb3;
+  left: 0;
+  bottom: 0;
+  transition: width 0.2s ease;
+}
+
+.nav-links a:hover:after {
+  width: 100%;
+}
+
+.nav-links a.active {
+  opacity: 1;
+}
+
+.nav-links a.active:after {
+  width: 100%;
+}
+
+.logo a {
+  text-decoration: none;
+}
+
+.logo h2 {
+  color: #6c2bb3;
+}
+
+.l-btn {
+  background: #6c2bb3;
+  color: white;
+  border: none;
+  padding: 0.5rem 2rem;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.l-btn:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  background: #8c58c2;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 20px;
+  transition: background-color 0.3s;
+}
+
+.user-profile:hover {
+  background-color: rgba(155, 77, 224, 0.1);
+}
+
+.username {
+  margin-right: 10px;
+  color: #6c2bb3;
+  font-weight: 500;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #6c2bb3;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 12px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.dropdown-menu a:hover {
+  background-color: rgba(155, 77, 224, 0.1);
+  color: #6c2bb3;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 1rem;
+  color: #e74c3c;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: rgba(231, 76, 60, 0.1);
+}

@@ -18,9 +18,7 @@ function Home() {
             Result<br />
             with us!
           </h1>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
-             eiusmod tempor incididunt ut labom et dolore magna aliqua. Ut 
-             enim ad minim veniam</p>
+          <p>A platform to share your learning and help you learn</p>
           <button 
             className="explore-btn"
             onClick={() => navigate('/contributions')}

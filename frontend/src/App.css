@@ -7,7 +7,7 @@
 body, html {
   width: 100%;
   min-height: 100%;
-  background: linear-gradient(45deg, #9b4de0, #6c2bb3);
+  background: white;
 }
 
 #root {
