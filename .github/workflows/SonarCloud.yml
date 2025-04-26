@@ -41,8 +41,8 @@ jobs:
         working-directory: core
         run: |
           coverage erase
-          coverage run --rcfile=../.coveragerc --source . manage.py test
-          coverage xml -o coverage.xml --relative-files
+          coverage run --rcfile=../.coveragerc manage.py test
+          coverage xml -o coverage.xml
           ls -l coverage.xml
         env:
           DJANGO_SETTINGS_MODULE: core.settings
