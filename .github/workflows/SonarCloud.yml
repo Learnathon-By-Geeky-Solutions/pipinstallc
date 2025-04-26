@@ -43,7 +43,7 @@ jobs:
           coverage erase
           coverage run --rcfile=.coveragerc --source . manage.py test
           coverage xml
-          ls -l core/coverage.xml 
+          ls -l ../coverage.xml 
         env:
           DJANGO_SETTINGS_MODULE: core.settings
 
