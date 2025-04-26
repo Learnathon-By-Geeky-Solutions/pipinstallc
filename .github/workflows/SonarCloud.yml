@@ -57,5 +57,6 @@ jobs:
           args: >
             -Dsonar.organization=learnathon-by-geeky-solutions
             -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_pipinstallc
-            -Dsonar.python.coverage.reportPaths=core/coverage.xml
-          
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.projectBaseDir=core
+                
