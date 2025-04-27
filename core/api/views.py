@@ -66,16 +66,12 @@ class UserInfoView(APIView):
             },
             status=status.HTTP_200_OK
         )
-class UserContributionView(APIView):
-    """
-    Get all contributions that user have created.
-    user must be authenticated to view their uploaded contribution
-    if pk is provided, get a single contribution by id
-    if no pk is provided, get all contributions
 
-    """
+class UserContributionView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request, pk=None):
+        user = request.user
         if pk:
             user = request.user
             contribution = Contribution.objects.get(id=pk)
@@ -140,9 +136,9 @@ class UserContributionView(APIView):
             )
 
     def put(self, request, pk):
-        '''
-        Update a contribution.
-        '''
+        import logging
+        logger = logging.getLogger(__name__)
+        
         try:
             user = request.user
             contribution = Contribution.objects.get(id=pk)

@@ -64,7 +64,39 @@ class Contribution(models.Model):
         if self.title:
             return self.title
         return f"Contribution {self.id}"
-    
+
+
+class contribution_videos(models.Model):
+    """
+    Model for storing contribution videos.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    contribution = models.ForeignKey(Contributions, related_name='videos', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    video_file = models.FileField(upload_to='contribution_videos/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Contribution_tags(models.Model):
+    """
+    Model for storing tags of contributions.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    name = models.CharField(max_length=255, null=True, blank=True)
+
+
+
+class Contribution_notes(models.Model):
+    """
+    Model for storing notes of contributions.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    contribution = models.ForeignKey(Contributions, related_name='notes', on_delete=models.CASCADE)
+    note_file = models.FileField(upload_to='contribution_notes/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 
 class ContributionComments(models.Model):
     """
@@ -100,10 +132,6 @@ class ContributionRatings(models.Model):
     
     class Meta:
         unique_together = ['user', 'contribution']  # Prevent duplicate ratings
-
-
-
-  
 
 
 class Enrollment(models.Model):

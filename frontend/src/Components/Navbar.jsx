@@ -77,7 +77,7 @@ function Navbar() {
               <Link to="/profile" onClick={() => setShowDropdown(false)}>
                 My Profile
               </Link>
-              <Link to="/my-contributions" onClick={() => setShowDropdown(false)}>
+              <Link to="/user-contributions" onClick={() => setShowDropdown(false)}>
                 My Contributions
               </Link>
               <button onClick={handleLogout} className="logout-btn">
