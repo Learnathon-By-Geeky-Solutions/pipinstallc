@@ -15,7 +15,7 @@ class Contributions(models.Model):
     description = models.TextField(null=True, blank=True)
     thumbnail_image = models.ImageField(upload_to='thumbnail_images/', null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    tags = models.ManyToManyField('Contribution_tags', related_name='contributions')
+    tags = models.ManyToManyField('ContributionTags', related_name='contributions')
     rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     related_University = models.CharField(max_length=255, null=True, blank=True)
     related_Department = models.CharField(max_length=255, null=True, blank=True)
@@ -29,7 +29,7 @@ class Contributions(models.Model):
         return f"Contribution {self.id}"
 
 
-class contribution_videos(models.Model):
+class contributionVideos(models.Model):
     """
     Model for storing contribution videos.
     """
@@ -41,7 +41,7 @@ class contribution_videos(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class Contribution_tags(models.Model):
+class ContributionTags(models.Model):
     """
     Model for storing tags of contributions.
     """
@@ -50,7 +50,7 @@ class Contribution_tags(models.Model):
 
 
 
-class Contribution_notes(models.Model):
+class ContributionNotes(models.Model):
     """
     Model for storing notes of contributions.
     """
@@ -61,7 +61,7 @@ class Contribution_notes(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class Contributions_comments(models.Model):
+class ContributionsComments(models.Model):
     """
     Model for storing comments of contributions.
     """
@@ -78,7 +78,7 @@ class Contributions_comments(models.Model):
         return f"Comment {self.id}"
 
 
-class Contribution_ratings(models.Model):
+class ContributionRatings(models.Model):
     """
     Model for storing ratings of contributions.
     """
@@ -120,13 +120,13 @@ class Enrollment(models.Model):
         unique_together = ['user', 'contribution']  # Prevent duplicate enrollments
 
 
-@receiver([post_save, post_delete], sender='api.Contribution_ratings')
+@receiver([post_save, post_delete], sender='api.ContributionRatings')
 def update_contribution_rating(sender, instance, **kwargs):
     """
     Update the contribution's average rating whenever a rating is added, updated, or deleted
     """
     contribution = instance.contribution
-    ratings = Contribution_ratings.objects.filter(contribution=contribution)
+    ratings = ContributionRatings.objects.filter(contribution=contribution)
     
     if ratings.exists():
         # Calculate average rating

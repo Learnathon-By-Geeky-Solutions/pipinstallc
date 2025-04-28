@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from auth_app.models import CustomUser
-from .models import Contributions, contribution_videos, Contribution_tags, Contribution_notes, Enrollment, Contributions_comments, Contribution_ratings
+from .models import Contributions, contributionVideos, ContributionTags, ContributionNotes, Enrollment, ContributionsComments, ContributionRatings
 from django.shortcuts import get_object_or_404
 from django.db import models
 
@@ -26,7 +26,7 @@ class ContributionVideoSerializer(serializers.ModelSerializer):
     video_file = serializers.FileField(required=False, allow_null=True)  # Make file optional
 
     class Meta:
-        model = contribution_videos
+        model = contributionVideos
         fields = ['id', 'title', 'video_file']
 
 class ContributionTagSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class ContributionTagSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        model = Contribution_tags
+        model = ContributionTags
         fields = '__all__'
 
 
@@ -43,12 +43,12 @@ class ContributionNoteSerializer(serializers.ModelSerializer):
     note_file = serializers.FileField(required=False, allow_null=True)  # Make file optional
 
     class Meta:
-        model = Contribution_notes
+        model = ContributionNotes
         fields = ['id', 'note_file']
 
 class ContributionCommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Contributions_comments
+        model = ContributionsComments
         fields = '__all__'
 
 class ContributionRatingSerializer(serializers.ModelSerializer):
@@ -58,7 +58,7 @@ class ContributionRatingSerializer(serializers.ModelSerializer):
     If user already rated, update the existing rating
     """
     class Meta:
-        model = Contribution_ratings
+        model = ContributionRatings
         fields = ['id', 'user', 'contribution', 'rating', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
     
@@ -70,7 +70,7 @@ class ContributionRatingSerializer(serializers.ModelSerializer):
         contribution = validated_data.get('contribution')
         
         # Check if user already rated this contribution
-        existing_rating = Contribution_ratings.objects.filter(
+        existing_rating = ContributionRatings.objects.filter(
             user=user, 
             contribution=contribution
         ).first()
@@ -82,7 +82,7 @@ class ContributionRatingSerializer(serializers.ModelSerializer):
             return existing_rating
         else:
             # Create new rating
-            rating = Contribution_ratings.objects.create(**validated_data)
+            rating = ContributionRatings.objects.create(**validated_data)
             return rating
 
 
@@ -106,19 +106,19 @@ class ContributionSerializer(serializers.ModelSerializer):
 
         # Create related objects
         for video_data in videos_data:
-            contribution_videos.objects.create(
+            contributionVideos.objects.create(
                 contribution=contribution, 
                 **video_data
             )
 
         # Create tags
         for tag_data in tags_data:
-            tag, _ = Contribution_tags.objects.get_or_create(**tag_data)
+            tag, _ = ContributionTags.objects.get_or_create(**tag_data)
             contribution.tags.add(tag)
 
         # Create notes
         for note_data in notes_data:
-            Contribution_notes.objects.create(
+            ContributionNotes.objects.create(
                 contribution=contribution, 
                 **note_data
             )
@@ -142,7 +142,7 @@ class ContributionSerializer(serializers.ModelSerializer):
             
             # Create new videos
             for video_data in videos_data:
-                contribution_videos.objects.create(
+                contributionVideos.objects.create(
                     contribution=instance,
                     **video_data
                 )
@@ -151,14 +151,14 @@ class ContributionSerializer(serializers.ModelSerializer):
         if tags_data is not None:
             instance.tags.clear()
             for tag_data in tags_data:
-                tag, _ = Contribution_tags.objects.get_or_create(**tag_data)
+                tag, _ = ContributionTags.objects.get_or_create(**tag_data)
                 instance.tags.add(tag)
 
         # Update notes if provided
         if notes_data is not None:
             instance.notes.all().delete()
             for note_data in notes_data:
-                Contribution_notes.objects.create(
+                ContributionNotes.objects.create(
                     contribution=instance,
                     **note_data
                 )

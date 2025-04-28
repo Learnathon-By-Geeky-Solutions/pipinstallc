@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, ContributionSerializer, EnrollmentSerializer, ContributionCommentSerializer, AllContributionSerializer, ContributionRatingSerializer
-from .models import Contributions, Enrollment, Contributions_comments, Contribution_ratings
+from .models import Contributions, Enrollment, ContributionsComments, ContributionRatings
 
 from sslcommerz_lib import SSLCOMMERZ
 from django.conf import settings
@@ -583,10 +583,10 @@ class ContributionCommentView(APIView):
         """
         if contribution_id:
             contribution = get_object_or_404(Contributions, id=contribution_id)
-            comments = Contributions_comments.objects.filter(contribution=contribution)
+            comments = ContributionsComments.objects.filter(contribution=contribution)
             serializer = ContributionCommentSerializer(comments, many=True)
         else:
-            comments = Contributions_comments.objects.all()
+            comments = ContributionsComments.objects.all()
             serializer = ContributionCommentSerializer(comments, many=True)
         return Response(
             {
@@ -620,7 +620,7 @@ class ContributionCommentView(APIView):
         delete a comment
         """
         contribution = get_object_or_404(Contributions, id=contribution_id)
-        comment = get_object_or_404(Contributions_comments, id=comment_id, contribution=contribution)
+        comment = get_object_or_404(ContributionsComments, id=comment_id, contribution=contribution)
         if comment.user.id == request.user.id:
             comment.delete()
             return Response(
@@ -640,7 +640,7 @@ class ContributionCommentView(APIView):
         update a comment
         """
         contribution = get_object_or_404(Contributions, id=contribution_id)
-        comment = get_object_or_404(Contributions_comments, id=comment_id, contribution=contribution)
+        comment = get_object_or_404(ContributionsComments, id=comment_id, contribution=contribution)
         if comment.user.id == request.user.id:
             serializer = ContributionCommentSerializer(comment, data=request.data)
             if serializer.is_valid():
@@ -678,7 +678,7 @@ class ContributionRatingView(APIView):
         
         if user_rating_only:
             # Get user's rating if it exists
-            rating = Contribution_ratings.objects.filter(
+            rating = ContributionRatings.objects.filter(
                 user=request.user,
                 contribution=contribution
             ).first()
@@ -697,7 +697,7 @@ class ContributionRatingView(APIView):
                 }, status=status.HTTP_404_NOT_FOUND)
         else:
             # Get all ratings for the contribution
-            ratings = Contribution_ratings.objects.filter(contribution=contribution)
+            ratings = ContributionRatings.objects.filter(contribution=contribution)
             serializer = ContributionRatingSerializer(ratings, many=True)
             
             return Response({
