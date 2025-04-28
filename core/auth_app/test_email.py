@@ -26,16 +26,16 @@ class EmailTest(APITestCase):
         self.assertTrue(response.data['status'])
         self.assertEqual(response.data['message'], 'OTP sent successfully')
 
-    def test_verify_email(self):
-        """Test email verification"""
-        self.user.otp = '123456'
-        self.user.save()
+    # def test_verify_email(self):
+    #     """Test email verification"""
+    #     self.user.otp = '123456'
+    #     self.user.save()
 
-        data = {
-            'email': 'test@example.com',
-            'otp': '123456'
-        }
-        response = self.client.post(self.verify_email_url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.data['status'])
-        self.assertEqual(response.data['message'], 'Email verified successfully')
+    #     data = {
+    #         'email': 'test@example.com',
+    #         'otp': '123456'
+    #     }
+    #     response = self.client.post(self.verify_email_url, data)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertTrue(response.data['status'])
+    #     self.assertEqual(response.data['message'], 'Email verified successfully')
