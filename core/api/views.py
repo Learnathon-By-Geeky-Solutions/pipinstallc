@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, ContributionSerializer, EnrollmentSerializer, ContributionCommentSerializer, AllContributionSerializer, ContributionRatingSerializer,UniversitySerializer,MajorSubjectSerializer,DepartmentSerializer
-from .models import Contributions, Enrollment, ContributionsComments, ContributionRatings, University, Department, MajorSubject
+from .models import Contributions, Enrollment, ContributionsComments, ContributionRatings, University, Department, MajorSubject,contributionVideos,ContributionNotes,ContributionTags
 
 from sslcommerz_lib import SSLCOMMERZ
 from django.conf import settings
@@ -15,6 +15,10 @@ from django.http import JsonResponse, HttpResponse
 import logging
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.cache import cache
+from django.db.models import Prefetch
 
 
 
@@ -475,28 +479,149 @@ class UserContributionView(APIView):
         except Contributions.DoesNotExist:
             return Response({'status': False, 'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
+class OptimizedPagination(LimitOffsetPagination):
+    default_limit = 10
+    max_limit = 100
+
 class AllContributionView(APIView):
     """
-    get all contributions
-    show only title, description, price, thumbnail_image, tags, origine, rating, comments
-    if user is authenticated, show the enrollment status and if enrolled show with all the elements available
-    if user is not authenticated, show only the basic elements
-
+    Get all contributions with optional filtering and optimized pagination
+    with filters: GET /api/all-contributions/?university=uuid1&limit=10&offset=0
+    
+    Pagination:
+    - Use limit and offset: ?limit=10&offset=20
+    - Default limit: 10
+    - Max limit: 100
+    
+    Filtering:
+    - Filter by university: ?university=<uuid>
+    - Filter by department: ?department=<uuid>
+    - Filter by major_subject: ?major_subject=<uuid>
+    - Can combine multiple filters
+    
+    Optimizations:
+    - Database-level pagination
+    - Efficient querying of related fields
+    - Optional caching for frequently accessed pages
     """
+    pagination_class = OptimizedPagination
+
+    def get_cached_key(self, params):
+        """Generate a cache key based on request parameters"""
+        return f"contributions_list:{params.get('university','')}-{params.get('department','')}-{params.get('major_subject','')}-{params.get('limit','')}-{params.get('offset','')}"
+
     def get(self, request, pk=None):
         if pk:
-            contribution = Contributions.objects.get(id=pk)
-            serializer = AllContributionSerializer(contribution, context={'request': request})
-        else:
-            contributions = Contributions.objects.all()
-            serializer = AllContributionSerializer(contributions, many=True, context={'request': request})
-        return Response(
-            {
-                'status': True,
-                'message': 'Contributions fetched successfully',
-                'data': serializer.data
-            }, status=status.HTTP_200_OK)
-    
+            try:
+                contribution = Contributions.objects.select_related(
+                    'related_University',
+                    'related_Department',
+                    'related_Major_Subject',
+                    'user'
+                ).prefetch_related(
+                    'tags',
+                    'videos',
+                    'notes',
+                    'comments'
+                ).get(id=pk)
+                
+                serializer = AllContributionSerializer(contribution, context={'request': request})
+                return Response({
+                    'status': True,
+                    'message': 'Contribution fetched successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_200_OK)
+            except Contributions.DoesNotExist:
+                return Response({
+                    'status': False,
+                    'message': 'Contribution not found'
+                }, status=status.HTTP_404_NOT_FOUND)
+
+        # Try to get cached response
+        cache_key = self.get_cached_key(request.query_params)
+        cached_response = cache.get(cache_key)
+        if cached_response:
+            return Response(cached_response)
+
+        # Get filter parameters
+        university_id = request.query_params.get('university')
+        department_id = request.query_params.get('department')
+        major_subject_id = request.query_params.get('major_subject')
+        
+        # Start with optimized queryset
+        contributions = Contributions.objects.select_related(
+            'related_University',
+            'related_Department',
+            'related_Major_Subject',
+            'user'
+        ).prefetch_related(
+            'tags',
+            Prefetch('videos', queryset=contributionVideos.objects.only('id', 'title', 'video_file')),
+            Prefetch('notes', queryset=ContributionNotes.objects.only('id', 'note_file')),
+            Prefetch('comments', queryset=ContributionsComments.objects.select_related('user').only(
+                'id', 'comment', 'user__username', 'created_at'
+            ))
+        )
+        
+        # Apply filters if provided
+        if university_id:
+            try:
+                contributions = contributions.filter(related_University_id=university_id)
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': f'Invalid university ID: {str(e)}'
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+        if department_id:
+            try:
+                contributions = contributions.filter(related_Department_id=department_id)
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': f'Invalid department ID: {str(e)}'
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+        if major_subject_id:
+            try:
+                contributions = contributions.filter(related_Major_Subject_id=major_subject_id)
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': f'Invalid major subject ID: {str(e)}'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Add ordering by created_at (newest first)
+        contributions = contributions.order_by('-created_at')
+
+        # Apply pagination
+        paginator = self.pagination_class()
+        paginated_contributions = paginator.paginate_queryset(contributions, request)
+        
+        serializer = AllContributionSerializer(paginated_contributions, many=True, context={'request': request})
+        
+        response_data = {
+            'status': True,
+            'message': 'Contributions fetched successfully',
+            'filters_applied': {
+                'university': university_id if university_id else None,
+                'department': department_id if department_id else None,
+                'major_subject': major_subject_id if major_subject_id else None
+            },
+            'pagination': {
+                'count': paginator.count,
+                'next': request.build_absolute_uri(paginator.get_next_link()) if paginator.get_next_link() else None,
+                'previous': request.build_absolute_uri(paginator.get_previous_link()) if paginator.get_previous_link() else None,
+                'limit': paginator.limit,
+                'offset': paginator.offset,
+            },
+            'data': serializer.data
+        }
+
+        # Cache the response for 5 minutes
+        cache.set(cache_key, response_data, timeout=300)
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 

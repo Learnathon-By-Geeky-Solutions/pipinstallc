@@ -40,17 +40,17 @@ class Contributions(models.Model):
     Model for storing contributions of users.
     """
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='contributions', on_delete=models.CASCADE, null=True, blank=True)
-    title = models.CharField(max_length=255, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='contributions', on_delete=models.CASCADE, null=True, blank=True, db_index=True)
+    title = models.CharField(max_length=255, null=True, blank=True, db_index=True)
     description = models.TextField(null=True, blank=True)
     thumbnail_image = models.ImageField(upload_to='thumbnail_images/', null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, db_index=True)
     tags = models.ManyToManyField('ContributionTags', related_name='contributions')
-    rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
-    related_University = models.ForeignKey(University, related_name='contributions', on_delete=models.PROTECT,null=True,blank=True)
-    related_Department = models.ForeignKey(Department, related_name='contributions', on_delete=models.PROTECT,null=True,blank=True)
-    related_Major_Subject = models.ForeignKey(MajorSubject, related_name='contributions', on_delete=models.PROTECT,null=True,blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True, db_index=True)
+    related_University = models.ForeignKey(University, related_name='contributions', on_delete=models.PROTECT, null=True, blank=True, db_index=True)
+    related_Department = models.ForeignKey(Department, related_name='contributions', on_delete=models.PROTECT, null=True, blank=True, db_index=True)
+    related_Major_Subject = models.ForeignKey(MajorSubject, related_name='contributions', on_delete=models.PROTECT, null=True, blank=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -60,6 +60,10 @@ class Contributions(models.Model):
 
     class Meta:
         verbose_name_plural = "Contributions"
+        indexes = [
+            models.Index(fields=['created_at', 'rating']),
+            models.Index(fields=['related_University', 'related_Department', 'related_Major_Subject']),
+        ]
 
 
 class contributionVideos(models.Model):

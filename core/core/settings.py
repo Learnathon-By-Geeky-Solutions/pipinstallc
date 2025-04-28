@@ -220,3 +220,11 @@ PAYMENT_REDIRECT_URLS = {
     'FAILED': f'{FRONTEND_URL}/payment-fail/',
     'CANCELLED': f'{FRONTEND_URL}/payment-cancel/',
 }
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
