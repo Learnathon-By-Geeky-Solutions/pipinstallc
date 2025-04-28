@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     ProfileView, UserInfoView, UserContributionView, EnrollmentView,CreateEnrollmentView,
     payment_success, payment_fail, payment_cancel, ContributionCommentView, AllContributionView,
-    ContributionRatingView
+    ContributionRatingView, UniversityView, DepartmentView, MajorSubjectView
 )
 
 urlpatterns = [
@@ -38,5 +38,13 @@ urlpatterns = [
     # Rating routes
     path('ratings/', ContributionRatingView.as_view(), name='contribution-ratings'),
     path('ratings/<uuid:contribution_id>/', ContributionRatingView.as_view(), name='contribution-ratings'),
+
+    # University, Department, and MajorSubject views
+    path('universities/', UniversityView.as_view(), name='universities'),
+    path('universities/<int:pk>/', UniversityView.as_view(), name='university-detail'),
+    path('departments/', DepartmentView.as_view(), name='departments'),
+    path('departments/<int:pk>/', DepartmentView.as_view(), name='department-detail'),
+    path('major-subjects/', MajorSubjectView.as_view(), name='major-subjects'),
+    path('major-subjects/<int:pk>/', MajorSubjectView.as_view(), name='major-subject-detail'),
 ]
 

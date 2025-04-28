@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from auth_app.models import CustomUser
-from .models import Contributions, contributionVideos, ContributionTags, ContributionNotes, Enrollment, ContributionsComments, ContributionRatings
+from .models import Contributions, contributionVideos, ContributionTags, ContributionNotes, Enrollment, ContributionsComments, ContributionRatings,University,Department,MajorSubject
 from django.shortcuts import get_object_or_404
 from django.db import models
 
@@ -19,6 +19,36 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number', 'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject']
 
+class UniversitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = University
+        fields = ['id', 'name']
+
+    def validate_name(self, value):
+        if value and len(value.strip()) == 0:
+            raise serializers.ValidationError("Name cannot be empty or just whitespace")
+        return value
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['id', 'name']
+
+    def validate_name(self, value):
+        if value and len(value.strip()) == 0:
+            raise serializers.ValidationError("Name cannot be empty or just whitespace")
+        return value
+
+class MajorSubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MajorSubject
+        fields = ['id', 'name']
+
+    def validate_name(self, value):
+        if value and len(value.strip()) == 0:
+            raise serializers.ValidationError("Name cannot be empty or just whitespace")
+        return value
+    
 class ContributionVideoSerializer(serializers.ModelSerializer):
     """
     Serializer for contribution videos
@@ -50,6 +80,8 @@ class ContributionCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContributionsComments
         fields = '__all__'
+
+
 
 class ContributionRatingSerializer(serializers.ModelSerializer):
     """
@@ -201,6 +233,9 @@ class AllContributionSerializer(serializers.ModelSerializer):
     comments = ContributionCommentSerializer(many=True, read_only=True)
     videos = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
+    related_University=UniversitySerializer()
+    related_Department=DepartmentSerializer()
+    related_Major_Subject=MajorSubjectSerializer()
     is_enrolled = serializers.SerializerMethodField()
     
     class Meta:

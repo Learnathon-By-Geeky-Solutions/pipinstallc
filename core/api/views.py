@@ -6,13 +6,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, ContributionSerializer, EnrollmentSerializer, ContributionCommentSerializer, AllContributionSerializer, ContributionRatingSerializer
-from .models import Contributions, Enrollment, ContributionsComments, ContributionRatings
+from .serializers import UserSerializer, ContributionSerializer, EnrollmentSerializer, ContributionCommentSerializer, AllContributionSerializer, ContributionRatingSerializer,UniversitySerializer,MajorSubjectSerializer,DepartmentSerializer
+from .models import Contributions, Enrollment, ContributionsComments, ContributionRatings, University, Department, MajorSubject
 
 from sslcommerz_lib import SSLCOMMERZ
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 import logging
+from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -64,6 +66,202 @@ class UserInfoView(APIView):
             },
             status=status.HTTP_200_OK
         )
+
+class UniversityView(APIView):
+    """
+    API View for handling University operations
+    GET: List all universities or get a specific university
+    POST: Create a new university
+    """
+    def get(self, request, pk=None):
+        try:
+            if pk:
+                university = University.objects.get(id=pk)
+                serializer = UniversitySerializer(university)
+                return Response({
+                    'status': True,
+                    'message': 'University fetched successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_200_OK)
+            
+            universities = University.objects.all()
+            serializer = UniversitySerializer(universities, many=True)
+            return Response({
+                'status': True,
+                'message': 'Universities fetched successfully',
+                'data': serializer.data
+            }, status=status.HTTP_200_OK)
+            
+        except ObjectDoesNotExist:
+            return Response({
+                'status': False,
+                'message': 'University not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request):
+        try:
+            serializer = UniversitySerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    'status': True,
+                    'message': 'University created successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_201_CREATED)
+            
+            return Response({
+                'status': False,
+                'message': 'Invalid data',
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+        except IntegrityError:
+            return Response({
+                'status': False,
+                'message': 'University with this name already exists'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DepartmentView(APIView):
+    """
+    API View for handling Department operations
+    GET: List all departments or get a specific department
+    POST: Create a new department
+    """
+    def get(self, request, pk=None):
+        try:
+            if pk:
+                department = Department.objects.get(id=pk)
+                serializer = DepartmentSerializer(department)
+                return Response({
+                    'status': True,
+                    'message': 'Department fetched successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_200_OK)
+            
+            departments = Department.objects.all()
+            serializer = DepartmentSerializer(departments, many=True)
+            return Response({
+                'status': True,
+                'message': 'Departments fetched successfully',
+                'data': serializer.data
+            }, status=status.HTTP_200_OK)
+            
+        except ObjectDoesNotExist:
+            return Response({
+                'status': False,
+                'message': 'Department not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request):
+        try:
+            serializer = DepartmentSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    'status': True,
+                    'message': 'Department created successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_201_CREATED)
+            
+            return Response({
+                'status': False,
+                'message': 'Invalid data',
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+        except IntegrityError:
+            return Response({
+                'status': False,
+                'message': 'Department with this name already exists'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class MajorSubjectView(APIView):
+    """
+    API View for handling MajorSubject operations
+    GET: List all major subjects or get a specific major subject
+    POST: Create a new major subject
+    """
+    def get(self, request, pk=None):
+        try:
+            if pk:
+                major_subject = MajorSubject.objects.get(id=pk)
+                serializer = MajorSubjectSerializer(major_subject)
+                return Response({
+                    'status': True,
+                    'message': 'Major Subject fetched successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_200_OK)
+            
+            major_subjects = MajorSubject.objects.all()
+            serializer = MajorSubjectSerializer(major_subjects, many=True)
+            return Response({
+                'status': True,
+                'message': 'Major Subjects fetched successfully',
+                'data': serializer.data
+            }, status=status.HTTP_200_OK)
+            
+        except ObjectDoesNotExist:
+            return Response({
+                'status': False,
+                'message': 'Major Subject not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request):
+        try:
+            serializer = MajorSubjectSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    'status': True,
+                    'message': 'Major Subject created successfully',
+                    'data': serializer.data
+                }, status=status.HTTP_201_CREATED)
+            
+            return Response({
+                'status': False,
+                'message': 'Invalid data',
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+        except IntegrityError:
+            return Response({
+                'status': False,
+                'message': 'Major Subject with this name already exists'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 class UserContributionView(APIView):
     permission_classes = [IsAuthenticated]
@@ -191,13 +389,15 @@ class UserContributionView(APIView):
             'title': request.data.get('title', contribution.title),
             'description': request.data.get('description', contribution.description),
             'price': request.data.get('price', contribution.price),
+            'related_University': request.data.get('related_University', contribution.related_University_id),
+            'related_Department': request.data.get('related_Department', contribution.related_Department_id),
+            'related_Major_Subject': request.data.get('related_Major_Subject', contribution.related_Major_Subject_id),
         }
         
         # Handle thumbnail image
         if 'thumbnail_image' in request.FILES:
             parsed_data['thumbnail_image'] = request.FILES['thumbnail_image']
         
-        # Handle tags, videos, notes (similar to post method)
         # Handle tags
         tags = []
         for key in request.data:
@@ -246,11 +446,26 @@ class UserContributionView(APIView):
         
         serializer = ContributionSerializer(contribution, data=parsed_data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response({'status': True, 'message': 'Updated', 'data': serializer.data}, status=status.HTTP_200_OK)
+            try:
+                updated_contribution = serializer.save()
+                return Response({
+                    'status': True, 
+                    'message': 'Updated', 
+                    'data': ContributionSerializer(updated_contribution).data
+                }, status=status.HTTP_200_OK)
+            except Exception as e:
+                logger.error(f"Error updating contribution: {str(e)}")
+                return Response({
+                    'status': False,
+                    'message': f'Error updating contribution: {str(e)}',
+                }, status=status.HTTP_400_BAD_REQUEST)
         
         logger.error(f"Validation errors: {serializer.errors}")
-        return Response({'status': False, 'message': 'Invalid data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            'status': False, 
+            'message': 'Invalid data', 
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         try:
