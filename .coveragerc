@@ -3,7 +3,7 @@ source = .
 omit =
     */migrations/*
     */venv/*
-branch = True
+
 
 [report]
 exclude_lines =
