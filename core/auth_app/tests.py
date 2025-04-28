@@ -83,19 +83,19 @@ class AuthenticationTest(APITestCase):
         self.assertTrue(response.data['status'])
         self.assertEqual(response.data['message'], 'OTP sent successfully')
 
-    # def test_verify_email(self):
-    #     """Test email verification"""
-    #     self.user.otp = '123456'
-    #     self.user.save()
+    def test_verify_email(self):
+    """Test email verification"""
+        self.user.otp = '123456'
+        self.user.save()
 
-    #     data = {
-    #         'email': 'test@example.com',
-    #         'otp': '123456'
-    #     }
-    #     response = self.client.post(self.verify_email_url, data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertTrue(response.data['status'])
-    #     self.assertEqual(response.data['message'], 'Email verified successfully')
+        data = {
+            'email': 'test@example.com',
+            'otp': '123456'
+        }
+        response = self.client.post(self.verify_email_url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['status'])
+        self.assertEqual(response.data['message'], 'Email verified successfully')
 
     def test_forgot_password(self):
         """Test forgot password functionality"""
@@ -108,21 +108,21 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(response.data['message'], 
                         'Password reset OTP sent successfully')
 
-    # def test_reset_password(self):
-    #     """Test password reset"""
-    #     self.user.otp = '123456'
-    #     self.user.save()
+    def test_reset_password(self):
+        """Test password reset"""
+        self.user.otp = '123456'
+        self.user.save()
 
-    #     data = {
-    #         'email': 'test@example.com',
-    #         'password': 'newpassword123',
-    #         'password2': 'newpassword123',
-    #         'otp': '123456'
-    #     }
-    #     response = self.client.post(self.reset_password_url, data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertTrue(response.data['status'])
-    #     self.assertEqual(response.data['message'], 'Password reset successful')
+        data = {
+            'email': 'test@example.com',
+            'password': 'newpassword123',
+            'password2': 'newpassword123',
+            'otp': '123456'
+        }
+        response = self.client.post(self.reset_password_url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['status'])
+        self.assertEqual(response.data['message'], 'Password reset successful')
 
     def test_logout(self):
         """Test user logout"""
@@ -143,26 +143,26 @@ class AuthenticationTest(APITestCase):
         self.assertTrue(response.data['status'])
         self.assertEqual(response.data['message'], 'User logged out successfully')
 
-    # def test_logout_without_token(self):
-    #     """Test logout without providing refresh token"""
-    #     self.client.credentials(HTTP_AUTHORIZATION='Bearer some-access-token')
-    #     response = self.client.post(self.logout_url, {})
+    def test_logout_without_token(self):
+        """Test logout without providing refresh token"""
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer some-access-token')
+        response = self.client.post(self.logout_url, {})
         
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    #     self.assertFalse(response.data['status'])
-    #     self.assertEqual(response.data['message'], 'Refresh token is required')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(response.data['status'])
+        self.assertEqual(response.data['message'], 'Refresh token is required')
 
-    # @patch('django.core.mail.send_mail', side_effect=Exception('Email sending failed'))
-    # def test_email_sending_failure(self, mock_send_mail):
-    #     """Test handling of email sending failure"""
-    #     data = {
-    #         'username': 'newuser',
-    #         'email': 'newuser@example.com',
-    #         'password': 'newpassword123',
-    #         'password2': 'newpassword123'
-    #     }
-    #     response = self.client.post(self.register_url, data)
-    #     self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
-    #     self.assertFalse(response.data['status'])
-    #     self.assertEqual(response.data['message'], 
-    #                     'Failed to send OTP email. Please try again.')
+    @patch('django.core.mail.send_mail', side_effect=Exception('Email sending failed'))
+    def test_email_sending_failure(self, mock_send_mail):
+        """Test handling of email sending failure"""
+        data = {
+            'username': 'newuser',
+            'email': 'newuser@example.com',
+            'password': 'newpassword123',
+            'password2': 'newpassword123'
+        }
+        response = self.client.post(self.register_url, data)
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertFalse(response.data['status'])
+        self.assertEqual(response.data['message'], 
+                        'Failed to send OTP email. Please try again.')
