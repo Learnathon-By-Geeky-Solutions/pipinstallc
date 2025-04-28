@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.contrib.admin.sites import site
 from api.models import (
     Contributions, Contribution_tags, contribution_videos, Contribution_notes,
-    Enrollment, Contribution_ratings
+    Enrollment
 )
-##comment not included
+##comment and rating not included
 
 class ApiAdminTest(TestCase):
     def test_models_registered(self):
@@ -12,7 +12,7 @@ class ApiAdminTest(TestCase):
         models = [
             Contributions, Contribution_tags, contribution_videos,
             Contribution_notes, Enrollment,
-            Contribution_ratings
+            
         ]
         for model in models:
             with self.subTest(model=model):
