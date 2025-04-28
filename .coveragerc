@@ -3,11 +3,9 @@ source = .
 omit =
     */migrations/*
     */venv/*
-    */tests/*
 branch = True
-relative-files = True
 
 [report]
 exclude_lines =
     pragma: no cover
-    if __name__ == .__main__.:
+    if __name__ == "__main__":
