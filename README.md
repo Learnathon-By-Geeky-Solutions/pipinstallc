@@ -22,12 +22,20 @@
 
  ## 👥 Team Members
 
-- [mhtasnia's GitHub Profile](https://github.com/mhtasnia)
-  [![mhtasnia's GitHub Stats](https://github-readme-stats.vercel.app/api?username=mhtasnia&show_icons=true&theme=gruvbox&custom_title=Team Leader's Stats)](https://github.com/mhtasnia)
-- [reshadMajumder's GitHub Profile](https://github.com/reshadMajumder)
-  [![reshadMajumder's GitHub Stats](https://github-readme-stats.vercel.app/api?username=reshadMajumder&show_icons=true&theme=gruvbox&custom_title=Coder's Stats)](https://github.com/reshadMajumder)
-- [Rokibul-Islam-Robi's GitHub Profile](https://github.com/Rokibul-Islam-Robi)
-  [![Rokibul-Islam-Robi's GitHub Stats](https://github-readme-stats.vercel.app/api?username=Rokibul-Islam-Robi&show_icons=true&theme=gruvbox&custom_title=Enthusiast's Stats)](https://github.com/Rokibul-Islam-Robi)
+  <p align="left">
+    <a href="https://github.com/mhtasnia" target="_blank" style="text-decoration: none;">
+      <img alt="mhtasnia" src="https://img.shields.io/badge/mhtasnia-Profile-blue?style=flat-square&logo=github" />
+    </a>
+    <a href="https://github.com/reshadMajumder" target="_blank" style="text-decoration: none;">
+      <img alt="reshadMajumder" src="https://img.shields.io/badge/reshadMajumder-Profile-blue?style=flat-square&logo=github" />
+    </a>
+    <a href="https://github.com/Rokibul-Islam-Robi" target="_blank" style="text-decoration: none;">
+      <img alt="Rokibul-Islam-Robi" src="https://img.shields.io/badge/Rokibul--Islam--Robi-Profile-blue?style=flat-square&logo=github" />
+    </a>
+  </p>
+
+
+---
 
 **👨‍🏫 Mentor:** Minhazul Hasan
 
