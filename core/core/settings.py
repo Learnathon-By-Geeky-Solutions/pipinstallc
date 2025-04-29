@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'enrollments'
 ]
 
 MIDDLEWARE = [
@@ -69,7 +70,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -169,7 +170,12 @@ SIMPLE_JWT = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',  # ✅ Required for file uploads
+        'rest_framework.parsers.FormParser',
+    ],
 }
 
 AUTH_USER_MODEL = 'auth_app.CustomUser'
@@ -208,8 +214,18 @@ LOGGING = {
     },
 }
 
+FRONTEND_URL = 'http://localhost:5173'
+
 PAYMENT_REDIRECT_URLS = {
-    'SUCCESS': '/dashboard/my-courses/',
-    'FAILED': '/dashboard/payment-failed/',
-    'CANCELLED': '/dashboard/payment-cancelled/',
+    'SUCCESS': f'{FRONTEND_URL}/payment-success/',
+    'FAILED': f'{FRONTEND_URL}/payment-fail/',
+    'CANCELLED': f'{FRONTEND_URL}/payment-cancel/',
+}
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
 }

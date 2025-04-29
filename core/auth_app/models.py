@@ -1,6 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.db import models
 from .manager import CustomUserManager
+from django.apps import apps
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
@@ -10,9 +11,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     is_profile_verified = models.BooleanField(default=False)
     date_of_birth = models.DateField(null=True, blank=True)
-    university = models.CharField(max_length=100, null=True, blank=True)
-    department = models.CharField(max_length=100, null=True, blank=True)
-    major_subject = models.CharField(max_length=100, null=True, blank=True)
+    university = models.ForeignKey('api.University', on_delete=models.SET_NULL, null=True, blank=True)
+    department = models.ForeignKey('api.Department', on_delete=models.SET_NULL, null=True, blank=True)
+    major_subject = models.ForeignKey('api.MajorSubject', on_delete=models.SET_NULL, null=True, blank=True)
     otp = models.CharField(max_length=6, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

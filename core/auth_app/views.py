@@ -54,7 +54,7 @@ class LoginView(APIView):
         password = data.get('password')
 
         user = CustomUser.objects.filter(username=username).first()
-        if not user.is_email_verified:
+        if user and not user.is_email_verified:
             return Response(
                 {
                     'status': False,
@@ -241,8 +241,7 @@ class ForgotPasswordView(APIView):
                         'status': True,
                         'message': 'Password reset OTP sent successfully',
                         'data': {
-                            'email': user.email,
-                            'otp': otp
+                            'email': user.email
                         }
                     },
                     status=status.HTTP_200_OK
