@@ -7,15 +7,15 @@
 ---
 
 ### 📚 Resources
-- [👥 Team Members](#team-members)
-- [📘 Project Description](#project-description)
-- [✨ Key Highlights](#key-highlights)
-- [🎯 Stakeholders](#stakeholders)
-- [📋 SRS - Functional Requirements](#srs---functional-requirements)
-- [📈 Diagrams](#diagrams)
-- [🛠 Tech Stack](#tech-stack)
-- [🧑‍💻 Getting Started](#getting-started)
-- [📏 Development Guidelines](#development-guidelines)
+- [👥 Team Members](#-team-members)
+- [📘 Project Description](#-project-description)
+- [✨ Key Highlights](#-key-highlights)
+- [🎯 Stakeholders](#-stakeholders)
+- [📋 SRS - Functional Requirements](#-srs---functional-requirements)
+- [📈 Diagrams](#-diagrams)
+- [🛠 Tech Stack](#-tech-stack)
+- [🧑‍💻 Getting Started](#-getting-started)
+- [📏 Development Guidelines](#-development-guidelines)
 
 
 ---
