@@ -1,205 +1,116 @@
-# pipinstallc
+<p align="center">
+  <img src="frontend/public/images/EDusphere.png" alt="EduSphere Banner" width="300"/>
+</p>
 
-## Resources
-- [Team Members](#team-members)
-- [Project Description](#project-description)
-- [Key Highlights](#key-highlights)
-- [Stakeholders](#stakeholders)
-- [SRS](#software-requirements-specification-srs---functional-requirements)
-- [Diagrams](#diagrams)
-  - [Data Flow Diagram](#data-flow-diagram)
-- [Tech Stack](#tech-stack)
-- [Development Setup](setup.md)
-- [Devlogs](devlog.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
+<h1 align="center">EduSphere</h1>
 
-## Team Members
-- mhtasnia (Team Leader)
-- reshadMajumder
-- Rokibul-Islam-Robi
+---
 
-## Mentor
-- MinhazulHasan
+### 📚 Resources
+- [👥 Team Members](#team-members)
+- [📘 Project Description](#project-description)
+- [✨ Key Highlights](#key-highlights)
+- [🎯 Stakeholders](#stakeholders)
+- [📋 SRS - Functional Requirements](#software-requirements-specification-srs---functional-requirements)
+- [📈 Diagrams](#diagrams)
+- [🛠 Tech Stack](#tech-stack)
+- [🧑‍💻 Development Setup](setup.md)
+- [🗒 Devlogs](devlog.md)
+- [🤝 Contributing Guidelines](CONTRIBUTING.md)
 
-## Project Description
-EduSphere is envisioned as a dynamic online platform designed to enhance the university learning experience through personalized learning pathways, academic collaboration, and resource sharing. Addressing the challenges of traditional learning environments, EduSphere will empower university students to learn at their own pace, access relevant academic resources, and connect with peers for collaborative learning. 
+---
 
-This platform will foster an academic community where students can seamlessly transition between the roles of learner and teacher. By providing tools for personalized teaching and mentorship, EduSphere aims to improve student outcomes, build a strong sense of community, and create a more supportive and effective learning ecosystem for university students.
+## 👥 Team Members
+- **mhtasnia** (Team Leader)  
+- **reshadMajumder**  
+- **Rokibul-Islam-Robi**
 
-## Key Highlights
-- **Academic Resource Hub:** Centralized repository for sharing study materials, notes, and other academic resources. 
+**👨‍🏫 Mentor:** Minhazul Hasan
 
-- **Peer-to-Peer Collaboration:** Features to facilitate group projects, study groups, and knowledge exchange. 
+---
 
-- **Personalized Teaching Opportunities:** Students can share their expertise and provide guidance to others. 
+## 📘 Project Description
+EduSphere is a dynamic online platform designed to enhance university learning through:
 
-- **Community Building:** Fostering a strong and supportive academic network among university students.
+- Personalized learning pathways  
+- Academic collaboration  
+- Peer teaching opportunities  
+- Resource sharing
 
-## Stakeholders
-- **Student:** University students are the primary users and the core beneficiary group of the EduSphere platform. They will utilize EduSphere to enhance their learning experience, access academic resources, collaborate with peers, and potentially share their own knowledge. Students will play the role of both learner and teacher within the system
+It empowers students to seamlessly transition between the roles of learner and mentor, improving outcomes and fostering community.
 
-- **Admin:** Administrators are responsible for the overall management, operation, and maintenance of the EduSphere platform. This group ensures the platform functions smoothly, remains secure, and meets the needs of its users. Administrators oversee the technical and operational aspects of EduSphere.
+---
 
-## Software Requirements Specification (SRS) - Functional Requirements
+## ✨ Key Highlights
+- 📚 **Academic Resource Hub** – Share study materials, notes, etc.  
+- 🤝 **Peer-to-Peer Collaboration** – Group projects, discussions  
+- 🧠 **Teach What You Know** – Students mentor others  
+- 🏫 **Community Building** – Strong academic network
 
-| FR 01        | login                                  |
-|--------------|----------------------------------------|
-| Description  | User can login using their credentials |
-| Stakeholders | Admin, student                        |
+---
 
+## 🎯 Stakeholders
+| Role   | Description |
+|--------|-------------|
+| 👩‍🎓 **Student** | Primary users, access & share learning resources |
+| 👨‍💼 **Admin**   | Oversees system, maintains integrity & security |
 
+---
 
-| FR 02        | Signup                                 |
-|--------------|----------------------------------------|
-| Description  | Students can sign up using their info like name, email, phone, university  |
-| Stakeholders | Admin, student                        |
+## 📋 Software Requirements Specification (SRS) - Functional Requirements
 
+| ID     | Feature                      | Description                                              | Stakeholders     |
+|--------|------------------------------|----------------------------------------------------------|------------------|
+| FR01   | Login                        | User login with credentials                              | Student, Admin   |
+| FR02   | Signup                       | Register with name, email, university, etc.              | Student          |
+| FR07   | Make Contributions           | Share notes, videos, etc.                                | Student          |
+| FR10   | Search Contributions         | Search by name or contribution type                      | Student, Admin   |
+| FR12   | Filter by University/Dept    | Narrow resources based on institution                    | Student, Admin   |
+| FR14   | Help & Support               | Assistance on platform usage                             | Student          |
+| FR15   | Report a Contribution        | Flag inappropriate or inaccurate materials               | Student, Admin   |
+| FR16   | Download Materials           | Download PDFs of shared notes                            | Student          |
+| FR17   | Take Notes                   | Make timestamped notes on video lectures                 | Student          |
+| FR18   | Make Payment                 | Pay to access peer-created premium content               | Student          |
+| FR19   | Request Refund               | Submit refund request with reason                        | Student          |
 
-| FR 03        |Logout                                  |
-|--------------|----------------------------------------|
-| Description  | User can logout when they want         |
-| Stakeholders | Admin, student                        |
+[🔎 Full List of Functional Requirements ›](#software-requirements-specification-srs---functional-requirements)
 
+---
 
+## 📈 Diagrams
 
-| FR 04        |View profile                              |
-|--------------|----------------------------------------|
-| Description  | User can view profile information     |
-| Stakeholders | Student                        |
+### 📊 Data Flow Diagram
+![Data Flow Diagram](frontend/public/images/DataFlowDiagram.png)
 
+---
 
-| FR 05        |Update profile                             |
-|--------------|----------------------------------------|
-| Description  | User can update profile information     |
-| Stakeholders | Student                        |
+## 🛠 Tech Stack
 
+**Frontend:**  
+- ⚛️ ReactJS  
 
-| FR 06        |View contributions                           |
-|--------------|----------------------------------------|
-| Description  | User can view all the contributions of a particular student in view profile section     |
-| Stakeholders | Admin, student                        |
+**Backend:**  
+- 🐍 Django  
+- 🗃️ PostgreSQL  
+- 🔄 Django ORM  
 
+**Other Tools:**  
+- 📝 Markdown (logs, docs)  
+- 🔀 Git & GitHub  
+- 🚀 Deployment (TBD)
 
-| FR 07        |Make contributions                          |
-|--------------|----------------------------------------|
-| Description  | All users can provide contributions like course video, notes etc.    |
-| Stakeholders | Student                        |
+---
 
+## 🧑‍💻 Getting Started
 
-| FR 08        |Update contributions                         |
-|--------------|----------------------------------------|
-| Description  | User can update their provided contribution data anytime   |
-| Stakeholders | Student                        |
+```bash
+# Clone the repository
+git clone https://github.com/your-username/edusphere.git
 
+# Install dependencies
+cd frontend && npm install
+cd backend && pip install -r requirements.txt
 
-
-| FR 09        |Access contributions                        |
-|--------------|----------------------------------------|
-| Description  |Users can search and get any contribution data that they are enrolled in    |
-| Stakeholders | Student                         |
-
-
-
-| FR 10        |Search by contributor or contributions                       |
-|--------------|----------------------------------------|
-| Description  |Users can search contributions by contributor name or contribution name    |
-| Stakeholders |Admin, Student                | 
-
-
-
-| FR 11        |Filter by contributor or contributions                       |
-|--------------|----------------------------------------|
-| Description  |User can filter contributions by contributor name or contribution name    |
-| Stakeholders |Admin, Student                | 
-
-
-
-| FR 12        |Filter by university or departments                        |
-|--------------|----------------------------------------|
-| Description  |User can filter contributions by university name or department name    |
-| Stakeholders |Admin, Student                | 
-
-
-
-| FR 13        |Filter by course                        |
-|--------------|----------------------------------------|
-| Description  |User can filter contributions by the course name    |
-| Stakeholders |Admin, Student                | 
-
-
-
-| FR 14        |Help and support                        |
-|--------------|----------------------------------------|
-| Description  |Users can get any type of support from here. This can be how to use the website, how to enroll, how to earn from here etc.  |
-| Stakeholders |Student                | 
-
-
-
-| FR 15        |Report a contribution                        |
-|--------------|----------------------------------------|
-| Description  |User can report a contribution if they see any issues  |
-| Stakeholders |Admin, student                | 
-
-
-
-| FR 16        |Download contribution materials                        |
-|--------------|----------------------------------------|
-| Description  |Users can download contribution notes as pdf  |
-| Stakeholders |Student                    | 
-
-
-
-| FR 17        |Take Notes                        |
-|--------------|----------------------------------------|
-| Description  |Learners can take note from a specific section of the video lecture  |
-| Stakeholders |Student                    | 
-
-
-
-| FR 18        |Make Payment                        |
-|--------------|----------------------------------------|
-| Description  |Users will pay the course fee to access the study materials provided by other students  |
-| Stakeholders |Student                    | 
-
-
-| FR 19        |Request Refund                        |
-|--------------|----------------------------------------|
-| Description  |Userss can request for refunds showing a reasonable cause  |
-| Stakeholders |Student                    | 
-
-
-## Diagrams
-
-### Data Flow Diagram
-![Data Flow Diagram of EduSphere](frontend/public/images/DataFlowDiagram.png)
-
-
-
-## Tech Stack
-
-- **Frontend:**
-
-    - **Framework:** ReactJS
-
-- **Backend:**
-
-  - **Framework:** Django
-  - **ORM:** Django ORM
-  - **Database:** PostgreSQL
-
-- **Other:**
-  - **Logging:** GitHub Markdown files
-  - **Version Control:** Git (GitHub)
-  - **Deployment:** 
-
-## Getting Started
-1. Clone the repository
-2. Install dependencies
-3. Start development
-   
-## Development Guidelines
-1. Create feature branches
-2. Make small, focused commits
-3. Write descriptive commit messages
-4. Create pull requests for review
-
+# Start development
+npm start   # for frontend
+python manage.py runserver  # for backend
