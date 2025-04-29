@@ -44,8 +44,8 @@ jobs:
       - name: Run tests and generate coverage report
         working-directory: core
         run: |
-          python manage.py makemigrations --noinput
-          python manage.py migrate --noinput
+          python manage.py makemigrations
+          python manage.py migrate
           coverage erase
           coverage run --rcfile=../.coveragerc manage.py test
           coverage xml -o coverage.xml
