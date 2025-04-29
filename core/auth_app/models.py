@@ -4,10 +4,10 @@ from .manager import CustomUserManager
 from django.apps import apps
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=255, unique=True)
+    email = models.EmailField(unique=True, db_index=True)
+    username = models.CharField(max_length=255, unique=True, db_index=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
-    is_email_verified = models.BooleanField(default=False)
+    is_email_verified = models.BooleanField(default=False, db_index=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     is_profile_verified = models.BooleanField(default=False)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -15,9 +15,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     department = models.ForeignKey('api.Department', on_delete=models.SET_NULL, null=True, blank=True)
     major_subject = models.ForeignKey('api.MajorSubject', on_delete=models.SET_NULL, null=True, blank=True)
     otp = models.CharField(max_length=6, null=True, blank=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, db_index=True)
     is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
+    date_joined = models.DateTimeField(auto_now_add=True, db_index=True)
 
     objects = CustomUserManager()
 
@@ -30,5 +30,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+        indexes = [
+            models.Index(fields=['username', 'email']),
+            models.Index(fields=['is_email_verified', 'is_active']),
+            models.Index(fields=['date_joined']),
+        ]
     
 

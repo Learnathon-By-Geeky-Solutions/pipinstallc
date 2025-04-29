@@ -66,7 +66,7 @@ class Contributions(models.Model):
         ]
 
 
-class contributionVideos(models.Model):
+class ContributionVideos(models.Model):
     """
     Model for storing contribution videos.
     """

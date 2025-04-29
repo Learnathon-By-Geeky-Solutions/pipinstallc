@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from auth_app.models import CustomUser
-from .models import Contributions, contributionVideos, ContributionTags, ContributionNotes, ContributionsComments, ContributionRatings,University,Department,MajorSubject
+from .models import Contributions, ContributionVideos, ContributionTags, ContributionNotes, ContributionsComments, ContributionRatings,University,Department,MajorSubject
 from django.shortcuts import get_object_or_404
 from django.db import models
 from enrollments.models import Enrollment
 
+# Define constants for repeated string literals
+NAME_WHITESPACE_ERROR = "Name cannot be empty or just whitespace"
 
 """
 Serializer for custom User model.
@@ -27,7 +29,7 @@ class UniversitySerializer(serializers.ModelSerializer):
 
     def validate_name(self, value):
         if value and len(value.strip()) == 0:
-            raise serializers.ValidationError("Name cannot be empty or just whitespace")
+            raise serializers.ValidationError(NAME_WHITESPACE_ERROR)
         return value
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -37,7 +39,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
     def validate_name(self, value):
         if value and len(value.strip()) == 0:
-            raise serializers.ValidationError("Name cannot be empty or just whitespace")
+            raise serializers.ValidationError(NAME_WHITESPACE_ERROR)
         return value
 
 class MajorSubjectSerializer(serializers.ModelSerializer):
@@ -47,7 +49,7 @@ class MajorSubjectSerializer(serializers.ModelSerializer):
 
     def validate_name(self, value):
         if value and len(value.strip()) == 0:
-            raise serializers.ValidationError("Name cannot be empty or just whitespace")
+            raise serializers.ValidationError(NAME_WHITESPACE_ERROR)
         return value
     
 class ContributionVideoSerializer(serializers.ModelSerializer):
@@ -57,7 +59,7 @@ class ContributionVideoSerializer(serializers.ModelSerializer):
     video_file = serializers.FileField(required=False, allow_null=True)  # Make file optional
 
     class Meta:
-        model = contributionVideos
+        model = ContributionVideos
         fields = ['id', 'title', 'video_file']
 
 class ContributionTagSerializer(serializers.ModelSerializer):
@@ -139,7 +141,7 @@ class ContributionSerializer(serializers.ModelSerializer):
 
         # Create related objects
         for video_data in videos_data:
-            contributionVideos.objects.create(
+            ContributionVideos.objects.create(
                 contribution=contribution, 
                 **video_data
             )
@@ -175,7 +177,7 @@ class ContributionSerializer(serializers.ModelSerializer):
             
             # Create new videos
             for video_data in videos_data:
-                contributionVideos.objects.create(
+                ContributionVideos.objects.create(
                     contribution=instance,
                     **video_data
                 )

@@ -9,6 +9,7 @@ from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 import logging
 from django.shortcuts import get_object_or_404, render
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -138,6 +139,7 @@ class CreateEnrollmentView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
 
+@csrf_exempt
 def payment_success(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
@@ -204,6 +206,7 @@ def payment_success(request, enrollment_id):
     redirect_url = settings.PAYMENT_REDIRECT_URLS["FAILED"]
     return render(request, 'fail.html', {'redirect_url': redirect_url})
 
+@csrf_exempt
 def payment_fail(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
@@ -218,6 +221,7 @@ def payment_fail(request, enrollment_id):
     redirect_url = settings.PAYMENT_REDIRECT_URLS['FAILED']
     return render(request, 'fail.html', {'redirect_url': redirect_url})
 
+@csrf_exempt
 def payment_cancel(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
