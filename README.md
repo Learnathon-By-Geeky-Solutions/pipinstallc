@@ -2,7 +2,7 @@
   <img src="frontend/public/images/EDusphere.png" alt="EduSphere Banner" width="300"/>
 </p>
 
-<h1 align="center">EduSphere</h1>
+
 
 ---
 
@@ -14,9 +14,9 @@
 - [📋 SRS - Functional Requirements](#software-requirements-specification-srs---functional-requirements)
 - [📈 Diagrams](#diagrams)
 - [🛠 Tech Stack](#tech-stack)
-- [🧑‍💻 Development Setup](setup.md)
-- [🗒 Devlogs](devlog.md)
-- [🤝 Contributing Guidelines](CONTRIBUTING.md)
+- [🧑‍💻 Getting Started](#getting-started)
+- [📏 Development Guidelines](#development-guidelines)
+
 
 ---
 
@@ -73,7 +73,7 @@ It empowers students to seamlessly transition between the roles of learner and m
 | FR18   | Make Payment                 | Pay to access peer-created premium content               | Student          |
 | FR19   | Request Refund               | Submit refund request with reason                        | Student          |
 
-[🔎 Full List of Functional Requirements ›](#software-requirements-specification-srs---functional-requirements)
+
 
 ---
 
