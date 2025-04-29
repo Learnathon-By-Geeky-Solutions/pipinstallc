@@ -142,3 +142,13 @@ api/templates/
 *.njsproj
 *.sln
 *.sw?
+
+
+
+migrations
+.env
+media
+staticfiles
+db.sqlite3
+__pycache__
+
