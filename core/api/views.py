@@ -21,6 +21,7 @@ from enrollments.models import Enrollment
 INVALID_DATA_MSG = 'Invalid data'
 NOT_FOUND_MSG = 'Not found'
 CONTRIBUTIONS_LIST_PATTERN = 'contributions_list:*'
+GENERIC_ERROR_MSG = 'An error occurred while processing your request'
 
 
 class OptimizedPagination(LimitOffsetPagination):
@@ -109,7 +110,7 @@ class UniversityView(APIView):
         except ObjectDoesNotExist:
             return create_error_response('University not found', status_code=status.HTTP_404_NOT_FOUND)
         except Exception:
-            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response(GENERIC_ERROR_MSG, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         try:
@@ -127,7 +128,7 @@ class UniversityView(APIView):
         except IntegrityError:
             return create_error_response('University with this name already exists')
         except Exception:
-            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response(GENERIC_ERROR_MSG, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class DepartmentView(APIView):
@@ -150,7 +151,7 @@ class DepartmentView(APIView):
         except ObjectDoesNotExist:
             return create_error_response('Department not found', status_code=status.HTTP_404_NOT_FOUND)
         except Exception:
-            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response(GENERIC_ERROR_MSG, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         try:
@@ -168,7 +169,7 @@ class DepartmentView(APIView):
         except IntegrityError:
             return create_error_response('Department with this name already exists')
         except Exception:
-            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response(GENERIC_ERROR_MSG, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class MajorSubjectView(APIView):
@@ -191,7 +192,7 @@ class MajorSubjectView(APIView):
         except ObjectDoesNotExist:
             return create_error_response('Major Subject not found', status_code=status.HTTP_404_NOT_FOUND)
         except Exception:
-            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response(GENERIC_ERROR_MSG, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         try:
@@ -209,7 +210,7 @@ class MajorSubjectView(APIView):
         except IntegrityError:
             return create_error_response('Major Subject with this name already exists')
         except Exception:
-            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response(GENERIC_ERROR_MSG, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -373,6 +374,19 @@ class UserContributionView(APIView):
         
         return result
 
+    def _extract_notes(self, request):
+        """Extract notes from request data"""
+        result = {}
+        notes = []
+        for key in request.FILES:
+            if 'note_file' in key:
+                notes.append({'note_file': request.FILES[key]})
+        
+        if notes:
+            result['notes'] = notes
+        
+        return result
+
     def put(self, request, pk):
         import logging
         logger = logging.getLogger(__name__)
@@ -400,7 +414,7 @@ class UserContributionView(APIView):
                 )
             except Exception:
                 logger.error("Error updating contribution")
-                return create_error_response('Error updating contribution')
+                return create_error_response(GENERIC_ERROR_MSG)
         
         logger.error(f"Validation errors: {serializer.errors}")
         return create_error_response(INVALID_DATA_MSG, serializer.errors)
@@ -441,7 +455,7 @@ class UserContributionView(APIView):
         parsed_data.update(self._process_videos(request))
         
         # Process notes
-        parsed_data.update(self._process_notes(request))
+        parsed_data.update(self._extract_notes(request))
         
         return parsed_data
     
@@ -601,14 +615,12 @@ class AllContributionView(APIView):
             tag_name
         )
         
-        # Add ordering by created_at (newest first)
         contributions = contributions.order_by('-created_at')
         
         # Get count efficiently without retrieving all objects
-        # For millions of records, we need to optimize count as well
         try:
             total_count = contributions.count()
-        except:
+        except Exception :
             # Fallback if count() is too slow
             total_count = None
         
@@ -651,6 +663,24 @@ class AllContributionView(APIView):
             'related_Major_Subject_id'
         )
         
+        # Process all ID filters
+        filter_params = self._apply_id_filters(filter_params, university_id, department_id, major_subject_id, user_id)
+        
+        # Apply all filters at once for better performance
+        if filter_params:
+            contributions = contributions.filter(**filter_params)
+        
+        # Apply tag filter separately since it requires a more complex lookup
+        if tag_name:
+            try:
+                contributions = contributions.filter(tags__name__icontains=tag_name).distinct()
+            except Exception:
+                return create_error_response('Invalid tag name')
+                
+        return contributions
+    
+    def _apply_id_filters(self, filter_params, university_id, department_id, major_subject_id, user_id):
+        """Helper method to apply ID filters to reduce complexity"""
         # Apply direct filter conditions for better performance
         if university_id:
             try:
@@ -676,18 +706,7 @@ class AllContributionView(APIView):
             except Exception:
                 return create_error_response('Invalid user ID')
         
-        # Apply all filters at once for better performance
-        if filter_params:
-            contributions = contributions.filter(**filter_params)
-        
-        # Apply tag filter separately since it requires a more complex lookup
-        if tag_name:
-            try:
-                contributions = contributions.filter(tags__name__icontains=tag_name).distinct()
-            except Exception:
-                return create_error_response('Invalid tag name')
-                
-        return contributions
+        return filter_params
         
     def _process_paginated_results(self, paginated_qs, request, total_count, paginator, university_id, department_id, major_subject_id, user_id, tag_name):
         # Only after pagination, load the related objects for the paginated subset
