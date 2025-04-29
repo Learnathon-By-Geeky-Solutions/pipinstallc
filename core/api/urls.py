@@ -6,13 +6,13 @@ from .views import (
 )
 
 urlpatterns = [
-    path('user-info/', UserInfoView.as_view(), name='add-user-info'),
+    path('user-info/', UserInfoView.as_view(), name='user-info'),
     # contribution urls for registered user to view their contributions
     path('user-contributions/', UserContributionView.as_view(), name='contributions'),
     path('user-contributions/<str:pk>/', UserContributionView.as_view(), name='contributions-delete-update'),
 
     path('all-contributions/', AllContributionView.as_view(), name='all-contributions'),
-    path('all-contributions/<str:pk>/', AllContributionView.as_view(), name='all-contributions-detail'),
+    path('all-contributions/<str:pk>/', AllContributionView.as_view(), name='contribution-detail'),
 
 
     path('contribution-comments/<uuid:contribution_id>/', ContributionCommentView.as_view(), name='contribution-comments'), #view all comments inside a contribution
@@ -23,10 +23,10 @@ urlpatterns = [
 
     # University, Department, and MajorSubject views
     path('universities/', UniversityView.as_view(), name='universities'),
-    path('universities/<int:pk>/', UniversityView.as_view(), name='university-detail'),
+    path('universities/<uuid:pk>/', UniversityView.as_view(), name='university-detail'),
     path('departments/', DepartmentView.as_view(), name='departments'),
-    path('departments/<int:pk>/', DepartmentView.as_view(), name='department-detail'),
+    path('departments/<uuid:pk>/', DepartmentView.as_view(), name='department-detail'),
     path('major-subjects/', MajorSubjectView.as_view(), name='major-subjects'),
-    path('major-subjects/<int:pk>/', MajorSubjectView.as_view(), name='major-subject-detail'),
+    path('major-subjects/<uuid:pk>/', MajorSubjectView.as_view(), name='major-subject-detail'),
 ]
 
