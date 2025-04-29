@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Payment Success</title>
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .redirect-btn {
+            padding: 10px 20px;
+            background-color: #6c2bb3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .hidden-data {
+            display: none;
+        }
+    </style>
+    <script>
+        // Auto-redirect after 3 seconds
+        window.onload = function() {
+            setTimeout(function() {
+                window.location.href = "{{ redirect_url }}";
+            }, 3000);
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Payment Completed Successfully!</h2>
+        <p>You will be redirected in a few seconds...</p>
+        <a href="{{ redirect_url }}" class="redirect-btn">
+            Continue Now
+        </a>
+        <div id="payment-data" class="hidden-data" data-contribution-id="{{ contribution_id }}" data-redirect-url="{{ redirect_url }}"></div>
+    </div>
+</body>
+</html> 

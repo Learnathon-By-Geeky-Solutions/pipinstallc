@@ -1,23 +1,100 @@
-# Virtual Environment
-env/
-.env
-venv/
-.env/
-env
-# Python & Django
+# Django
+*.log
+*.pot
+*.pyc
 __pycache__/
-*.py[cod]
-*.so
-*.egg
-*.egg-info/
-migrations/
+local_settings.py
 db.sqlite3
 db.sqlite3-journal
+media/
+staticfiles/
+
+# Database migrations
+**/migrations/**
+!**/migrations/__init__.py
+
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.env/
+.venv/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Node.js & React
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.pnp/
+.pnp.js
+dist/
+dist-ssr/
+coverage/
+.next/
+out/
+build/
+.DS_Store
+*.pem
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Media files and uploads
+uploads/
+media/
 
 # Static and Media
-media/
 static/
-uploads/
 core/media/
 core/static/
 core/uploads/
@@ -26,7 +103,6 @@ api/static/
 api/uploads/
 
 # Node.js & React
-node_modules/
 package-lock.json
 package.json
 dist/
@@ -66,3 +142,13 @@ api/templates/
 *.njsproj
 *.sln
 *.sw?
+
+
+
+migrations
+.env
+media
+staticfiles
+db.sqlite3
+__pycache__
+

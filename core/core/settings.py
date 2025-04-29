@@ -26,7 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1234567890'
+
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'True'  # Convert string to boolean
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'enrollments'
 ]
 
 MIDDLEWARE = [
@@ -58,7 +60,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',   TODO uncomment this
+    'django.middleware.csrf.CsrfViewMiddleware',   
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -69,7 +71,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -143,7 +145,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True  # TODO: Change to False in production
+CORS_ALLOW_ALL_ORIGINS = True  # Change to False in production
 
 # CORS_ALLOWED_ORIGINS = [
 #     'http://localhost:3000',
@@ -169,7 +171,12 @@ SIMPLE_JWT = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',  # ✅ Required for file uploads
+        'rest_framework.parsers.FormParser',
+    ],
 }
 
 AUTH_USER_MODEL = 'auth_app.CustomUser'
@@ -189,9 +196,9 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 
 
 SSLCOMMERZ = {
-    'STORE_ID': 'testbox',  # Sandbox store ID (replace with production ID when deploying)
-    'STORE_PASSWORD': 'qwerty',  # Sandbox store password (replace with production password)
-    'IS_SANDBOX': True,  # Set to False for production
+    'STORE_ID': os.getenv("STORE_ID"),  # Sandbox store ID (replace with production ID when deploying)
+    'STORE_PASSWORD':os.getenv("STORE_PASSWORD"),  # Sandbox store password (replace with production password)
+    'IS_SANDBOX':os.getenv("IS_SANDBOX"),  # Set to False for production
 }
 
 LOGGING = {
@@ -208,8 +215,39 @@ LOGGING = {
     },
 }
 
+FRONTEND_URL = 'http://localhost:5173'
+
 PAYMENT_REDIRECT_URLS = {
-    'SUCCESS': '/dashboard/my-courses/',
-    'FAILED': '/dashboard/payment-failed/',
-    'CANCELLED': '/dashboard/payment-cancelled/',
+    'SUCCESS': f'{FRONTEND_URL}/payment-success/',
+    'FAILED': f'{FRONTEND_URL}/payment-fail/',
+    'CANCELLED': f'{FRONTEND_URL}/payment-cancel/',
 }
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # Default cache timeout in seconds (5 minutes)
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,  # Maximum number of entries in cache
+            'CULL_FREQUENCY': 3,  # Fraction of entries to cull when max is reached (1/3)
+        }
+    }
+}
+
+# Cache keys and timeouts for specific views
+CACHE_TIMEOUTS = {
+    'contributions_list': 300,  # 5 minutes for contribution listings
+    'contribution_detail': 600,  # 10 minutes for contribution details
+    'university_list': 3600,    # 1 hour for university listings
+    'department_list': 3600,    # 1 hour for department listings
+    'major_subject_list': 3600  # 1 hour for major subject listings
+}
+
+
+# Configuration for rate limiting
+MAX_LOGIN_ATTEMPTS = 5  # Maximum failed login attempts before rate limiting
+LOGIN_ATTEMPTS_TIMEOUT = 300  # Timeout in seconds (5 minutes) for login attempts
+MAX_REGISTER_ATTEMPTS = 6  # Maximum failed registration attempts
+REGISTER_ATTEMPTS_TIMEOUT = 3600  # Timeout in seconds (1 hour) for registration attempts 

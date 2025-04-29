@@ -1,0 +1,65 @@
+name: SonarCloud
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.4'
+
+      - name: Install dependencies
+        run: pip install -r core/requirements.txt
+        
+      - name: Create .env file
+        run: |
+          touch .env
+          echo "SECRET_KEY=django-insecure-slfkjhbehjrbksljladheb24u3475y3847rh2u32o3ye2erhwbef3r53oy4r2o87ryw" >> .env
+          echo "DEBUG=True" >> .env
+          echo "EMAIL_HOST=smtp.gmail.com" >> .env
+          echo "EMAIL_PORT=587" >> .env
+          echo "EMAIL_HOST_USER=editreshad@gmail.com" >> .env
+          echo "EMAIL_HOST_PASSWORD=lgnb wukn qcge ykvt" >> .env
+          echo "EMAIL_USE_TLS=True" >> .env
+          # echo "EMAIL_USE_SSL=False" >> .env
+
+      - name: Run tests and generate coverage report
+        working-directory: core
+        run: |
+          coverage erase
+          coverage run --rcfile=../.coveragerc manage.py test
+          coverage xml -o coverage.xml
+          ls -l coverage.xml
+          cat coverage.xml
+        env:
+          DJANGO_SETTINGS_MODULE: core.settings
+
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: "https://sonarcloud.io"
+        with:
+          args: >
+            -Dsonar.organization=learnathon-by-geeky-solutions
+            -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_pipinstallc
+            -Dsonar.projectBaseDir=core
+            -Dsonar.sources=.
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.python.version=3.12
+                
