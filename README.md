@@ -11,7 +11,7 @@
 - [📘 Project Description](#project-description)
 - [✨ Key Highlights](#key-highlights)
 - [🎯 Stakeholders](#stakeholders)
-- [📋 SRS - Functional Requirements](#software-requirements-specification-srs---functional-requirements)
+- [📋 SRS - Functional Requirements](#srs---functional-requirements)
 - [📈 Diagrams](#diagrams)
 - [🛠 Tech Stack](#tech-stack)
 - [🧑‍💻 Getting Started](#getting-started)
@@ -20,7 +20,7 @@
 
 ---
 
-👥 ## Team Members
+ ## 👥 Team Members
 - **mhtasnia** (Team Leader)  
 - **reshadMajumder**  
 - **Rokibul-Islam-Robi**
