@@ -1,6 +1,6 @@
 from django.test import TestCase
 from api.models import (
-    Contributions, Contribution_tags, contribution_videos, Contribution_notes,
+    Contributions, ContributionTags, contribution_videos, Contribution_notes,
     Contribution_origines, Enrollment
 )
 from auth_app.models import CustomUser
@@ -15,7 +15,7 @@ class ContributionModelTest(TestCase):
         )
 
         # Create related objects
-        self.tag = Contribution_tags.objects.create(name="Test Tag")
+        self.tag = ContributionTags.objects.create(name="Test Tag")
         self.video = contribution_videos.objects.create(title="Test Video")
         self.note = Contribution_notes.objects.create()
         self.origine = Contribution_origines.objects.create(
