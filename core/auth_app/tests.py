@@ -10,7 +10,7 @@ class UserTest(APITestCase):
         self.user = User.objects.create_user(
             username='testuser',
             email='test@example.com',
-            password='testpassword123'
+            password='TestPassword123'
         )
         self.user.is_email_verified = True
         self.user.save()
@@ -24,8 +24,8 @@ class UserTest(APITestCase):
         data = {
             'username': 'newuser',
             'email': 'newuser@example.com',
-            'password': 'newpassword123',
-            'password2': 'newpassword123'
+            'password': 'NewPassword123',
+            'password2': 'NewPassword123'
         }
         response = self.client.post(self.register_url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -36,8 +36,8 @@ class UserTest(APITestCase):
     def test_login_success(self):
         """Test successful login"""
         data = {
-            'username': 'testuser',
-            'password': 'testpassword123'
+            'email': 'test@example.com',
+            'password': 'TestPassword123'
         }
         response = self.client.post(self.login_url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -48,8 +48,8 @@ class UserTest(APITestCase):
     def test_logout(self):
         """Test user logout"""
         login_data = {
-            'username': 'testuser',
-            'password': 'testpassword123'
+            'email': 'test@example.com',
+            'password': 'TestPassword123'
         }
         login_response = self.client.post(self.login_url, login_data)
         refresh_token = login_response.data['refresh']
@@ -75,7 +75,7 @@ class PasswordTest(APITestCase):
         self.user = User.objects.create_user(
             username='testuser',
             email='test@example.com',
-            password='testpassword123'
+            password='TestPassword123'
         )
         self.user.is_email_verified = True
         self.user.save()
@@ -92,21 +92,21 @@ class PasswordTest(APITestCase):
         self.assertEqual(response.data['message'], 
                          'Password reset OTP sent successfully')
 
-    # def test_reset_password(self):
-    #     """Test password reset"""
-    #     self.user.otp = '123456'
-    #     self.user.save()
+    def test_reset_password(self):
+        """Test password reset"""
+        self.user.otp = '1234'
+        self.user.save()
 
-    #     data = {
-    #         'email': 'test@example.com',
-    #         'password': 'newpassword123',
-    #         'password2': 'newpassword123',
-    #         'otp': '123456'
-    #     }
-    #     response = self.client.post(self.reset_password_url, data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertTrue(response.data['status'])
-    #     self.assertEqual(response.data['message'], 'Password reset successful')
+        data = {
+            'email': 'test@example.com',
+            'password': 'NewPassword123',
+            'password2': 'NewPassword123',
+            'otp': '1234'
+        }
+        response = self.client.post(self.reset_password_url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['status'])
+        self.assertEqual(response.data['message'], 'Password reset successful')
 
 
 from django.test import TestCase
@@ -118,11 +118,11 @@ class CustomUserManagerTest(TestCase):
         user = CustomUser.objects.create_user(
             username='testuser',
             email='test@example.com',
-            password='testpassword123'
+            password='TestPassword123'
         )
         self.assertEqual(user.username, 'testuser')
         self.assertEqual(user.email, 'test@example.com')
-        self.assertTrue(user.check_password('testpassword123'))
+        self.assertTrue(user.check_password('TestPassword123'))
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
 
@@ -132,7 +132,7 @@ class CustomUserManagerTest(TestCase):
             CustomUser.objects.create_user(
                 username='testuser',
                 email=None,
-                password='testpassword123'
+                password='TestPassword123'
             )
         self.assertEqual(str(context.exception), 'The Email field must be set')
 
@@ -141,11 +141,11 @@ class CustomUserManagerTest(TestCase):
         superuser = CustomUser.objects.create_superuser(
             username='adminuser',
             email='admin@example.com',
-            password='adminpassword123'
+            password='AdminPassword123'
         )
         self.assertEqual(superuser.username, 'adminuser')
         self.assertEqual(superuser.email, 'admin@example.com')
-        self.assertTrue(superuser.check_password('adminpassword123'))
+        self.assertTrue(superuser.check_password('AdminPassword123'))
         self.assertTrue(superuser.is_staff)
         self.assertTrue(superuser.is_superuser)
 
@@ -155,7 +155,7 @@ class CustomUserManagerTest(TestCase):
             CustomUser.objects.create_superuser(
                 username='adminuser',
                 email='admin@example.com',
-                password='adminpassword123',
+                password='AdminPassword123',
                 is_staff=False
             )
         self.assertEqual(str(context.exception), 'Superuser must have is_staff=True.')
@@ -166,7 +166,7 @@ class CustomUserManagerTest(TestCase):
             CustomUser.objects.create_superuser(
                 username='adminuser',
                 email='admin@example.com',
-                password='adminpassword123',
+                password='AdminPassword123',
                 is_superuser=False
             )
         self.assertEqual(str(context.exception), 'Superuser must have is_superuser=True.')
@@ -184,7 +184,7 @@ class EmailTest(APITestCase):
         self.user = User.objects.create_user(
             username='testuser',
             email='test@example.com',
-            password='testpassword123'
+            password='TestPassword123'
         )
         self.user.is_email_verified = True
         self.user.save()
@@ -200,20 +200,21 @@ class EmailTest(APITestCase):
         self.assertTrue(response.data['status'])
         self.assertEqual(response.data['message'], 'OTP sent successfully')
 
-    # def test_verify_email(self):
-    #     """Test email verification"""
-    #     self.user.otp = '123456'
-    #     self.user.save()
+    def test_verify_email(self):
+        """Test email verification"""
+        # Set is_email_verified to False for this test
+        self.user.is_email_verified = False
+        self.user.otp = '1234'
+        self.user.save()
 
-    #     data = {
-    #         'email': 'test@example.com',
-    #         'otp': '123456'
-    #     }
-    #     response = self.client.post(self.verify_email_url, data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertTrue(response.data['status'])
-    #     self.assertEqual(response.data['message'], 'Email verified successfully')
-
+        data = {
+            'email': 'test@example.com',
+            'otp': '1234'
+        }
+        response = self.client.post(self.verify_email_url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['status'])
+        self.assertEqual(response.data['message'], 'Email verified successfully')
 
 
 from django.test import TestCase
