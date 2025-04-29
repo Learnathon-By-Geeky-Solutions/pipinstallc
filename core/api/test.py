@@ -108,7 +108,7 @@ class ApiAdminTest(TestCase):
 
 
 from api.models import (
-    Contributions, ContributionTags, contributionVideos, ContributionNotes,
+    Contributions, ContributionTags, ContributionVideos, ContributionNotes,
      University, Department, MajorSubject
 )
 from auth_app.models import CustomUser
@@ -125,7 +125,7 @@ class ContributionModelTest(TestCase):
 
         # Create related objects
         self.tag = ContributionTags.objects.create(name="Test Tag")
-        self.video = contributionVideos.objects.create(title="Test Video")
+        self.video = ContributionVideos.objects.create(title="Test Video")
         self.note = ContributionNotes.objects.create()
         self.university = University.objects.create(name="Test University")
         self.department = Department.objects.create(name="Test Department")
