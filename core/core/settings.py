@@ -26,6 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -195,9 +196,9 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 
 
 SSLCOMMERZ = {
-    'STORE_ID': 'testbox',  # Sandbox store ID (replace with production ID when deploying)
-    'STORE_PASSWORD': 'qwerty',  # Sandbox store password (replace with production password)
-    'IS_SANDBOX': True,  # Set to False for production
+    'STORE_ID': os.getenv("STORE_ID"),  # Sandbox store ID (replace with production ID when deploying)
+    'STORE_PASSWORD':os.getenv("STORE_PASSWORD"),  # Sandbox store password (replace with production password)
+    'IS_SANDBOX':os.getenv("IS_SANDBOX"),  # Set to False for production
 }
 
 LOGGING = {
