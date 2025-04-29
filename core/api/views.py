@@ -441,7 +441,7 @@ class UserContributionView(APIView):
         # Process videos
         parsed_data.update(self._process_videos(request))
         
-        # Process notes
+        # Process notes - reusing the method defined earlier
         parsed_data.update(self._process_notes(request))
         
         return parsed_data
@@ -480,18 +480,8 @@ class UserContributionView(APIView):
         
         return result
     
-    def _process_notes(self, request):
-        """Extract notes from request data"""
-        result = {}
-        notes = []
-        for key in request.FILES:
-            if 'note_file' in key:
-                notes.append({'note_file': request.FILES[key]})
-        
-        if notes:
-            result['notes'] = notes
-        
-        return result
+    # Using the first implementation of _process_notes defined at line 364
+    # This eliminates duplication and reduces complexity
 
 class AllContributionView(APIView):
     """
