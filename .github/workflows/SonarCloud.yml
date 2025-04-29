@@ -36,6 +36,9 @@ jobs:
           echo "EMAIL_HOST_PASSWORD=lgnb wukn qcge ykvt" >> .env
           echo "EMAIL_USE_TLS=True" >> .env
           # echo "EMAIL_USE_SSL=False" >> .env
+          echo "STORE_ID=testbox" >> .env
+          echo "STORE_PASSWORD=qwerty" >> .env
+          echo "IS_SANDBOX=True" >> .env
 
       - name: Run tests and generate coverage report
         working-directory: core
