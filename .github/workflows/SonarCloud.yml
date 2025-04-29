@@ -42,6 +42,7 @@ jobs:
           
       - name: Run migrations
         run: |
+          cd core
           python manage.py makemigrations
           python manage.py migrate
 
