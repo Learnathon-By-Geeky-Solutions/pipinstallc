@@ -21,9 +21,13 @@
 ---
 
  ## 👥 Team Members
-- **mhtasnia** (Team Leader)  
-- **reshadMajumder**  
-- **Rokibul-Islam-Robi**
+
+- [mhtasnia's GitHub Profile](https://github.com/mhtasnia)
+  [![mhtasnia's GitHub Stats](https://github-readme-stats.vercel.app/api?username=mhtasnia&show_icons=true&theme=gruvbox&custom_title=Team Leader's Stats)](https://github.com/mhtasnia)
+- [reshadMajumder's GitHub Profile](https://github.com/reshadMajumder)
+  [![reshadMajumder's GitHub Stats](https://github-readme-stats.vercel.app/api?username=reshadMajumder&show_icons=true&theme=gruvbox&custom_title=Coder's Stats)](https://github.com/reshadMajumder)
+- [Rokibul-Islam-Robi's GitHub Profile](https://github.com/Rokibul-Islam-Robi)
+  [![Rokibul-Islam-Robi's GitHub Stats](https://github-readme-stats.vercel.app/api?username=Rokibul-Islam-Robi&show_icons=true&theme=gruvbox&custom_title=Enthusiast's Stats)](https://github.com/Rokibul-Islam-Robi)
 
 **👨‍🏫 Mentor:** Minhazul Hasan
 
