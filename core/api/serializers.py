@@ -191,17 +191,8 @@ class ContributionSerializer(serializers.ModelSerializer):
 
         return contribution
 
-    def update(self, instance, validated_data):
-        videos_data = validated_data.pop('videos', None)
-        tags_data = validated_data.pop('tags', None)
-        notes_data = validated_data.pop('notes', None)
-
-        # Update the main instance fields
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-
-        # Update videos if provided
+    def _update_videos(self, instance, videos_data):
+        """Helper method to update videos"""
         if videos_data is not None:
             # Delete existing videos
             instance.videos.all().delete()
@@ -213,14 +204,16 @@ class ContributionSerializer(serializers.ModelSerializer):
                     **video_data
                 )
 
-        # Update tags if provided
+    def _update_tags(self, instance, tags_data):
+        """Helper method to update tags"""
         if tags_data is not None:
             instance.tags.clear()
             for tag_data in tags_data:
                 tag, _ = ContributionTags.objects.get_or_create(**tag_data)
                 instance.tags.add(tag)
 
-        # Update notes if provided
+    def _update_notes(self, instance, notes_data):
+        """Helper method to update notes"""
         if notes_data is not None:
             instance.notes.all().delete()
             for note_data in notes_data:
@@ -228,6 +221,21 @@ class ContributionSerializer(serializers.ModelSerializer):
                     contribution=instance,
                     **note_data
                 )
+
+    def update(self, instance, validated_data):
+        videos_data = validated_data.pop('videos', None)
+        tags_data = validated_data.pop('tags', None)
+        notes_data = validated_data.pop('notes', None)
+
+        # Update the main instance fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Update related objects using helper methods
+        self._update_videos(instance, videos_data)
+        self._update_tags(instance, tags_data)
+        self._update_notes(instance, notes_data)
 
         return instance
 
