@@ -12,5 +12,6 @@ tzdata==2025.1
 coverage==7.6.7
 pytest==7.4.3
 pytest-cov==4.1.0
+pytest-django==4.8.0 # Added pytest-django
+uv==0.1.27 # Added uv.
 sslcommerz_lib==1.0.0
-
