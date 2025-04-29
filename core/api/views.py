@@ -374,19 +374,6 @@ class UserContributionView(APIView):
         
         return result
 
-    def _extract_notes(self, request):
-        """Extract notes from request data"""
-        result = {}
-        notes = []
-        for key in request.FILES:
-            if 'note_file' in key:
-                notes.append({'note_file': request.FILES[key]})
-        
-        if notes:
-            result['notes'] = notes
-        
-        return result
-
     def put(self, request, pk):
         import logging
         logger = logging.getLogger(__name__)
@@ -455,7 +442,7 @@ class UserContributionView(APIView):
         parsed_data.update(self._process_videos(request))
         
         # Process notes
-        parsed_data.update(self._extract_notes(request))
+        parsed_data.update(self._process_notes(request))
         
         return parsed_data
     
