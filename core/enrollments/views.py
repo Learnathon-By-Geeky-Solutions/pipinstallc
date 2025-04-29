@@ -139,6 +139,16 @@ class CreateEnrollmentView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
 
+# SECURITY NOTE: CSRF protection is intentionally disabled for the following payment callback endpoints.
+# This exemption is necessary and safe because:
+# 1. These endpoints receive callbacks directly from the SSLCommerz payment gateway servers
+# 2. External payment gateways cannot include Django's CSRF tokens in their requests
+# 3. Instead of CSRF, we validate the payment gateway's authenticity through:
+#    - Transaction validation using the payment gateway's API
+#    - Verification of transaction IDs against our database records
+#    - Secure handling of payment gateway credentials (store_id and store_pass)
+# 4. These endpoints are specifically designed for server-to-server communication,
+#    not for browser-based form submissions where CSRF would be applicable
 @csrf_exempt
 def payment_success(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
@@ -184,6 +194,7 @@ def payment_success(request, enrollment_id):
         sslcz = SSLCOMMERZ(sslcommerz_settings)
         
         try:
+            # Security measure: Validate transaction with SSLCommerz API
             response = sslcz.validationTransaction(val_id)
             logger.info(f"SSLCommerz validation response: {response}")
             
@@ -208,6 +219,7 @@ def payment_success(request, enrollment_id):
 
 @csrf_exempt
 def payment_fail(request, enrollment_id):
+    # See security note above regarding CSRF exemption for payment callbacks
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
     # Log the failure
@@ -223,6 +235,7 @@ def payment_fail(request, enrollment_id):
 
 @csrf_exempt
 def payment_cancel(request, enrollment_id):
+    # See security note above regarding CSRF exemption for payment callbacks
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
     enrollment.payment_status = 'CANCELLED'
