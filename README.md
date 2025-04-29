@@ -105,7 +105,7 @@ It empowers students to seamlessly transition between the roles of learner and m
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/edusphere.git
+git clone https://github.com/Learnathon-By-Geeky-Solutions/pipinstallc.git
 
 # Install dependencies
 cd frontend && npm install
