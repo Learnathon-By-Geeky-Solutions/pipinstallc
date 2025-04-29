@@ -40,11 +40,6 @@ jobs:
           echo "STORE_PASSWORD=qwerty" >> .env
           echo "IS_SANDBOX=True" >> .env
           
-      - name: Run migrations
-        run: |
-          cd core
-          python manage.py makemigrations
-          python manage.py migrate
 
       - name: Run tests and generate coverage report
         working-directory: core
