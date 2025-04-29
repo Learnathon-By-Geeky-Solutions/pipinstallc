@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, ContributionSerializer, ContributionCommentSerializer, AllContributionSerializer, ContributionRatingSerializer,UniversitySerializer,MajorSubjectSerializer,DepartmentSerializer
-from .models import Contributions, ContributionsComments, ContributionRatings, University, Department, MajorSubject,contributionVideos,ContributionNotes,ContributionTags
+from .models import Contributions, ContributionsComments, ContributionRatings, University, Department, MajorSubject,ContributionVideos,ContributionNotes,ContributionTags
 
 from django.conf import settings
 from django.db import IntegrityError
@@ -16,6 +16,10 @@ from rest_framework.pagination import  LimitOffsetPagination
 from django.core.cache import cache
 from django.db.models import Prefetch
 from enrollments.models import Enrollment
+
+# Define constants for repeated string literals
+INVALID_DATA_MSG = 'Invalid data'
+NOT_FOUND_MSG = 'Not found'
 
 
 class OptimizedPagination(LimitOffsetPagination):
@@ -120,7 +124,7 @@ class UniversityView(APIView):
             
             return Response({
                 'status': False,
-                'message': 'Invalid data',
+                'message': INVALID_DATA_MSG,
                 'errors': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
             
@@ -183,7 +187,7 @@ class DepartmentView(APIView):
             
             return Response({
                 'status': False,
-                'message': 'Invalid data',
+                'message': INVALID_DATA_MSG,
                 'errors': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
             
@@ -246,7 +250,7 @@ class MajorSubjectView(APIView):
             
             return Response({
                 'status': False,
-                'message': 'Invalid data',
+                'message': INVALID_DATA_MSG,
                 'errors': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
             
@@ -274,7 +278,7 @@ class UserContributionView(APIView):
                 serializer = ContributionSerializer(contribution)
                 return Response({'status': True, 'message': 'Success', 'data': serializer.data}, status=status.HTTP_200_OK)
             except Contributions.DoesNotExist:
-                return Response({'status': False, 'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'status': False, 'message': NOT_FOUND_MSG}, status=status.HTTP_404_NOT_FOUND)
         
         # Get filter parameter for major subject
         major_subject_id = request.query_params.get('major_subject')
@@ -325,11 +329,36 @@ class UserContributionView(APIView):
         import json
         logger = logging.getLogger(__name__)
         
-        # Log the incoming data for debugging
-        logger.info(f"Request FILES: {request.FILES}")
-        logger.info(f"Request DATA: {request.data}")
+        # Create a properly structured data dictionary using the helper method
+        parsed_data = self._prepare_post_data(request)
         
-        # Create a properly structured data dictionary
+        # Create the serializer with our properly structured data
+        serializer = ContributionSerializer(data=parsed_data)
+        
+        if serializer.is_valid():
+            contribution = serializer.save(user=request.user)
+            
+            # Invalidate cache for list views
+            cache.delete_pattern("contributions_list:*") if hasattr(cache, 'delete_pattern') else cache.clear()
+            
+            return Response({
+                'status': True, 
+                'message': 'Created', 
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        
+        # Log validation errors for debugging
+        logger.error(f"Validation errors: {serializer.errors}")
+        
+        return Response({
+            'status': False, 
+            'message': INVALID_DATA_MSG, 
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    def _prepare_post_data(self, request):
+        """Helper method to prepare contribution data from request for post"""
+        # Create base data dictionary
         parsed_data = {
             'title': request.data.get('title', ''),
             'description': request.data.get('description', ''),
@@ -343,15 +372,10 @@ class UserContributionView(APIView):
         if 'thumbnail_image' in request.FILES:
             parsed_data['thumbnail_image'] = request.FILES['thumbnail_image']
         
-        # Handle tags
-        tags = []
-        for key in request.data:
-            if key.startswith('tags[') and key.endswith('][name]'):
-                tags.append({'name': request.data[key]})
-        if tags:
-            parsed_data['tags'] = tags
+        # Process tags, videos and notes
+        parsed_data.update(self._process_tags(request))
         
-        # Handle videos
+        # Handle videos specifically for post
         videos = []
         video_titles = {}
         video_files = {}
@@ -389,28 +413,8 @@ class UserContributionView(APIView):
         
         if notes:
             parsed_data['notes'] = notes
-        
-        logger.info(f"Parsed data: {parsed_data}")
-        
-        # Create the serializer with our properly structured data
-        serializer = ContributionSerializer(data=parsed_data)
-        
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response({
-                'status': True, 
-                'message': 'Created', 
-                'data': serializer.data
-            }, status=status.HTTP_201_CREATED)
-        
-        # Log validation errors for debugging
-        logger.error(f"Validation errors: {serializer.errors}")
-        
-        return Response({
-            'status': False, 
-            'message': 'Invalid data', 
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+            
+        return parsed_data
 
     def put(self, request, pk):
         import logging
@@ -419,12 +423,41 @@ class UserContributionView(APIView):
         try:
             contribution = Contributions.objects.get(id=pk, user=request.user)
         except Contributions.DoesNotExist:
-            return Response({'status': False, 'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'status': False, 'message': NOT_FOUND_MSG}, status=status.HTTP_404_NOT_FOUND)
         
-        # Log the incoming data for debugging
-        logger.info(f"Request FILES: {request.FILES}")
-        logger.info(f"Request DATA: {request.data}")
+        # Extract contribution data processing to reduce complexity
+        parsed_data = self._prepare_contribution_data(request, contribution)
         
+        serializer = ContributionSerializer(contribution, data=parsed_data, partial=True)
+        if serializer.is_valid():
+            try:
+                updated_contribution = serializer.save()
+                
+                # Invalidate cache for this contribution and list views
+                cache.delete(f"contribution_detail:{pk}")
+                cache.delete_pattern("contributions_list:*") if hasattr(cache, 'delete_pattern') else cache.clear()
+                
+                return Response({
+                    'status': True, 
+                    'message': 'Updated', 
+                    'data': ContributionSerializer(updated_contribution).data
+                }, status=status.HTTP_200_OK)
+            except Exception:
+                logger.error("Error updating contribution")
+                return Response({
+                    'status': False,
+                    'message': 'Error updating contribution',
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
+        logger.error(f"Validation errors: {serializer.errors}")
+        return Response({
+            'status': False, 
+            'message': INVALID_DATA_MSG, 
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+        
+    def _prepare_contribution_data(self, request, contribution):
+        """Helper method to prepare contribution data from request"""
         # Create a properly structured data dictionary
         parsed_data = {
             'title': request.data.get('title', contribution.title),
@@ -439,29 +472,48 @@ class UserContributionView(APIView):
         if 'thumbnail_image' in request.FILES:
             parsed_data['thumbnail_image'] = request.FILES['thumbnail_image']
         
-        # Handle tags
+        # Process tags
+        parsed_data.update(self._process_tags(request))
+        
+        # Process videos
+        parsed_data.update(self._process_videos(request))
+        
+        # Process notes
+        parsed_data.update(self._process_notes(request))
+        
+        return parsed_data
+    
+    def _process_tags(self, request):
+        """Extract tags from request data"""
+        result = {}
         tags = []
         for key in request.data:
             if key.startswith('tags[') and key.endswith('][name]'):
                 tags.append({'name': request.data[key]})
         if tags:
-            parsed_data['tags'] = tags
-            
-        # Handle videos
+            result['tags'] = tags
+        return result
+    
+    def _process_videos(self, request):
+        """Extract videos from request data"""
+        result = {}
         videos = []
         video_titles = {}
         video_files = {}
         
+        # Extract video titles
         for key in request.data:
             if key.startswith('videos[') and '][title]' in key:
                 index = key.split('[')[1].split(']')[0]
                 video_titles[index] = request.data[key]
         
+        # Extract video files
         for key in request.FILES:
             if 'video_file' in key:
                 index = key.split('[')[1].split(']')[0]
                 video_files[index] = request.FILES[key]
         
+        # Combine titles and files
         for index in set(list(video_titles.keys()) + list(video_files.keys())):
             video = {}
             if index in video_titles:
@@ -472,49 +524,35 @@ class UserContributionView(APIView):
                 videos.append(video)
         
         if videos:
-            parsed_data['videos'] = videos
-            
-        # Handle notes
+            result['videos'] = videos
+        
+        return result
+    
+    def _process_notes(self, request):
+        """Extract notes from request data"""
+        result = {}
         notes = []
         for key in request.FILES:
             if 'note_file' in key:
                 notes.append({'note_file': request.FILES[key]})
         
         if notes:
-            parsed_data['notes'] = notes
+            result['notes'] = notes
         
-        logger.info(f"Parsed data for update: {parsed_data}")
-        
-        serializer = ContributionSerializer(contribution, data=parsed_data, partial=True)
-        if serializer.is_valid():
-            try:
-                updated_contribution = serializer.save()
-                return Response({
-                    'status': True, 
-                    'message': 'Updated', 
-                    'data': ContributionSerializer(updated_contribution).data
-                }, status=status.HTTP_200_OK)
-            except Exception:
-                logger.error(f"Error updating contributin")
-                return Response({
-                    'status': False,
-                    'message': f'Error updating contribution',
-                }, status=status.HTTP_400_BAD_REQUEST)
-        
-        logger.error(f"Validation errors: {serializer.errors}")
-        return Response({
-            'status': False, 
-            'message': 'Invalid data', 
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return result
 
     def delete(self, request, pk):
         try:
             contribution = Contributions.objects.get(id=pk, user=request.user)
             contribution.delete()
+            
+            # Invalidate cache for this contribution and list views
+            cache.delete(f"contribution_detail:{pk}")
+            cache.delete_pattern("contributions_list:*") if hasattr(cache, 'delete_pattern') else cache.clear()
+            
             return Response({'status': True, 'message': 'Deleted'}, status=status.HTTP_200_OK)
         except Contributions.DoesNotExist:
-            return Response({'status': False, 'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'status': False, 'message': NOT_FOUND_MSG}, status=status.HTTP_404_NOT_FOUND)
 
 class AllContributionView(APIView):
     """
@@ -574,7 +612,7 @@ class AllContributionView(APIView):
                     'user'
                 ).prefetch_related(
                     'tags',
-                    Prefetch('videos', queryset=contributionVideos.objects.only('id', 'title', 'video_file')),
+                    Prefetch('videos', queryset=ContributionVideos.objects.only('id', 'title', 'video_file')),
                     Prefetch('notes', queryset=ContributionNotes.objects.only('id', 'note_file')),
                     
                 ).get(id=pk)
@@ -635,7 +673,7 @@ class AllContributionView(APIView):
             except Exception:
                 return Response({
                     'status': False,
-                    'message': f'Invalid university ID'
+                    'message': 'Invalid university ID'
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
         if department_id:
@@ -644,7 +682,7 @@ class AllContributionView(APIView):
             except Exception:
                 return Response({
                     'status': False,
-                    'message': f'Invalid department ID'
+                    'message': 'Invalid department ID'
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
         if major_subject_id:
@@ -653,7 +691,7 @@ class AllContributionView(APIView):
             except Exception:
                 return Response({
                     'status': False,
-                    'message': f'Invalid major subject ID'
+                    'message': 'Invalid major subject ID'
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
         if user_id:
@@ -706,7 +744,7 @@ class AllContributionView(APIView):
                 'user'
             ).prefetch_related(
                 'tags',
-                Prefetch('videos', queryset=contributionVideos.objects.only('id', 'title', 'video_file')),
+                Prefetch('videos', queryset=ContributionVideos.objects.only('id', 'title', 'video_file')),
                 Prefetch('notes', queryset=ContributionNotes.objects.only('id', 'note_file')),
                 
             ).order_by('-created_at')
@@ -791,7 +829,7 @@ class ContributionCommentView(APIView):
         return Response(
             {
                 'status': False,
-                'message': 'Invalid data',
+                'message': INVALID_DATA_MSG,
                 'errors': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
 
@@ -947,7 +985,7 @@ class ContributionRatingView(APIView):
         
         return Response({
             'status': False,
-            'message': 'Invalid data',
+            'message': INVALID_DATA_MSG,
             'errors': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
 
