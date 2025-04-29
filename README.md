@@ -20,7 +20,7 @@
 
 ---
 
-## 👥 Team Members
+👥 ## Team Members
 - **mhtasnia** (Team Leader)  
 - **reshadMajumder**  
 - **Rokibul-Islam-Robi**
