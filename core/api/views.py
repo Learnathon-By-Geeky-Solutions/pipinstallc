@@ -501,10 +501,6 @@ class AllContributionView(APIView):
     - Filter by user: ?user=<uuid> (to find a specific user's contributions)
     - Can combine multiple filters
     
-    Optimizations:
-    - Database-level pagination
-    - Efficient querying of related fields
-    - Optional caching for frequently accessed pages
     """
     pagination_class = OptimizedPagination
 
