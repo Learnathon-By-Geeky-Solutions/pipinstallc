@@ -227,5 +227,19 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # Default cache timeout in seconds (5 minutes)
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,  # Maximum number of entries in cache
+            'CULL_FREQUENCY': 3,  # Fraction of entries to cull when max is reached (1/3)
+        }
     }
+}
+
+# Cache keys and timeouts for specific views
+CACHE_TIMEOUTS = {
+    'contributions_list': 300,  # 5 minutes for contribution listings
+    'contribution_detail': 600,  # 10 minutes for contribution details
+    'university_list': 3600,    # 1 hour for university listings
+    'department_list': 3600,    # 1 hour for department listings
+    'major_subject_list': 3600  # 1 hour for major subject listings
 }
