@@ -1,8 +1,38 @@
 from django.db import models
 from uuid import uuid4
-from auth_app.models import CustomUser
+from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+
+
+class University(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.name or "Unnamed University"
+    
+    class Meta:
+        verbose_name_plural = "Universities"
+
+
+class Department(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.name or "Unnamed Department"
+
+
+class MajorSubject(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.name or "Unnamed Major Subject"
+
+    class Meta:
+        verbose_name_plural = "Major Subjects"
 
 
 class Contributions(models.Model):
@@ -10,17 +40,17 @@ class Contributions(models.Model):
     Model for storing contributions of users.
     """
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(CustomUser, related_name='contributions', on_delete=models.CASCADE, null=True, blank=True)
-    title = models.CharField(max_length=255, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='contributions', on_delete=models.CASCADE, null=True, blank=True, db_index=True)
+    title = models.CharField(max_length=255, null=True, blank=True, db_index=True)
     description = models.TextField(null=True, blank=True)
     thumbnail_image = models.ImageField(upload_to='thumbnail_images/', null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    tags = models.ManyToManyField('Contribution_tags', related_name='contributions')
-    rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
-    related_University = models.CharField(max_length=255, null=True, blank=True)
-    related_Department = models.CharField(max_length=255, null=True, blank=True)
-    related_Major_Subject = models.CharField(max_length=255, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, db_index=True)
+    tags = models.ManyToManyField('ContributionTags', related_name='contributions')
+    rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True, db_index=True)
+    related_University = models.ForeignKey(University, related_name='contributions', on_delete=models.PROTECT, null=True, blank=True, db_index=True)
+    related_Department = models.ForeignKey(Department, related_name='contributions', on_delete=models.PROTECT, null=True, blank=True, db_index=True)
+    related_Major_Subject = models.ForeignKey(MajorSubject, related_name='contributions', on_delete=models.PROTECT, null=True, blank=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -28,8 +58,15 @@ class Contributions(models.Model):
             return self.title
         return f"Contribution {self.id}"
 
+    class Meta:
+        verbose_name_plural = "Contributions"
+        indexes = [
+            models.Index(fields=['created_at', 'rating']),
+            models.Index(fields=['related_University', 'related_Department', 'related_Major_Subject']),
+        ]
 
-class contribution_videos(models.Model):
+
+class contributionVideos(models.Model):
     """
     Model for storing contribution videos.
     """
@@ -41,7 +78,7 @@ class contribution_videos(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class Contribution_tags(models.Model):
+class ContributionTags(models.Model):
     """
     Model for storing tags of contributions.
     """
@@ -50,7 +87,7 @@ class Contribution_tags(models.Model):
 
 
 
-class Contribution_notes(models.Model):
+class ContributionNotes(models.Model):
     """
     Model for storing notes of contributions.
     """
@@ -61,13 +98,13 @@ class Contribution_notes(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class Contributions_comments(models.Model):
+class ContributionsComments(models.Model):
     """
     Model for storing comments of contributions.
     """
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     comment = models.TextField(null=True, blank=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
     contribution = models.ForeignKey(Contributions, on_delete=models.CASCADE, related_name='comments')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -78,12 +115,12 @@ class Contributions_comments(models.Model):
         return f"Comment {self.id}"
 
 
-class Contribution_ratings(models.Model):
+class ContributionRatings(models.Model):
     """
     Model for storing ratings of contributions.
     """
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ratings')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ratings')
     contribution = models.ForeignKey(Contributions, on_delete=models.CASCADE, related_name='ratings')
     rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -98,35 +135,14 @@ class Contribution_ratings(models.Model):
         unique_together = ['user', 'contribution']  # Prevent duplicate ratings
 
 
-class Enrollment(models.Model):
-    """
-    Model for tracking user enrollments in contributions
-    """
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='enrollments')
-    contribution = models.ForeignKey(Contributions, on_delete=models.CASCADE, related_name='enrollments')
-    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_status = models.CharField(max_length=20, choices=[
-        ('PENDING', 'Pending'),
-        ('COMPLETED', 'Completed'),
-        ('FAILED', 'Failed'),
-        ('CANCELLED', 'Cancelled')
-    ], default='PENDING')
-    enrolled_at = models.DateTimeField(auto_now_add=True)
-    payment_reference = models.CharField(max_length=100, blank=True, null=True)  # Store SSLCommerz transaction reference
-    payment_method = models.CharField(max_length=50, blank=True, null=True)  # Store payment method used
-    
-    class Meta:
-        unique_together = ['user', 'contribution']  # Prevent duplicate enrollments
 
-
-@receiver([post_save, post_delete], sender='api.Contribution_ratings')
+@receiver([post_save, post_delete], sender='api.ContributionRatings')
 def update_contribution_rating(sender, instance, **kwargs):
     """
     Update the contribution's average rating whenever a rating is added, updated, or deleted
     """
     contribution = instance.contribution
-    ratings = Contribution_ratings.objects.filter(contribution=contribution)
+    ratings = ContributionRatings.objects.filter(contribution=contribution)
     
     if ratings.exists():
         # Calculate average rating

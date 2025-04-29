@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'enrollments'
 ]
 
 MIDDLEWARE = [
@@ -69,7 +70,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -219,4 +220,12 @@ PAYMENT_REDIRECT_URLS = {
     'SUCCESS': f'{FRONTEND_URL}/payment-success/',
     'FAILED': f'{FRONTEND_URL}/payment-fail/',
     'CANCELLED': f'{FRONTEND_URL}/payment-cancel/',
+}
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
 }
