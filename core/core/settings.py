@@ -60,7 +60,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',   TODO uncomment this
+    'django.middleware.csrf.CsrfViewMiddleware',   
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -145,7 +145,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True  # TODO: Change to False in production
+CORS_ALLOW_ALL_ORIGINS = True  # Change to False in production
 
 # CORS_ALLOWED_ORIGINS = [
 #     'http://localhost:3000',
@@ -228,5 +228,26 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # Default cache timeout in seconds (5 minutes)
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,  # Maximum number of entries in cache
+            'CULL_FREQUENCY': 3,  # Fraction of entries to cull when max is reached (1/3)
+        }
     }
 }
+
+# Cache keys and timeouts for specific views
+CACHE_TIMEOUTS = {
+    'contributions_list': 300,  # 5 minutes for contribution listings
+    'contribution_detail': 600,  # 10 minutes for contribution details
+    'university_list': 3600,    # 1 hour for university listings
+    'department_list': 3600,    # 1 hour for department listings
+    'major_subject_list': 3600  # 1 hour for major subject listings
+}
+
+
+# Configuration for rate limiting
+MAX_LOGIN_ATTEMPTS = 5  # Maximum failed login attempts before rate limiting
+LOGIN_ATTEMPTS_TIMEOUT = 300  # Timeout in seconds (5 minutes) for login attempts
+MAX_REGISTER_ATTEMPTS = 6  # Maximum failed registration attempts
+REGISTER_ATTEMPTS_TIMEOUT = 3600  # Timeout in seconds (1 hour) for registration attempts 
