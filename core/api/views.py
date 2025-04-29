@@ -66,7 +66,6 @@ class UserInfoView(APIView):
             },
             status=status.HTTP_200_OK
         )
-
 class UniversityView(APIView):
     """
     API View for handling University operations
@@ -97,10 +96,10 @@ class UniversityView(APIView):
                 'status': False,
                 'message': 'University not found'
             }, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
+        except Exception:
             return Response({
                 'status': False,
-                'message': str(e)
+                'message': 'An error occurred while processing your request'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -125,10 +124,9 @@ class UniversityView(APIView):
                 'status': False,
                 'message': 'University with this name already exists'
             }, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
+        except Exception :
             return Response({
                 'status': False,
-                'message': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -162,10 +160,9 @@ class DepartmentView(APIView):
                 'status': False,
                 'message': 'Department not found'
             }, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
+        except Exception:
             return Response({
                 'status': False,
-                'message': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -190,10 +187,9 @@ class DepartmentView(APIView):
                 'status': False,
                 'message': 'Department with this name already exists'
             }, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
+        except Exception:
             return Response({
                 'status': False,
-                'message': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -227,10 +223,9 @@ class MajorSubjectView(APIView):
                 'status': False,
                 'message': 'Major Subject not found'
             }, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
+        except Exception:
             return Response({
                 'status': False,
-                'message': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
@@ -255,10 +250,9 @@ class MajorSubjectView(APIView):
                 'status': False,
                 'message': 'Major Subject with this name already exists'
             }, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
+        except Exception:
             return Response({
                 'status': False,
-                'message': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -453,11 +447,11 @@ class UserContributionView(APIView):
                     'message': 'Updated', 
                     'data': ContributionSerializer(updated_contribution).data
                 }, status=status.HTTP_200_OK)
-            except Exception as e:
-                logger.error(f"Error updating contribution: {str(e)}")
+            except Exception:
+                logger.error(f"Error updating contributin")
                 return Response({
                     'status': False,
-                    'message': f'Error updating contribution: {str(e)}',
+                    'message': f'Error updating contribution',
                 }, status=status.HTTP_400_BAD_REQUEST)
         
         logger.error(f"Validation errors: {serializer.errors}")
@@ -563,28 +557,28 @@ class AllContributionView(APIView):
         if university_id:
             try:
                 contributions = contributions.filter(related_University_id=university_id)
-            except Exception as e:
+            except Exception:
                 return Response({
                     'status': False,
-                    'message': f'Invalid university ID: {str(e)}'
+                    'message': f'Invalid university ID'
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
         if department_id:
             try:
                 contributions = contributions.filter(related_Department_id=department_id)
-            except Exception as e:
+            except Exception:
                 return Response({
                     'status': False,
-                    'message': f'Invalid department ID: {str(e)}'
+                    'message': f'Invalid department ID'
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
         if major_subject_id:
             try:
                 contributions = contributions.filter(related_Major_Subject_id=major_subject_id)
-            except Exception as e:
+            except Exception:
                 return Response({
                     'status': False,
-                    'message': f'Invalid major subject ID: {str(e)}'
+                    'message': f'Invalid major subject ID'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
         # Add ordering by created_at (newest first)
