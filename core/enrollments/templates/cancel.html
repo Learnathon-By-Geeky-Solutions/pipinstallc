@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Cancelled</title>
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .redirect-btn {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .hidden-data {
+            display: none;
+        }
+    </style>
+    <script>
+        // Auto-redirect after 3 seconds
+        window.onload = function() {
+            setTimeout(function() {
+                window.location.href = "{{ redirect_url }}";
+            }, 3000);
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Payment Cancelled</h2>
+        <p>Your payment was cancelled. You will be redirected in a few seconds...</p>
+        <a href="{{ redirect_url }}" class="redirect-btn">
+            Return to Dashboard
+        </a>
+        <div id="payment-data" class="hidden-data" data-redirect-url="{{ redirect_url }}"></div>
+    </div>
+</body>
+</html> 

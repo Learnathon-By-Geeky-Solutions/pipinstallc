@@ -8,7 +8,7 @@ from sslcommerz_lib import SSLCOMMERZ
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 import logging
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 
 
@@ -156,53 +156,11 @@ def payment_success(request, enrollment_id):
         # Get the redirect URL from settings
         redirect_url = settings.PAYMENT_REDIRECT_URLS['SUCCESS']
         
-        # Return HTML response with redirect button and embedded data
-        html_content = f"""
-        <html>
-        <head>
-            <title>Payment Success</title>
-            <style>
-                .container {{
-                    text-align: center;
-                    margin-top: 50px;
-                }}
-                .redirect-btn {{
-                    padding: 10px 20px;
-                    background-color: #6c2bb3;
-                    color: white;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    text-decoration: none;
-                    display: inline-block;
-                    margin-top: 20px;
-                }}
-                .hidden-data {{
-                    display: none;
-                }}
-            </style>
-            <script>
-                // Auto-redirect after 3 seconds
-                window.onload = function() {{
-                    setTimeout(function() {{
-                        window.location.href = "{redirect_url}";
-                    }}, 3000);
-                }};
-            </script>
-        </head>
-        <body>
-            <div class="container">
-                <h2>Payment Completed Successfully!</h2>
-                <p>You will be redirected in a few seconds...</p>
-                <a href="{redirect_url}" class="redirect-btn">
-                    Continue Now
-                </a>
-                <div id="payment-data" class="hidden-data" data-contribution-id="{contribution_id}" data-redirect-url="{redirect_url}"></div>
-            </div>
-        </body>
-        </html>
-        """
-        return HttpResponse(html_content)
+        # Return HTML response using the template
+        return render(request, 'success.html', {
+            'contribution_id': contribution_id,
+            'redirect_url': redirect_url
+        })
     
     # Production mode validation
     val_id = request.GET.get('val_id', '') or request.POST.get('val_id', '')
@@ -230,29 +188,21 @@ def payment_success(request, enrollment_id):
             if response.get('status') == 'VALID' or response.get('status') == 'SUCCESS':
                 enrollment.payment_status = 'COMPLETED'
                 enrollment.save()
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'Payment completed successfully',
-                    'redirect_url': '/dashboard/my-courses/'
+                
+                # Use redirect_url from settings
+                redirect_url = settings.PAYMENT_REDIRECT_URLS['SUCCESS']
+                contribution_id = str(enrollment.contribution.id)
+                
+                return render(request, 'success.html', {
+                    'contribution_id': contribution_id,
+                    'redirect_url': redirect_url
                 })
         except Exception as e:
             logger.error(f"SSLCommerz validation error: {str(e)}")
     
     # If we reach here, something went wrong
-    # logger.error(f"Payment validation failed for enrollment {enrollment_id}")
-    # logger.error(f"Status: {status}, val_id: {val_id}, tran_id: {tran_id}")
-    return JsonResponse({
-        'status': 'error',
-        'message': 'Payment validation failed',
-        'debug_info': {
-            'status': status,
-            'val_id': val_id,
-            'tran_id': tran_id,
-            'amount': amount,
-            'get_params': dict(request.GET),
-            'post_params': dict(request.POST)
-        }
-    }, status=400)
+    redirect_url = settings.PAYMENT_REDIRECT_URLS["FAILED"]
+    return render(request, 'fail.html', {'redirect_url': redirect_url})
 
 def payment_fail(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
@@ -265,25 +215,14 @@ def payment_fail(request, enrollment_id):
     enrollment.payment_status = 'FAILED'
     enrollment.save()
     
-    return JsonResponse({
-        'status': 'fail',
-        'message': 'Payment failed',
-        'redirect_url': '/dashboard/payment-failed/'
-    })
+    redirect_url = settings.PAYMENT_REDIRECT_URLS['FAILED']
+    return render(request, 'fail.html', {'redirect_url': redirect_url})
 
 def payment_cancel(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
     
-    # Log the cancellation
-    # logger.info(f"Payment cancelled for enrollment {enrollment_id}")
-    # logger.info(f"Request GET params: {request.GET}")
-    
-    # Update payment status
     enrollment.payment_status = 'CANCELLED'
     enrollment.save()
     
-    return JsonResponse({
-        'status': 'cancel',
-        'message': 'Payment canceled',
-        'redirect_url': '/dashboard/payment-cancelled/'
-    })
+    redirect_url = settings.PAYMENT_REDIRECT_URLS['CANCELLED']
+    return render(request, 'cancel.html', {'redirect_url': redirect_url})
