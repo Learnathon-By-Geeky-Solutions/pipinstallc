@@ -111,4 +111,7 @@ uploads/*
 # Ignore all files in the media directory
 media/*
 
-migrations/*
+# Ignore all migration files except __init__.py
+**/migrations/*
+!**/migrations/__init__.py
+

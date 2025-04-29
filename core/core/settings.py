@@ -50,9 +50,10 @@ INSTALLED_APPS = [
     'core',
     'auth_app',
     'api',
+    'enrollments',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'enrollments'
+    
 ]
 
 MIDDLEWARE = [
