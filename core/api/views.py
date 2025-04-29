@@ -20,6 +20,7 @@ from enrollments.models import Enrollment
 # Define constants for repeated string literals
 INVALID_DATA_MSG = 'Invalid data'
 NOT_FOUND_MSG = 'Not found'
+CONTRIBUTIONS_LIST_PATTERN = 'contributions_list:*'
 
 
 class OptimizedPagination(LimitOffsetPagination):
@@ -27,23 +28,29 @@ class OptimizedPagination(LimitOffsetPagination):
     max_limit = 100
 
 
-class ProfileView(APIView):
-    """
-    Get user profile data.
-    """
-    permission_classes = [IsAuthenticated]
-    def get(self, request):
-        user = request.user
-        serializer = UserSerializer(user)   
+# Helper methods to reduce code duplication
+def create_success_response(message, data=None, status_code=status.HTTP_200_OK):
+    """Create a standardized success response"""
+    response_data = {
+        'status': True,
+        'message': message
+    }
+    if data is not None:
+        response_data['data'] = data
+    return Response(response_data, status=status_code)
 
-        return Response(
-            {
-                'status': True,
-                'message': 'User profile fetched successfully',
-                'data': serializer.data
-            },
-            status=status.HTTP_200_OK
-        )
+def create_error_response(message, errors=None, status_code=status.HTTP_400_BAD_REQUEST):
+    """Create a standardized error response"""
+    response_data = {
+        'status': False,
+        'message': message
+    }
+    if errors is not None:
+        response_data['errors'] = errors
+    return Response(response_data, status=status_code)
+
+
+
 
 
 class UserInfoView(APIView):
@@ -53,28 +60,35 @@ class UserInfoView(APIView):
     permission_classes = [IsAuthenticated]
     def put(self, request):
         user = request.user
-        serializer = UserSerializer(user, data=request.data, partial=True)
+        data = request.data.copy()
+        
+        # Map the incoming IDs to the appropriate serializer fields
+        if 'university' in data and data['university']:
+            data['university_id'] = data.pop('university')
+        
+        if 'department' in data and data['department']:
+            data['department_id'] = data.pop('department')
+        
+        if 'major_subject' in data and data['major_subject']:
+            data['major_subject_id'] = data.pop('major_subject')
+            
+        serializer = UserSerializer(user, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                {
-                    'status': True,
-                    'message': 'User info updated successfully',
-                    'data':serializer.data
-                }, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return create_success_response(
+                'User info updated successfully',
+                serializer.data
+            )
+        return create_error_response(INVALID_DATA_MSG, serializer.errors)
     
     def get(self, request):
         user = request.user
         serializer = UserSerializer(user)
-        return Response(
-            {
-                'status': True,
-                'message': 'User info fetched successfully',    
-                'data': serializer.data
-            },
-            status=status.HTTP_200_OK
+        return create_success_response(
+            'User info fetched successfully',
+            serializer.data
         )
+
 class UniversityView(APIView):
     """
     API View for handling University operations
@@ -86,57 +100,34 @@ class UniversityView(APIView):
             if pk:
                 university = University.objects.get(id=pk)
                 serializer = UniversitySerializer(university)
-                return Response({
-                    'status': True,
-                    'message': 'University fetched successfully',
-                    'data': serializer.data
-                }, status=status.HTTP_200_OK)
+                return create_success_response('University fetched successfully', serializer.data)
             
             universities = University.objects.all()
             serializer = UniversitySerializer(universities, many=True)
-            return Response({
-                'status': True,
-                'message': 'Universities fetched successfully',
-                'data': serializer.data
-            }, status=status.HTTP_200_OK)
+            return create_success_response('Universities fetched successfully', serializer.data)
             
         except ObjectDoesNotExist:
-            return Response({
-                'status': False,
-                'message': 'University not found'
-            }, status=status.HTTP_404_NOT_FOUND)
+            return create_error_response('University not found', status_code=status.HTTP_404_NOT_FOUND)
         except Exception:
-            return Response({
-                'status': False,
-                'message': 'An error occurred while processing your request'
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         try:
             serializer = UniversitySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({
-                    'status': True,
-                    'message': 'University created successfully',
-                    'data': serializer.data
-                }, status=status.HTTP_201_CREATED)
+                return create_success_response(
+                    'University created successfully', 
+                    serializer.data, 
+                    status_code=status.HTTP_201_CREATED
+                )
             
-            return Response({
-                'status': False,
-                'message': INVALID_DATA_MSG,
-                'errors': serializer.errors
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return create_error_response(INVALID_DATA_MSG, serializer.errors)
             
         except IntegrityError:
-            return Response({
-                'status': False,
-                'message': 'University with this name already exists'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        except Exception :
-            return Response({
-                'status': False,
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response('University with this name already exists')
+        except Exception:
+            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class DepartmentView(APIView):
@@ -150,56 +141,34 @@ class DepartmentView(APIView):
             if pk:
                 department = Department.objects.get(id=pk)
                 serializer = DepartmentSerializer(department)
-                return Response({
-                    'status': True,
-                    'message': 'Department fetched successfully',
-                    'data': serializer.data
-                }, status=status.HTTP_200_OK)
+                return create_success_response('Department fetched successfully', serializer.data)
             
             departments = Department.objects.all()
             serializer = DepartmentSerializer(departments, many=True)
-            return Response({
-                'status': True,
-                'message': 'Departments fetched successfully',
-                'data': serializer.data
-            }, status=status.HTTP_200_OK)
+            return create_success_response('Departments fetched successfully', serializer.data)
             
         except ObjectDoesNotExist:
-            return Response({
-                'status': False,
-                'message': 'Department not found'
-            }, status=status.HTTP_404_NOT_FOUND)
+            return create_error_response('Department not found', status_code=status.HTTP_404_NOT_FOUND)
         except Exception:
-            return Response({
-                'status': False,
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         try:
             serializer = DepartmentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({
-                    'status': True,
-                    'message': 'Department created successfully',
-                    'data': serializer.data
-                }, status=status.HTTP_201_CREATED)
+                return create_success_response(
+                    'Department created successfully', 
+                    serializer.data, 
+                    status_code=status.HTTP_201_CREATED
+                )
             
-            return Response({
-                'status': False,
-                'message': INVALID_DATA_MSG,
-                'errors': serializer.errors
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return create_error_response(INVALID_DATA_MSG, serializer.errors)
             
         except IntegrityError:
-            return Response({
-                'status': False,
-                'message': 'Department with this name already exists'
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return create_error_response('Department with this name already exists')
         except Exception:
-            return Response({
-                'status': False,
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class MajorSubjectView(APIView):
@@ -213,56 +182,34 @@ class MajorSubjectView(APIView):
             if pk:
                 major_subject = MajorSubject.objects.get(id=pk)
                 serializer = MajorSubjectSerializer(major_subject)
-                return Response({
-                    'status': True,
-                    'message': 'Major Subject fetched successfully',
-                    'data': serializer.data
-                }, status=status.HTTP_200_OK)
+                return create_success_response('Major Subject fetched successfully', serializer.data)
             
             major_subjects = MajorSubject.objects.all()
             serializer = MajorSubjectSerializer(major_subjects, many=True)
-            return Response({
-                'status': True,
-                'message': 'Major Subjects fetched successfully',
-                'data': serializer.data
-            }, status=status.HTTP_200_OK)
+            return create_success_response('Major Subjects fetched successfully', serializer.data)
             
         except ObjectDoesNotExist:
-            return Response({
-                'status': False,
-                'message': 'Major Subject not found'
-            }, status=status.HTTP_404_NOT_FOUND)
+            return create_error_response('Major Subject not found', status_code=status.HTTP_404_NOT_FOUND)
         except Exception:
-            return Response({
-                'status': False,
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         try:
             serializer = MajorSubjectSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({
-                    'status': True,
-                    'message': 'Major Subject created successfully',
-                    'data': serializer.data
-                }, status=status.HTTP_201_CREATED)
+                return create_success_response(
+                    'Major Subject created successfully', 
+                    serializer.data, 
+                    status_code=status.HTTP_201_CREATED
+                )
             
-            return Response({
-                'status': False,
-                'message': INVALID_DATA_MSG,
-                'errors': serializer.errors
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return create_error_response(INVALID_DATA_MSG, serializer.errors)
             
         except IntegrityError:
-            return Response({
-                'status': False,
-                'message': 'Major Subject with this name already exists'
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return create_error_response('Major Subject with this name already exists')
         except Exception:
-            return Response({
-                'status': False,
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return create_error_response('An error occurred while processing your request', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -276,9 +223,9 @@ class UserContributionView(APIView):
             try:
                 contribution = Contributions.objects.get(id=pk, user=user)
                 serializer = ContributionSerializer(contribution)
-                return Response({'status': True, 'message': 'Success', 'data': serializer.data}, status=status.HTTP_200_OK)
+                return create_success_response('Success', serializer.data)
             except Contributions.DoesNotExist:
-                return Response({'status': False, 'message': NOT_FOUND_MSG}, status=status.HTTP_404_NOT_FOUND)
+                return create_error_response(NOT_FOUND_MSG, status_code=status.HTTP_404_NOT_FOUND)
         
         # Get filter parameter for major subject
         major_subject_id = request.query_params.get('major_subject')
@@ -291,10 +238,7 @@ class UserContributionView(APIView):
             try:
                 contributions = contributions.filter(related_Major_Subject_id=major_subject_id)
             except Exception:
-                return Response({
-                    'status': False,
-                    'message': 'Invalid major subject ID'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return create_error_response('Invalid major subject ID')
         
         # Order by newest first
         contributions = contributions.order_by('-created_at')
@@ -336,25 +280,17 @@ class UserContributionView(APIView):
         serializer = ContributionSerializer(data=parsed_data)
         
         if serializer.is_valid():
-            contribution = serializer.save(user=request.user)
+            serializer.save(user=request.user)
             
             # Invalidate cache for list views
-            cache.delete_pattern("contributions_list:*") if hasattr(cache, 'delete_pattern') else cache.clear()
+            cache.delete_pattern(CONTRIBUTIONS_LIST_PATTERN) if hasattr(cache, 'delete_pattern') else cache.clear()
             
-            return Response({
-                'status': True, 
-                'message': 'Created', 
-                'data': serializer.data
-            }, status=status.HTTP_201_CREATED)
+            return create_success_response('Created', serializer.data, status_code=status.HTTP_201_CREATED)
         
         # Log validation errors for debugging
         logger.error(f"Validation errors: {serializer.errors}")
         
-        return Response({
-            'status': False, 
-            'message': INVALID_DATA_MSG, 
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return create_error_response(INVALID_DATA_MSG, serializer.errors)
 
     def _prepare_post_data(self, request):
         """Helper method to prepare contribution data from request for post"""
@@ -374,8 +310,14 @@ class UserContributionView(APIView):
         
         # Process tags, videos and notes
         parsed_data.update(self._process_tags(request))
+        parsed_data.update(self._process_post_videos(request))
+        parsed_data.update(self._process_notes(request))
         
-        # Handle videos specifically for post
+        return parsed_data
+        
+    def _process_post_videos(self, request):
+        """Process videos specifically for post method"""
+        result = {}
         videos = []
         video_titles = {}
         video_files = {}
@@ -403,18 +345,33 @@ class UserContributionView(APIView):
                 videos.append(video)
         
         if videos:
-            parsed_data['videos'] = videos
-        
-        # Handle notes
+            result['videos'] = videos
+            
+        return result
+
+    def _process_tags(self, request):
+        """Extract tags from request data"""
+        result = {}
+        tags = []
+        for key in request.data:
+            if key.startswith('tags[') and key.endswith('][name]'):
+                tags.append({'name': request.data[key]})
+        if tags:
+            result['tags'] = tags
+        return result
+    
+    def _process_notes(self, request):
+        """Extract notes from request data"""
+        result = {}
         notes = []
         for key in request.FILES:
             if 'note_file' in key:
                 notes.append({'note_file': request.FILES[key]})
         
         if notes:
-            parsed_data['notes'] = notes
-            
-        return parsed_data
+            result['notes'] = notes
+        
+        return result
 
     def put(self, request, pk):
         import logging
@@ -423,7 +380,7 @@ class UserContributionView(APIView):
         try:
             contribution = Contributions.objects.get(id=pk, user=request.user)
         except Contributions.DoesNotExist:
-            return Response({'status': False, 'message': NOT_FOUND_MSG}, status=status.HTTP_404_NOT_FOUND)
+            return create_error_response(NOT_FOUND_MSG, status_code=status.HTTP_404_NOT_FOUND)
         
         # Extract contribution data processing to reduce complexity
         parsed_data = self._prepare_contribution_data(request, contribution)
@@ -435,27 +392,32 @@ class UserContributionView(APIView):
                 
                 # Invalidate cache for this contribution and list views
                 cache.delete(f"contribution_detail:{pk}")
-                cache.delete_pattern("contributions_list:*") if hasattr(cache, 'delete_pattern') else cache.clear()
+                cache.delete_pattern(CONTRIBUTIONS_LIST_PATTERN) if hasattr(cache, 'delete_pattern') else cache.clear()
                 
-                return Response({
-                    'status': True, 
-                    'message': 'Updated', 
-                    'data': ContributionSerializer(updated_contribution).data
-                }, status=status.HTTP_200_OK)
+                return create_success_response(
+                    'Updated', 
+                    ContributionSerializer(updated_contribution).data
+                )
             except Exception:
                 logger.error("Error updating contribution")
-                return Response({
-                    'status': False,
-                    'message': 'Error updating contribution',
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return create_error_response('Error updating contribution')
         
         logger.error(f"Validation errors: {serializer.errors}")
-        return Response({
-            'status': False, 
-            'message': INVALID_DATA_MSG, 
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
-        
+        return create_error_response(INVALID_DATA_MSG, serializer.errors)
+
+    def delete(self, request, pk):
+        try:
+            contribution = Contributions.objects.get(id=pk, user=request.user)
+            contribution.delete()
+            
+            # Invalidate cache for this contribution and list views
+            cache.delete(f"contribution_detail:{pk}")
+            cache.delete_pattern(CONTRIBUTIONS_LIST_PATTERN) if hasattr(cache, 'delete_pattern') else cache.clear()
+            
+            return create_success_response('Deleted')
+        except Contributions.DoesNotExist:
+            return create_error_response(NOT_FOUND_MSG, status_code=status.HTTP_404_NOT_FOUND)
+
     def _prepare_contribution_data(self, request, contribution):
         """Helper method to prepare contribution data from request"""
         # Create a properly structured data dictionary
@@ -482,17 +444,6 @@ class UserContributionView(APIView):
         parsed_data.update(self._process_notes(request))
         
         return parsed_data
-    
-    def _process_tags(self, request):
-        """Extract tags from request data"""
-        result = {}
-        tags = []
-        for key in request.data:
-            if key.startswith('tags[') and key.endswith('][name]'):
-                tags.append({'name': request.data[key]})
-        if tags:
-            result['tags'] = tags
-        return result
     
     def _process_videos(self, request):
         """Extract videos from request data"""
@@ -541,19 +492,6 @@ class UserContributionView(APIView):
         
         return result
 
-    def delete(self, request, pk):
-        try:
-            contribution = Contributions.objects.get(id=pk, user=request.user)
-            contribution.delete()
-            
-            # Invalidate cache for this contribution and list views
-            cache.delete(f"contribution_detail:{pk}")
-            cache.delete_pattern("contributions_list:*") if hasattr(cache, 'delete_pattern') else cache.clear()
-            
-            return Response({'status': True, 'message': 'Deleted'}, status=status.HTTP_200_OK)
-        except Contributions.DoesNotExist:
-            return Response({'status': False, 'message': NOT_FOUND_MSG}, status=status.HTTP_404_NOT_FOUND)
-
 class AllContributionView(APIView):
     """
     Get all contributions with optional filtering and optimized pagination
@@ -597,46 +535,48 @@ class AllContributionView(APIView):
     def get(self, request, pk=None):
         # For individual contribution detail view
         if pk:
-            # For individual contribution, use a different cache key
-            cache_key = f"contribution_detail:{pk}"
-            cached_response = cache.get(cache_key)
-            if cached_response:
-                return Response(cached_response)
-                
-            try:
-                # Only select the related fields we actually need
-                contribution = Contributions.objects.select_related(
-                    'related_University',
-                    'related_Department',
-                    'related_Major_Subject',
-                    'user'
-                ).prefetch_related(
-                    'tags',
-                    Prefetch('videos', queryset=ContributionVideos.objects.only('id', 'title', 'video_file')),
-                    Prefetch('notes', queryset=ContributionNotes.objects.only('id', 'note_file')),
-                    
-                ).get(id=pk)
-                
-                serializer = AllContributionSerializer(contribution, context={'request': request})
-                response_data = {
-                    'status': True,
-                    'message': 'Contribution fetched successfully',
-                    'data': serializer.data
-                }
-                
-                # Cache individual contribution detail
-                cache_timeout = getattr(settings, 'CACHE_TIMEOUTS', {}).get('contribution_detail', 600)
-                cache.set(cache_key, response_data, timeout=cache_timeout)
-                
-                return Response(response_data, status=status.HTTP_200_OK)
-            except Contributions.DoesNotExist:
-                return Response({
-                    'status': False,
-                    'message': 'Contribution not found'
-                }, status=status.HTTP_404_NOT_FOUND)
+            return self._get_contribution_detail(request, pk)
 
-        # For listing view with milions of records
+        # For listing view with millions of records
+        return self._get_contribution_list(request)
         
+    def _get_contribution_detail(self, request, pk):
+        # For individual contribution, use a different cache key
+        cache_key = f"contribution_detail:{pk}"
+        cached_response = cache.get(cache_key)
+        if cached_response:
+            return Response(cached_response)
+            
+        try:
+            # Only select the related fields we actually need
+            contribution = Contributions.objects.select_related(
+                'related_University',
+                'related_Department',
+                'related_Major_Subject',
+                'user'
+            ).prefetch_related(
+                'tags',
+                Prefetch('videos', queryset=ContributionVideos.objects.only('id', 'title', 'video_file')),
+                Prefetch('notes', queryset=ContributionNotes.objects.only('id', 'note_file')),
+                
+            ).get(id=pk)
+            
+            serializer = AllContributionSerializer(contribution, context={'request': request})
+            response_data = {
+                'status': True,
+                'message': 'Contribution fetched successfully',
+                'data': serializer.data
+            }
+            
+            # Cache individual contribution detail
+            cache_timeout = getattr(settings, 'CACHE_TIMEOUTS', {}).get('contribution_detail', 600)
+            cache.set(cache_key, response_data, timeout=cache_timeout)
+            
+            return Response(response_data, status=status.HTTP_200_OK)
+        except Contributions.DoesNotExist:
+            return create_error_response('Contribution not found', status_code=status.HTTP_404_NOT_FOUND)
+            
+    def _get_contribution_list(self, request):
         # Build filter query params
         filter_params = {}
         university_id = request.query_params.get('university')
@@ -651,6 +591,51 @@ class AllContributionView(APIView):
         if cached_response:
             return Response(cached_response)
 
+        # Get filtered contributions queryset
+        contributions = self._get_filtered_contributions(
+            filter_params, 
+            university_id, 
+            department_id, 
+            major_subject_id, 
+            user_id, 
+            tag_name
+        )
+        
+        # Add ordering by created_at (newest first)
+        contributions = contributions.order_by('-created_at')
+        
+        # Get count efficiently without retrieving all objects
+        # For millions of records, we need to optimize count as well
+        try:
+            total_count = contributions.count()
+        except:
+            # Fallback if count() is too slow
+            total_count = None
+        
+        # Apply pagination - critical for millions of records
+        paginator = self.pagination_class()
+        paginated_qs = paginator.paginate_queryset(contributions, request)
+        
+        # Process paginated results
+        response_data = self._process_paginated_results(
+            paginated_qs, 
+            request, 
+            total_count, 
+            paginator, 
+            university_id, 
+            department_id, 
+            major_subject_id, 
+            user_id, 
+            tag_name
+        )
+
+        # Get cache timeout from settings or use default (5 minutes)
+        cache_timeout = getattr(settings, 'CACHE_TIMEOUTS', {}).get('contributions_list', 300)
+        cache.set(cache_key, response_data, timeout=cache_timeout)
+
+        return Response(response_data, status=status.HTTP_200_OK)
+        
+    def _get_filtered_contributions(self, filter_params, university_id, department_id, major_subject_id, user_id, tag_name):
         # Start with optimized queryset - only select needed fields to reduce memory usage
         # For large datasets, we want to be very specific about what we fetch
         contributions = Contributions.objects.only(
@@ -671,37 +656,25 @@ class AllContributionView(APIView):
             try:
                 filter_params['related_University_id'] = university_id
             except Exception:
-                return Response({
-                    'status': False,
-                    'message': 'Invalid university ID'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return create_error_response('Invalid university ID')
                 
         if department_id:
             try:
                 filter_params['related_Department_id'] = department_id
             except Exception:
-                return Response({
-                    'status': False,
-                    'message': 'Invalid department ID'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return create_error_response('Invalid department ID')
                 
         if major_subject_id:
             try:
                 filter_params['related_Major_Subject_id'] = major_subject_id
             except Exception:
-                return Response({
-                    'status': False,
-                    'message': 'Invalid major subject ID'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return create_error_response('Invalid major subject ID')
                 
         if user_id:
             try:
                 filter_params['user_id'] = user_id
             except Exception:
-                return Response({
-                    'status': False,
-                    'message': 'Invalid user ID'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return create_error_response('Invalid user ID')
         
         # Apply all filters at once for better performance
         if filter_params:
@@ -712,28 +685,13 @@ class AllContributionView(APIView):
             try:
                 contributions = contributions.filter(tags__name__icontains=tag_name).distinct()
             except Exception:
-                return Response({
-                    'status': False,
-                    'message': 'Invalid tag name'
-                }, status=status.HTTP_400_BAD_REQUEST)
-
-        # Add ordering by created_at (newest first)
-        contributions = contributions.order_by('-created_at')
+                return create_error_response('Invalid tag name')
+                
+        return contributions
         
-        # Get count efficiently without retrieving all objects
-        # For milions of records, we need to optimize count as well
-        try:
-            total_count = contributions.count()
-        except:
-            # Fallback if count() is too slow
-            total_count = None
-        
-        # Apply pagination - critical for milions of records
-        paginator = self.pagination_class()
-        paginated_qs = paginator.paginate_queryset(contributions, request)
-        
+    def _process_paginated_results(self, paginated_qs, request, total_count, paginator, university_id, department_id, major_subject_id, user_id, tag_name):
         # Only after pagination, load the related objects for the paginated subset
-        # This is key for handling milions of records - only load relations for the current page
+        # This is key for handling millions of records - only load relations for the current page
         ids_in_page = [item.id for item in paginated_qs]
         if ids_in_page:
             # Now get complete data only for the paginated items
@@ -754,7 +712,7 @@ class AllContributionView(APIView):
             serializer = AllContributionSerializer([], many=True, context={'request': request})
         
         # Build response with pagination details
-        response_data = {
+        return {
             'status': True,
             'message': 'Contributions fetched successfully',
             'filters_applied': {
@@ -773,12 +731,6 @@ class AllContributionView(APIView):
             },
             'data': serializer.data
         }
-
-        # Get cache timeout from settings or use default (5 minutes)
-        cache_timeout = getattr(settings, 'CACHE_TIMEOUTS', {}).get('contributions_list', 300)
-        cache.set(cache_key, response_data, timeout=cache_timeout)
-
-        return Response(response_data, status=status.HTTP_200_OK)
 
 
 
@@ -806,12 +758,7 @@ class ContributionCommentView(APIView):
         else:
             comments = ContributionsComments.objects.all()
             serializer = ContributionCommentSerializer(comments, many=True)
-        return Response(
-            {
-                'status': True,
-                'message': 'Comments fetched successfully',
-                'data': serializer.data
-            }, status=status.HTTP_200_OK)
+        return create_success_response('Comments fetched successfully', serializer.data)
 
     def post(self, request):
         """
@@ -820,18 +767,12 @@ class ContributionCommentView(APIView):
         serializer = ContributionCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                {
-                    'status': True,
-                    'message': 'Comment Posted successfully',
-                    'data': serializer.data
-                }, status=status.HTTP_201_CREATED)
-        return Response(
-            {
-                'status': False,
-                'message': INVALID_DATA_MSG,
-                'errors': serializer.errors
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return create_success_response(
+                'Comment Posted successfully',
+                serializer.data,
+                status_code=status.HTTP_201_CREATED
+            )
+        return create_error_response(INVALID_DATA_MSG, serializer.errors)
 
 
 
@@ -843,17 +784,12 @@ class ContributionCommentView(APIView):
         comment = get_object_or_404(ContributionsComments, id=comment_id, contribution=contribution)
         if comment.user.id == request.user.id:
             comment.delete()
-            return Response(
-                {
-                    'status': True,
-                    'message': 'Comment deleted successfully',
-                }, status=status.HTTP_200_OK)
+            return create_success_response('Comment deleted successfully')
         else:
-            return Response(
-                {
-                    'status': False,
-                    'message': 'You do not have permission to delete this comment',
-                }, status=status.HTTP_403_FORBIDDEN)
+            return create_error_response(
+                'You do not have permission to delete this comment',
+                status_code=status.HTTP_403_FORBIDDEN
+            )
         
     def put(self, request, contribution_id, comment_id):
         """
@@ -865,18 +801,12 @@ class ContributionCommentView(APIView):
             serializer = ContributionCommentSerializer(comment, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(
-                    {
-                        'status': True,
-                        'message': 'Comment updated successfully',
-                        'data': serializer.data
-                    }, status=status.HTTP_200_OK)
+                return create_success_response('Comment updated successfully', serializer.data)
         else:
-            return Response(
-                {
-                    'status': False,
-                    'message': 'You do not have permission to update this comment',
-                }, status=status.HTTP_403_FORBIDDEN)
+            return create_error_response(
+                'You do not have permission to update this comment',
+                status_code=status.HTTP_403_FORBIDDEN
+            )
         
 class ContributionRatingView(APIView):
     """
@@ -905,30 +835,22 @@ class ContributionRatingView(APIView):
             
             if rating:
                 serializer = ContributionRatingSerializer(rating)
-                return Response({
-                    'status': True,
-                    'message': 'User rating fetched successfully',
-                    'data': serializer.data
-                }, status=status.HTTP_200_OK)
+                return create_success_response('User rating fetched successfully', serializer.data)
             else:
-                return Response({
-                    'status': False,
-                    'message': 'You have not rated this contribution yet'
-                }, status=status.HTTP_404_NOT_FOUND)
+                return create_error_response(
+                    'You have not rated this contribution yet',
+                    status_code=status.HTTP_404_NOT_FOUND
+                )
         else:
             # Get all ratings for the contribution
             ratings = ContributionRatings.objects.filter(contribution=contribution)
             serializer = ContributionRatingSerializer(ratings, many=True)
             
-            return Response({
-                'status': True,
-                'message': 'Ratings fetched successfully',
-                'data': {
-                    'average_rating': contribution.rating,
-                    'total_ratings': ratings.count(),
-                    'ratings': serializer.data
-                }
-            }, status=status.HTTP_200_OK)
+            return create_success_response('Ratings fetched successfully', {
+                'average_rating': contribution.rating,
+                'total_ratings': ratings.count(),
+                'ratings': serializer.data
+            })
     
     def post(self, request, contribution_id):
         """
@@ -944,10 +866,10 @@ class ContributionRatingView(APIView):
         ).exists()
         
         if not is_enrolled:
-            return Response({
-                'status': False,
-                'message': 'You must be enrolled in this contribution to rate it'
-            }, status=status.HTTP_403_FORBIDDEN)
+            return create_error_response(
+                'You must be enrolled in this contribution to rate it',
+                status_code=status.HTTP_403_FORBIDDEN
+            )
         
         # Add user and contribution to request data
         data = request.data.copy()
@@ -959,15 +881,15 @@ class ContributionRatingView(APIView):
         try:
             rating_value = float(rating_value)
             if rating_value < 0 or rating_value > 5:
-                return Response({
-                    'status': False,
-                    'message': 'Rating must be between 0 and 5'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return create_error_response(
+                    'Rating must be between 0 and 5',
+                    status_code=status.HTTP_400_BAD_REQUEST
+                )
         except (TypeError, ValueError):
-            return Response({
-                'status': False,
-                'message': 'Rating must be a number between 0 and 5'
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return create_error_response(
+                'Rating must be a number between 0 and 5',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
         
         serializer = ContributionRatingSerializer(data=data)
         if serializer.is_valid():
@@ -975,18 +897,12 @@ class ContributionRatingView(APIView):
             
             # The signal handler will update the contribution's rating automatically
             
-            return Response({
-                'status': True,
-                'message': 'Rating submitted successfully',
-                'data': {
-                    'rating': serializer.data,
-                }
-            }, status=status.HTTP_201_CREATED)
+            return create_success_response(
+                'Rating submitted successfully',
+                {'rating': serializer.data},
+                status_code=status.HTTP_201_CREATED
+            )
         
-        return Response({
-            'status': False,
-            'message': INVALID_DATA_MSG,
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return create_error_response(INVALID_DATA_MSG, serializer.errors)
 
 

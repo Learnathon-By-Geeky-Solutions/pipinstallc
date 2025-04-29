@@ -1,12 +1,11 @@
 from django.urls import path
 from .views import (
-    ProfileView, UserInfoView, UserContributionView, 
+    UserInfoView, UserContributionView, 
     ContributionCommentView, AllContributionView,
     ContributionRatingView, UniversityView, DepartmentView, MajorSubjectView
 )
 
 urlpatterns = [
-    path('profile/', ProfileView.as_view(), name='profile'),
     path('user-info/', UserInfoView.as_view(), name='add-user-info'),
     # contribution urls for registered user to view their contributions
     path('user-contributions/', UserContributionView.as_view(), name='contributions'),
