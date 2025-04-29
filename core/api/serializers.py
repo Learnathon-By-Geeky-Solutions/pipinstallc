@@ -5,22 +5,13 @@ from django.shortcuts import get_object_or_404
 from django.db import models
 from enrollments.models import Enrollment
 
+
 # Define constants for repeated string literals
 NAME_WHITESPACE_ERROR = "Name cannot be empty or just whitespace"
 
 """
 Serializer for custom User model.
 """
-class UserSerializer(serializers.ModelSerializer):
-    '''
-    Serializer for custom User model.
-    user can view their profile and update their profile
-    user must be authenticated to view their profile
-    user can view a single user by id
-    '''
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number', 'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject']
 
 class UniversitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,6 +43,46 @@ class MajorSubjectSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(NAME_WHITESPACE_ERROR)
         return value
     
+    
+class UserSerializer(serializers.ModelSerializer):
+
+    '''
+    Serializer for custom User model.
+    user can view their profile and update their profile
+    user must be authenticated to view their profile
+    user can view a single user by id
+    '''
+    university = UniversitySerializer(read_only=True)
+    department = DepartmentSerializer(read_only=True)
+    major_subject = MajorSubjectSerializer(read_only=True)
+    
+    # Fields that should be read-only and not modifiable by users
+    is_email_verified = serializers.BooleanField(read_only=True)
+    is_profile_verified = serializers.BooleanField(read_only=True)
+    
+    # Write-only fields for updating with just IDs
+    university_id = serializers.UUIDField(write_only=True, required=False)
+    department_id = serializers.UUIDField(write_only=True, required=False)
+    major_subject_id = serializers.UUIDField(write_only=True, required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'profile_picture', 'is_email_verified', 'phone_number', 'is_profile_verified', 'date_of_birth', 'university', 'department', 'major_subject', 'university_id', 'department_id', 'major_subject_id']
+    
+    def update(self, instance, validated_data):
+        # Handle the ID fields and remove them from validated_data
+        if 'university_id' in validated_data:
+            instance.university_id = validated_data.pop('university_id')
+        if 'department_id' in validated_data:
+            instance.department_id = validated_data.pop('department_id')
+        if 'major_subject_id' in validated_data:
+            instance.major_subject_id = validated_data.pop('major_subject_id')
+        
+        # Update the instance with remaining fields
+        return super().update(instance, validated_data)
+
+
+
 class ContributionVideoSerializer(serializers.ModelSerializer):
     """
     Serializer for contribution videos
