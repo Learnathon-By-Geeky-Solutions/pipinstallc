@@ -88,7 +88,7 @@ class APITest(APITestCase):
 from django.test import TestCase
 from django.contrib.admin.sites import site
 from api.models import (
-    Contributions, ContributionTags, contributionVideos, ContributionNotes,
+    Contributions, ContributionTags, ContributionVideos, ContributionNotes,
     ContributionsComments, ContributionRatings
 )
 
@@ -96,7 +96,7 @@ class ApiAdminTest(TestCase):
     def test_models_registered(self):
         """Test that all models are registered in the admin site."""
         models = [
-            Contributions, ContributionTags, contributionVideos,
+            Contributions, ContributionTags, ContributionVideos,
             ContributionNotes, ContributionsComments, ContributionRatings
         ]
         for model in models:
