@@ -1,4 +1,4 @@
-export const BaseUrl = "https://pipinstallc.onrender.com"
+export const BaseUrl = "https://edusphare.pythonanywhere.com"
 
 export const signup = async (data) => {
     try {
