@@ -173,7 +173,7 @@ To explore and test the API endpoints of **EduSphere**, you can use the Postman 
 ### 🔧 How to Run
 
 1. 📥 **[Download Postman Collection](postman/edusphere.postman_collection.json)**  
-   *(Make sure the file path is correct in your repo)*
+  
 
 2. 🚀 **Import into Postman**
    - Open Postman  
