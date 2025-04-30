@@ -199,6 +199,8 @@ git clone https://github.com/Learnathon-By-Geeky-Solutions/pipinstallc.git
 
 #create virtual environment& activate
 # Install dependencies
+#change the API url to [BaseUrl = "http://127.0.0.1:8000";] indise src/data/ApiCalls.js
+
 cd frontend && npm install
 cd backend && pip install -r requirements.txt
 
