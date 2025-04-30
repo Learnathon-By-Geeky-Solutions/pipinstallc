@@ -16,6 +16,7 @@ function Contributions() {
   const filterRef = useRef(null);
   const [userEnrollments, setUserEnrollments] = useState([]);
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Pagination state
   const [pagination, setPagination] = useState({
@@ -32,45 +33,9 @@ function Contributions() {
     department: '',
     major_subject: '',
     tag: '',
-    user: ''
+    user: '',
+    search: ''
   });
-  
-  // Universities, departments, and major subjects data
-  const [universities, setUniversities] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [majorSubjects, setMajorSubjects] = useState([]);
-
-  // Fetch filter options when component mounts
-  useEffect(() => {
-    const fetchFilterOptions = async () => {
-      try {
-        // Fetch universities
-        const uniResponse = await fetch(`${BaseUrl}/api/universities/`);
-        const uniResult = await uniResponse.json();
-        if (uniResult.status) {
-          setUniversities(uniResult.data);
-        }
-        
-        // Fetch departments
-        const deptResponse = await fetch(`${BaseUrl}/api/departments/`);
-        const deptResult = await deptResponse.json();
-        if (deptResult.status) {
-          setDepartments(deptResult.data);
-        }
-        
-        // Fetch major subjects
-        const subjectResponse = await fetch(`${BaseUrl}/api/major-subjects/`);
-        const subjectResult = await subjectResponse.json();
-        if (subjectResult.status) {
-          setMajorSubjects(subjectResult.data);
-        }
-      } catch (error) {
-        console.error('Error fetching filter options:', error);
-      }
-    };
-
-    fetchFilterOptions();
-  }, []);
 
   // Function to build the API URL with filters and pagination
   const buildApiUrl = () => {
@@ -87,6 +52,7 @@ function Contributions() {
     if (filters.major_subject) params.append('major_subject', filters.major_subject);
     if (filters.tag) params.append('tag', filters.tag);
     if (filters.user) params.append('user', filters.user);
+    if (filters.search) params.append('search', filters.search);
     
     // Append query parameters to URL if they exist
     const queryString = params.toString();
@@ -254,14 +220,47 @@ function Contributions() {
     return userEnrollments.includes(contributionId);
   };
 
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Handle search submission
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setFilters(prev => ({
+      ...prev,
+      search: searchQuery
+    }));
+    setPagination(prev => ({
+      ...prev,
+      offset: 0
+    }));
+  };
+
   return (
     <div className="contributions-page">
       <Navbar />
       <div className="contributions-content">
-        <h1 style={{color: '#6c2bb3'}}>All the exam preparations you need in one place</h1>
+        <h1>All the exam preparations you need in one place</h1>
         <p className="subtitle">From critical skills to exam topics, edusphere supports your development.</p>
         
         <div className="sub-navbar">
+          <div className="search-container">
+            <form onSubmit={handleSearch} className="search-form">
+              <input
+                type="text"
+                placeholder="Search by keyword or tag..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="search-input"
+              />
+              <button type="submit" className="search-button">
+                <i className="fas fa-search"></i>
+              </button>
+            </form>
+          </div>
+
           <div className="tags-container">
             {allTags.map((tag) => (
               <button 
