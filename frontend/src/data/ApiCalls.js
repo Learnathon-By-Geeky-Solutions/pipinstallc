@@ -1,4 +1,4 @@
-export const BaseUrl = "http://127.0.0.1:8000"
+export const BaseUrl = "https://edusphare.pythonanywhere.com"
 
 export const signup = async (data) => {
     try {
@@ -75,8 +75,8 @@ export const login = async (username, password) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                username,
-                password
+                email: username, // Sending as email field as expected by backend
+                password: password
             }),
         });
         
