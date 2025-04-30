@@ -5,7 +5,7 @@ import { login } from '../data/ApiCalls';
 
 function LoginForm() {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
     rememberMe: false
   });
@@ -13,40 +13,42 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // Check if redirected from verification page
   useEffect(() => {
     if (location.state?.verificationSuccess) {
-      setMessage({ 
-        text: location.state.message || 'Email verified successfully. You can now log in.', 
-        type: 'success' 
+      setMessage({
+        text: location.state.message || 'Email verified successfully. You can now log in.',
+        type: 'success'
       });
     }
   }, [location.state]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     // Basic validation
-    if (!formData.username || !formData.password) {
-      setMessage({ text: 'Please enter both username and password', type: 'error' });
+    if (!formData.email || !formData.password) {
+      setMessage({ text: 'Please enter both email and password', type: 'error' });
       return;
     }
-    
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setMessage({ text: 'Please enter a valid email address', type: 'error' });
+      return;
+    }
+
     setIsLoading(true);
     setMessage({ text: '', type: '' });
-    
     try {
-      const response = await login(formData.username, formData.password);
-      
+      const response = await login(formData.email, formData.password);
       if (response.status) {
         setMessage({ text: response.message || 'Login successful!', type: 'success' });
-        
         // Store user data and tokens in localStorage
         localStorage.setItem('user', JSON.stringify(response.user));
         localStorage.setItem('access_token', response.access);
         localStorage.setItem('refresh_token', response.refresh);
-        
         // Redirect to home page after successful login
         setTimeout(() => {
           navigate('/');
@@ -62,7 +64,6 @@ function LoginForm() {
             errorMessage = 'Invalid credentials. Please try again.';
           }
         }
-        
         setMessage({ text: errorMessage || 'Login failed', type: 'error' });
       }
     } catch (error) {
@@ -76,8 +77,9 @@ function LoginForm() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <div className="login-header" style={{fontSize: '1.25rem'}}>
-          <p>Don't Have an account?<a href="/signup"><u>Sign up</u></a></p>
+        <div className="login-header">
+          <h2>Welcome Back!</h2>
+          <p>New to Edusphere? <a href="/signup">Sign up</a></p>
         </div>
         
         {message.text && (
@@ -88,27 +90,35 @@ function LoginForm() {
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              id="username"
-              type="text"
-              placeholder="Enter your username"
-              value={formData.username}
-              onChange={(e) => setFormData({...formData, username: e.target.value})}
-            />
+            <label htmlFor="email">
+              <i className="fas fa-envelope"></i> Email
+            </label>
+            <div className="input-wrapper">
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+              />
+            </div>
           </div>
-
+          
           <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter password"
-              value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-            />
+            <label htmlFor="password">
+              <i className="fas fa-lock"></i> Password
+            </label>
+            <div className="input-wrapper">
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+              />
+            </div>
           </div>
-
+          
           <div className="form-options">
             <label className="remember-me">
               <input
@@ -118,24 +128,21 @@ function LoginForm() {
               />
               <span>Remember me</span>
             </label>
-            <a href="/forgot-password" className="forgot-password">Forgot Password</a>
+            <a href="/forgot-password" className="forgot-password">Forgot Password?</a>
           </div>
-
-          <button 
-            type="submit" 
-            className="login-btn"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Logging in...' : 'Login'}
-          </button>
-
-          <div className="divider">
-            <span>or</span>
-          </div>
-
-          <button type="button" className="google-btn">
-            <img src={"images/google.png"} alt="Google" />
-            Login with Google
+          
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i>
+                Logging in...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-sign-in-alt"></i>
+                Login
+              </>
+            )}
           </button>
         </form>
       </div>
