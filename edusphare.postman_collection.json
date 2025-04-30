@@ -1,0 +1,802 @@
+{
+	"info": {
+		"_postman_id": "cd2377e2-b172-44c4-8339-d27a108430b6",
+		"name": "edusphare",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34681015"
+	},
+	"item": [
+		{
+			"name": "http://127.0.0.1:8000/auth/register/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"jojo\",\r\n    \"email\":\"reshadmajumder00@gmail.com\",\r\n    \"password\":\"jojo\",\r\n    \"password2\":\"jojo\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/register/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"register",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/auth/verify-email/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"reshadmajumder00@gmail.com\",\r\n    \"otp\":9128\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/verify-email/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"verify-email",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/auth/login/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2MDM4MzU4LCJpYXQiOjE3NDYwMzQ3NTgsImp0aSI6ImQ2YzJhOGE4Nzg0ODQ1OWRiOGY5YTRmNzg5YjI5MDljIiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjAwQGdtYWlsLmNvbSJ9.s0v8a_kfC7jExM3Zmu3-I_y6B5h-E64MC0kzhU6KUAc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"reshadmajumder00@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/forgot-password/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"forgot-password",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/user-contributions/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQyNzY2LCJpYXQiOjE3NDU5MzkxNjYsImp0aSI6IjNjOGYzMjBlMjFjOTQzOTNhZjg2OGVjM2EzMDljYjA3IiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjY5QGdtYWlsLmNvbSJ9.JqyxXkcfKHoiLUdLq4Mk4f1-BbG6IEoLu1_-pRALqbo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": " tags[0][name]",
+							"value": "swe",
+							"type": "text"
+						},
+						{
+							"key": "tags[1][name]:",
+							"value": "diu",
+							"type": "text"
+						},
+						{
+							"key": "notes[0][note_file]",
+							"type": "file",
+							"src": "postman-cloud:///1eff1ae4-19ee-42b0-9c10-4cb1dde9366a"
+						},
+						{
+							"key": "notes[1][note_file]",
+							"type": "file",
+							"src": "postman-cloud:///1eff1ae4-19ee-42b0-9c10-4cb1dde9366a"
+						},
+						{
+							"key": "title",
+							"value": "python paro tumi 234",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "this is a description for the product",
+							"type": "text"
+						},
+						{
+							"key": "thumbnail_image",
+							"type": "file",
+							"src": "postman-cloud:///1efffd89-2b66-4320-8d98-2696df094889"
+						},
+						{
+							"key": "price",
+							"value": "4",
+							"type": "text"
+						},
+						{
+							"key": "videos[0][title]",
+							"value": "pt 4551 res",
+							"type": "text"
+						},
+						{
+							"key": "videos[0][video_file]",
+							"type": "file",
+							"src": "postman-cloud:///1f0231fb-c18b-46e0-996b-492e8a3c773b"
+						},
+						{
+							"key": "videos[1][title]",
+							"value": "part one 1",
+							"type": "text"
+						},
+						{
+							"key": "videos[1][video_file]",
+							"type": "file",
+							"src": "postman-cloud:///1f00ccec-4098-4580-9e75-6d3453aa5ec3"
+						},
+						{
+							"key": "related_University",
+							"value": "e77bcae1-3709-47d9-8c5a-814dea292b77",
+							"type": "text"
+						},
+						{
+							"key": "related_Department",
+							"value": "7db2a0e4-31e6-4bda-9446-ff42e3eed126",
+							"type": "text"
+						},
+						{
+							"key": "related_Major_Subject",
+							"value": "bdc6e2f6-881c-4b6a-97f2-4fea695ada04",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/user-contributions/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user-contributions",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/universities",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/universities",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"universities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/all-contributions/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1ODU1MDU4LCJpYXQiOjE3NDU4NTE0NTgsImp0aSI6IjM1ODkwMWRlMGI5MTQyYTM5ZjljZDIyYWE4MmUwZGNhIiwidXNlcl9pZCI6MX0.dPqNdq1uKDsOYDB6whV1puYRwexk-DI-XT3hRsDvT3Q",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/all-contributions/54e43c25-7369-4073-a288-f0f2e620968f/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"all-contributions",
+						"54e43c25-7369-4073-a288-f0f2e620968f",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/create-enrollments/1e20b18b-3f47-4de0-8a54-56468bf6567b/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1ODU5ODQ0LCJpYXQiOjE3NDU4NTYyNDQsImp0aSI6IjE0ODU5ZDRhN2I4MTQyYzNhOGM4MWQyMmI4MDRmZjI3IiwidXNlcl9pZCI6MX0._8fTPFnbPNLpQQYnPSEfiLZzcjm3ziUr5pjOqLhFbGA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/create-enrollments/1e20b18b-3f47-4de0-8a54-56468bf6567b/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"create-enrollments",
+						"1e20b18b-3f47-4de0-8a54-56468bf6567b",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/contribution-comments/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQyNzY2LCJpYXQiOjE3NDU5MzkxNjYsImp0aSI6IjNjOGYzMjBlMjFjOTQzOTNhZjg2OGVjM2EzMDljYjA3IiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjY5QGdtYWlsLmNvbSJ9.JqyxXkcfKHoiLUdLq4Mk4f1-BbG6IEoLu1_-pRALqbo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"rating\":3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/ratings/54e43c25-7369-4073-a288-f0f2e620968f/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"ratings",
+						"54e43c25-7369-4073-a288-f0f2e620968f",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/enrollments/",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQyNzY2LCJpYXQiOjE3NDU5MzkxNjYsImp0aSI6IjNjOGYzMjBlMjFjOTQzOTNhZjg2OGVjM2EzMDljYjA3IiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjY5QGdtYWlsLmNvbSJ9.JqyxXkcfKHoiLUdLq4Mk4f1-BbG6IEoLu1_-pRALqbo",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/enrollments/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"enrollments",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/ratings/54e43c25-7369-4073-a288-f0f2e620968f/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQyNzY2LCJpYXQiOjE3NDU5MzkxNjYsImp0aSI6IjNjOGYzMjBlMjFjOTQzOTNhZjg2OGVjM2EzMDljYjA3IiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjY5QGdtYWlsLmNvbSJ9.JqyxXkcfKHoiLUdLq4Mk4f1-BbG6IEoLu1_-pRALqbo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"rating\":3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/ratings/54e43c25-7369-4073-a288-f0f2e620968f/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"ratings",
+						"54e43c25-7369-4073-a288-f0f2e620968f",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/major-subjects/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQyNzY2LCJpYXQiOjE3NDU5MzkxNjYsImp0aSI6IjNjOGYzMjBlMjFjOTQzOTNhZjg2OGVjM2EzMDljYjA3IiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjY5QGdtYWlsLmNvbSJ9.JqyxXkcfKHoiLUdLq4Mk4f1-BbG6IEoLu1_-pRALqbo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"rating\":3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/major-subjects/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"major-subjects",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/universities/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQyNzY2LCJpYXQiOjE3NDU5MzkxNjYsImp0aSI6IjNjOGYzMjBlMjFjOTQzOTNhZjg2OGVjM2EzMDljYjA3IiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjY5QGdtYWlsLmNvbSJ9.JqyxXkcfKHoiLUdLq4Mk4f1-BbG6IEoLu1_-pRALqbo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"rating\":3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/universities/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"universities",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/profile/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQyNzY2LCJpYXQiOjE3NDU5MzkxNjYsImp0aSI6IjNjOGYzMjBlMjFjOTQzOTNhZjg2OGVjM2EzMDljYjA3IiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjY5QGdtYWlsLmNvbSJ9.JqyxXkcfKHoiLUdLq4Mk4f1-BbG6IEoLu1_-pRALqbo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"id\": 1,\r\n        \r\n        \"phone_number\": \"01627076527\",\r\n        \"date_of_birth\": \"02/20/20\"\r\n\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/profile/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"profile",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/contribution-comments/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQ2NDIyLCJpYXQiOjE3NDU5NDI4MjIsImp0aSI6Ijc2NmI5Mzk4M2I5NjQ1ZTI4ZmU3ZDJmYmRjMTY4Yjk3IiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjY5QGdtYWlsLmNvbSJ9._AcjMFznmUoWbwYlGqS4sU3NnRvhRroQeoe8kmlYd1I",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"id\": 1,\r\n        \r\n        \"phone_number\": \"01627076527\",\r\n        \"date_of_birth\": \"2002-02-20\",\r\n        \"university\": \"e56d6384-fd3d-42a3-821c-1bb203ee4fec\",\r\n        \"department\": \"a943fc21-49d5-44dd-bb36-e12a020b55eb\",\r\n        \"major_subject\":\"7664d769-daa0-45f5-bf3a-60dbc2032d9c\",\r\n        \"is_email_verified\":false,\r\n        \"is_profile_verified\":true\r\n\r\n\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/user-info/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user-info",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/api/departments/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQ2NDIyLCJpYXQiOjE3NDU5NDI4MjIsImp0aSI6Ijc2NmI5Mzk4M2I5NjQ1ZTI4ZmU3ZDJmYmRjMTY4Yjk3IiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjY5QGdtYWlsLmNvbSJ9._AcjMFznmUoWbwYlGqS4sU3NnRvhRroQeoe8kmlYd1I",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"rating\":3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/departments/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"departments",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/auth/forgot-password/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2MDM4MzU4LCJpYXQiOjE3NDYwMzQ3NTgsImp0aSI6ImQ2YzJhOGE4Nzg0ODQ1OWRiOGY5YTRmNzg5YjI5MDljIiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjAwQGdtYWlsLmNvbSJ9.s0v8a_kfC7jExM3Zmu3-I_y6B5h-E64MC0kzhU6KUAc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"reshadmajumder00@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/forgot-password/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"forgot-password",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/auth/resend-otp/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2MDM4MzU4LCJpYXQiOjE3NDYwMzQ3NTgsImp0aSI6ImQ2YzJhOGE4Nzg0ODQ1OWRiOGY5YTRmNzg5YjI5MDljIiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjAwQGdtYWlsLmNvbSJ9.s0v8a_kfC7jExM3Zmu3-I_y6B5h-E64MC0kzhU6KUAc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"reshadmajumder00@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/resend-otp/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"resend-otp",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/auth/reset-password/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2MDM4MzU4LCJpYXQiOjE3NDYwMzQ3NTgsImp0aSI6ImQ2YzJhOGE4Nzg0ODQ1OWRiOGY5YTRmNzg5YjI5MDljIiwidXNlcl9pZCI6MSwiZW1haWwiOiJyZXNoYWRtYWp1bWRlcjAwQGdtYWlsLmNvbSJ9.s0v8a_kfC7jExM3Zmu3-I_y6B5h-E64MC0kzhU6KUAc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"reshadmajumder00@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/reset-password/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"reset-password",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
