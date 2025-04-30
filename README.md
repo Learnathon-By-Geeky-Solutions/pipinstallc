@@ -1,6 +1,12 @@
 <p align="center">
-  <img src="frontend/public/images/EDusphere.png" alt="EduSphere Banner" width="300"/>
+  <img src="frontend/public/images/EDusphere.png" alt="EduSphere Banner" width="400"/>
 </p>
+
+<p align="center">
+  🚀 <a href="https://edusphare.netlify.app/" target="_blank"><strong>Live Frontend Demo</strong></a> | 🔧 <a href="https://edusphare.pythonanywhere.com" target="_blank"><strong>Live Backend API</strong></a>
+</p>
+
+
 
 
 
