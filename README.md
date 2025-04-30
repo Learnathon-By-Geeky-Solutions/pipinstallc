@@ -119,7 +119,7 @@ It empowers students to seamlessly transition between the roles of learner and m
 ### 📚 Course Detail View
 
 ![Course Detail](frontend/public/images/contriview.png)
-![Course Detail](frontend/public/images/resourcecontri.png)
+![Course Resources](frontend/public/images/resourcecontri.png)
 
 ### 💳 Payment Page
 
@@ -142,11 +142,10 @@ Displays a locked view of a contribution before purchase, encouraging users to b
 
 Enables students to upload notes, videos, or other academic resources to the platform.
 
-![Add Contribution Page]
-<p align="center">
-  <img src="frontend/public/images/addcontri1.png" width="400" alt="Home Page"/>
-  <img src="frontend/public/images/addcontri_3.png" width="400" alt="Dashboard"/>
-</p>
+![Add Contribution Page](frontend/public/images/addcontri1.png)
+![Add Contribution submit](frontend/public/images/addcontri3.png)
+
+
 ---
 ## 🛠 Tech Stack
 
