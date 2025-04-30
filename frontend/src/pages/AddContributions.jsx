@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { addContribution, isLoggedIn } from '../data/ApiCalls'
+import { addContribution, isLoggedIn, BaseUrl } from '../data/ApiCalls'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import '../styles/AddContrinutions.css'
@@ -20,14 +20,110 @@ function AddContributions() {
     related_Major_Subject: '',
     thumbnail_image: null
   })
+  
+  // State for dropdown options
+  const [universities, setUniversities] = useState([])
+  const [departments, setDepartments] = useState([])
+  const [majorSubjects, setMajorSubjects] = useState([])
+  const [loadingOptions, setLoadingOptions] = useState({
+    universities: false,
+    departments: false,
+    majorSubjects: false
+  })
 
   // Check if user is logged in
   useEffect(() => {
     if (!isLoggedIn()) {
       toast.error('You must be logged in to add contributions')
       navigate('/login')
+    } else {
+      // Fetch dropdown options
+      fetchUniversities()
+      fetchDepartments()
+      fetchMajorSubjects()
     }
   }, [navigate])
+
+  // Fetch universities from API
+  const fetchUniversities = async () => {
+    try {
+      setLoadingOptions(prev => ({ ...prev, universities: true }))
+      const accessToken = localStorage.getItem('access_token')
+      
+      const response = await fetch(`${BaseUrl}/api/universities/`, {
+        headers: {
+          'Authorization': accessToken ? `Bearer ${accessToken}` : '',
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      const result = await response.json()
+      
+      if (result.status) {
+        setUniversities(result.data)
+      } else {
+        console.error('Failed to fetch universities:', result.message)
+      }
+    } catch (error) {
+      console.error('Error fetching universities:', error)
+    } finally {
+      setLoadingOptions(prev => ({ ...prev, universities: false }))
+    }
+  }
+  
+  // Fetch departments from API
+  const fetchDepartments = async () => {
+    try {
+      setLoadingOptions(prev => ({ ...prev, departments: true }))
+      const accessToken = localStorage.getItem('access_token')
+      
+      const response = await fetch(`${BaseUrl}/api/departments/`, {
+        headers: {
+          'Authorization': accessToken ? `Bearer ${accessToken}` : '',
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      const result = await response.json()
+      
+      if (result.status) {
+        setDepartments(result.data)
+      } else {
+        console.error('Failed to fetch departments:', result.message)
+      }
+    } catch (error) {
+      console.error('Error fetching departments:', error)
+    } finally {
+      setLoadingOptions(prev => ({ ...prev, departments: false }))
+    }
+  }
+  
+  // Fetch major subjects from API
+  const fetchMajorSubjects = async () => {
+    try {
+      setLoadingOptions(prev => ({ ...prev, majorSubjects: true }))
+      const accessToken = localStorage.getItem('access_token')
+      
+      const response = await fetch(`${BaseUrl}/api/major-subjects/`, {
+        headers: {
+          'Authorization': accessToken ? `Bearer ${accessToken}` : '',
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      const result = await response.json()
+      
+      if (result.status) {
+        setMajorSubjects(result.data)
+      } else {
+        console.error('Failed to fetch major subjects:', result.message)
+      }
+    } catch (error) {
+      console.error('Error fetching major subjects:', error)
+    } finally {
+      setLoadingOptions(prev => ({ ...prev, majorSubjects: false }))
+    }
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -122,9 +218,17 @@ function AddContributions() {
     submitFormData.append('title', formData.title)
     submitFormData.append('description', formData.description)
     submitFormData.append('price', formData.price)
-    submitFormData.append('related_University', formData.related_University)
-    submitFormData.append('related_Department', formData.related_Department)
-    submitFormData.append('related_Major_Subject', formData.related_Major_Subject)
+    
+    // Add academic information using UUIDs from dropdowns
+    if (formData.related_University) {
+      submitFormData.append('related_University', formData.related_University)
+    }
+    if (formData.related_Department) {
+      submitFormData.append('related_Department', formData.related_Department)
+    }
+    if (formData.related_Major_Subject) {
+      submitFormData.append('related_Major_Subject', formData.related_Major_Subject)
+    }
     
     // Add thumbnail image
     if (formData.thumbnail_image) {
@@ -350,45 +454,72 @@ function AddContributions() {
                 <label htmlFor="university" className="form-label">
                   University
                 </label>
-                <input
-                  type="text"
+                <select
                   id="university"
                   name="related_University"
                   value={formData.related_University}
                   onChange={handleChange}
-                  className="form-input"
-                  placeholder="Enter university name"
-                />
+                  className="form-select"
+                  disabled={loadingOptions.universities}
+                >
+                  <option value="">Select University</option>
+                  {universities.map(uni => (
+                    <option key={uni.id} value={uni.id}>
+                      {uni.name}
+                    </option>
+                  ))}
+                </select>
+                {loadingOptions.universities && (
+                  <div className="select-loading">Loading universities...</div>
+                )}
               </div>
               
               <div className="form-group">
                 <label htmlFor="department" className="form-label">
                   Department
                 </label>
-                <input
-                  type="text"
+                <select
                   id="department"
                   name="related_Department"
                   value={formData.related_Department}
                   onChange={handleChange}
-                  className="form-input"
-                  placeholder="Enter department name"
-                />
+                  className="form-select"
+                  disabled={loadingOptions.departments}
+                >
+                  <option value="">Select Department</option>
+                  {departments.map(dept => (
+                    <option key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </option>
+                  ))}
+                </select>
+                {loadingOptions.departments && (
+                  <div className="select-loading">Loading departments...</div>
+                )}
               </div>
               
               <div className="form-group">
                 <label htmlFor="subject" className="form-label">
                   Major Subject
                 </label>
-                <input
-                  type="text"
+                <select
                   id="subject"
                   name="related_Major_Subject"
                   value={formData.related_Major_Subject}
                   onChange={handleChange}
-                  className="form-input"
-                  placeholder="Enter major subject"
-                />
+                  className="form-select"
+                  disabled={loadingOptions.majorSubjects}
+                >
+                  <option value="">Select Major Subject</option>
+                  {majorSubjects.map(subject => (
+                    <option key={subject.id} value={subject.id}>
+                      {subject.name}
+                    </option>
+                  ))}
+                </select>
+                {loadingOptions.majorSubjects && (
+                  <div className="select-loading">Loading major subjects...</div>
+                )}
               </div>
             </div>
           </div>

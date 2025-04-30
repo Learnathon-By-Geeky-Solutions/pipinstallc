@@ -75,8 +75,8 @@ export const login = async (username, password) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                username,
-                password
+                email: username, // Sending as email field as expected by backend
+                password: password
             }),
         });
         
