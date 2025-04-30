@@ -288,8 +288,18 @@
   color: #1c1d1f;
 }
 
+/* Enhanced Comment Form Styles */
 .comment-form {
   margin-top: 30px;
+  background-color: #f7f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e1e1e1;
+}
+
+.comment-form h4 {
+  margin-bottom: 15px;
+  color: #1c1d1f;
 }
 
 .comment-textarea {
@@ -303,6 +313,12 @@
   resize: vertical;
 }
 
+.comment-textarea:focus {
+  border-color: #a435f0;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(164, 53, 240, 0.2);
+}
+
 .submit-comment-btn {
   background-color: #a435f0;
   color: white;
@@ -314,32 +330,96 @@
   transition: background-color 0.2s;
 }
 
-.submit-comment-btn:hover {
+.submit-comment-btn:hover:not(:disabled) {
   background-color: #8710d8;
 }
 
-/* Rating section */
+.submit-comment-btn:disabled {
+  background-color: #ccb1e5;
+  cursor: not-allowed;
+}
+
+/* Styles for login and enroll prompts */
+.login-to-comment, .enroll-to-comment, .login-to-rate, .enroll-to-rate {
+  background-color: #f7f9fa;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin-top: 20px;
+  text-align: center;
+  color: #1c1d1f;
+}
+
+.login-link-btn {
+  background: none;
+  border: none;
+  color: #a435f0;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.login-link-btn:hover {
+  color: #8710d8;
+}
+
+.enroll-to-rate-btn, .login-to-rate-btn {
+  background-color: #a435f0;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 10px;
+}
+
+.enroll-to-rate-btn:hover:not(:disabled), .login-to-rate-btn:hover {
+  background-color: #8710d8;
+}
+
+.enroll-to-rate-btn:disabled {
+  background-color: #ccb1e5;
+  cursor: not-allowed;
+}
+
+/* Enhanced Rating Styles */
 .rating-content {
   text-align: center;
   padding: 20px 0;
+}
+
+.rating-instruction {
+  margin-bottom: 15px;
+  color: #6a6f73;
+  font-style: italic;
 }
 
 .rating-stars {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-top: 20px;
+  margin: 20px 0;
 }
 
 .star {
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #d1d7dc;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .star:hover, .star.active {
   color: #f3ca8c;
+  transform: scale(1.1);
+}
+
+.current-rating {
+  margin-top: 15px;
+  font-weight: 500;
+  color: #1c1d1f;
 }
 
 /* Right column - enrollment card */
@@ -489,6 +569,18 @@
   
   .tab-content {
     padding: 20px;
+  }
+  
+  .rating-stars {
+    gap: 5px;
+  }
+  
+  .star {
+    font-size: 2rem;
+  }
+  
+  .comment-form, .login-to-comment, .enroll-to-comment {
+    padding: 15px;
   }
 }
 

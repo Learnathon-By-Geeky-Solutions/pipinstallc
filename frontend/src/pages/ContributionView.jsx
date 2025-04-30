@@ -214,6 +214,66 @@ function ContributionView() {
     }
   };
 
+  // Handle comment submission
+  const [commentText, setCommentText] = useState('');
+  const [submittingComment, setSubmittingComment] = useState(false);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!commentText.trim()) {
+      alert('Please enter a comment');
+      return;
+    }
+
+    if (!isLoggedIn()) {
+      navigate('/login', { state: { returnUrl: `/contributions/${id}` } });
+      return;
+    }
+
+    if (!isEnrolled) {
+      alert('You must be enrolled in this course to leave a comment');
+      return;
+    }
+
+    try {
+      setSubmittingComment(true);
+      const accessToken = localStorage.getItem('access_token');
+      
+      // Format the request body according to the API's expected format
+      const requestBody = {
+        user: null, // The API will get the user from the token
+        contribution: id,
+        comment: commentText
+      };
+      
+      const response = await fetch(`${BaseUrl}/api/contribution-comments/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+      
+      const result = await response.json();
+      
+      if (result.status) {
+        // Clear the comment text
+        setCommentText('');
+        // Reload to show the new comment
+        window.location.reload();
+      } else {
+        alert(result.message || 'Failed to submit comment');
+      }
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+      alert('An error occurred while submitting your comment');
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
+
   // Toggle video list visibility
   const toggleVideoList = () => {
     setShowVideoList(!showVideoList);
@@ -474,14 +534,38 @@ function ContributionView() {
                   <p>No reviews yet. Be the first to leave a review!</p>
                 )}
                 
-                {isLoggedIn() && (
+                {isLoggedIn() && isEnrolled ? (
                   <div className="comment-form">
                     <h4>Leave a Review</h4>
-                    <textarea 
-                      placeholder="Share your experience with this course..."
-                      className="comment-textarea"
-                    ></textarea>
-                    <button className="submit-comment-btn">Submit Review</button>
+                    <form onSubmit={handleCommentSubmit}>
+                      <textarea 
+                        placeholder="Share your experience with this course..."
+                        className="comment-textarea"
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        required
+                      ></textarea>
+                      <button 
+                        type="submit" 
+                        className="submit-comment-btn"
+                        disabled={submittingComment}
+                      >
+                        {submittingComment ? 'Submitting...' : 'Submit Review'}
+                      </button>
+                    </form>
+                  </div>
+                ) : isLoggedIn() ? (
+                  <div className="enroll-to-comment">
+                    <p>Enroll in this course to leave a review</p>
+                  </div>
+                ) : (
+                  <div className="login-to-comment">
+                    <p>Please <button 
+                      onClick={() => navigate('/login', { 
+                        state: { returnUrl: `/contributions/${id}` } 
+                      })}
+                      className="login-link-btn"
+                    >log in</button> to leave a review</p>
                   </div>
                 )}
               </div>
@@ -491,19 +575,46 @@ function ContributionView() {
               <div className="rating-content">
                 <h4>Rate this Course</h4>
                 {isEnrolled ? (
-                  <div className="rating-stars">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <span 
-                        key={star}
-                        className={`star ${userRating >= star ? 'active' : ''}`}
-                        onClick={() => handleRateSubmit(star)}
-                      >
-                        ★
-                      </span>
-                    ))}
+                  <>
+                    <p className="rating-instruction">Click on a star to rate this course</p>
+                    <div className="rating-stars">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <span 
+                          key={star}
+                          className={`star ${userRating >= star ? 'active' : ''}`}
+                          onClick={() => handleRateSubmit(star)}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                    {userRating > 0 && (
+                      <p className="current-rating">Your rating: {userRating} star{userRating !== 1 ? 's' : ''}</p>
+                    )}
+                  </>
+                ) : isLoggedIn() ? (
+                  <div className="enroll-to-rate">
+                    <p>You must be enrolled in this course to rate it.</p>
+                    <button 
+                      onClick={handleEnroll}
+                      className="enroll-to-rate-btn"
+                      disabled={enrollmentStatus === 'enrolling' || enrollmentStatus === 'redirecting'}
+                    >
+                      Enroll Now
+                    </button>
                   </div>
                 ) : (
-                  <p>You must be enrolled in this course to rate it.</p>
+                  <div className="login-to-rate">
+                    <p>Please log in and enroll to rate this course</p>
+                    <button 
+                      onClick={() => navigate('/login', { 
+                        state: { returnUrl: `/contributions/${id}` } 
+                      })}
+                      className="login-to-rate-btn"
+                    >
+                      Log in
+                    </button>
+                  </div>
                 )}
               </div>
             )}
