@@ -96,7 +96,7 @@ It empowers students to seamlessly transition between the roles of learner and m
 
 
 ### 📊 Entity Relationship Diagram
-![Entity Relationship Diagram](frontend/public/images/ERD.png)
+![Entity Relationship Diagram](frontend/public/images/Entity.png)
 
 ---
 
