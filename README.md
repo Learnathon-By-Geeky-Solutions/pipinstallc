@@ -105,7 +105,49 @@ It empowers students to seamlessly transition between the roles of learner and m
 ![Entity Relationship Diagram](frontend/public/images/Entity.png)
 
 ---
+---
+## 🖼️ Application Screenshots
 
+### 🏠 Home Page
+
+![Home Page](frontend/public/images/homepage.png)
+
+### 📊 Contribution Page
+
+![Dashboard](frontend/public/images/contributionpage.png)
+
+### 📚 Course Detail View
+
+![Course Detail](frontend/public/images/contriview.png)
+![Course Detail](frontend/public/images/resourcecontri.png)
+
+### 💳 Payment Page
+
+Shows the interface where users complete transactions to access premium study materials.
+
+![Payment Page](frontend/public/images/payment.png)
+![Payment Success](frontend/public/images/payment_success.png)
+
+---
+
+### 🔒 Before Buying Contribution Page
+
+Displays a locked view of a contribution before purchase, encouraging users to buy access.
+
+![Before Buying Contribution Page](frontend/public/images/contribeforeaccess.png)
+
+---
+
+### ➕ Add Contribution Page
+
+Enables students to upload notes, videos, or other academic resources to the platform.
+
+![Add Contribution Page]
+<p align="center">
+  <img src="frontend/public/images/addcontri1.png" width="400" alt="Home Page"/>
+  <img src="frontend/public/images/addcontri_3.png" width="400" alt="Dashboard"/>
+</p>
+---
 ## 🛠 Tech Stack
 
 **Frontend:**  
