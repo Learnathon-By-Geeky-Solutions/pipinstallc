@@ -92,7 +92,11 @@ It empowers students to seamlessly transition between the roles of learner and m
 ## 📈 Diagrams
 
 ### 📊 Data Flow Diagram
-![Data Flow Diagram](frontend/public/images/DataFlowDiagram.png)
+![Data Flow Diagram](frontend/public/images/DFD.png)
+
+
+### 📊 Entity Relationship Diagram
+![Entity Relationship Diagram](frontend/public/images/ERD.png)
 
 ---
 
