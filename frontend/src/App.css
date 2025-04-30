@@ -8,6 +8,8 @@ body, html {
   width: 100%;
   min-height: 100%;
   background: white;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  scroll-behavior: smooth;
 }
 
 #root {
@@ -18,11 +20,31 @@ body, html {
 .app {
   position: relative;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
 .content {
-  flex: 1 0 auto; /* This prevents content from shrinking */
-  padding-bottom: 100px; /* Height of footer plus some extra space */
+  flex: 1 0 auto;
+  padding-bottom: 100px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-top: 50px; /* Reduced from 60px to make content closer to navbar */
+  animation: fadeIn 0.3s ease; /* Faster animation */
+  will-change: transform, opacity;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px); /* Smaller movement for quicker feel */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Remove any existing margin or position styles from footer */
@@ -33,8 +55,82 @@ footer {
   position: relative; /* Changed from fixed to relative */
   bottom: 0;
   left: 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  animation: fadeInBlur 0.3s ease;
+}
+
+@keyframes fadeInBlur {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+}
+
+/* Improve form element smoothness */
+input, select, textarea, button {
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(108, 43, 179, 0.2);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Responsive styles */
+@media screen and (max-width: 1440px) {
+  .content {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .content {
+    padding-left: 10px; /* Reduced from 15px */
+    padding-right: 10px; /* Reduced from 15px */
+    padding-top: 50px; /* Reduced from 60px */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .content {
+    padding-left: 5px; /* Reduced from 10px */
+    padding-right: 5px; /* Reduced from 10px */
+    padding-bottom: 70px; /* Reduced from 80px */
+    padding-top: 50px; /* Reduced from 60px */
+  }
+}
+
+/* Animation styles */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -65,8 +161,105 @@ footer {
 
 .card {
   padding: 2em;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(108, 43, 179, 0.1);
 }
 
 .read-the-docs {
   color: #888;
+}
+
+/* Utility classes for responsive layouts */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.gap-1 {
+  gap: 0.5rem;
+}
+
+.gap-2 {
+  gap: 1rem;
+}
+
+.gap-3 {
+  gap: 1.5rem;
+}
+
+/* Animated element transitions */
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.5s ease;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .flex-row-to-column {
+    flex-direction: column;
+  }
+}
+
+/* Smooth scrolling for all anchors */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 50px; /* Adjusted from 70px to match new navbar height */
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion) {
+  *, html {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }

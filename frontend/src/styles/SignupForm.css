@@ -65,6 +65,18 @@
   font-size: 1.1rem;
 }
 
+.form-group input.input-error {
+  border-color: #dc3545;
+  background-color: #fff8f8;
+}
+
+.field-error {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
 .form-group input::placeholder {
   color: rgba(108, 43, 179, 0.5);
 }

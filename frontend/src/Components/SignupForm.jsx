@@ -11,11 +11,16 @@ function SignupForm() {
     confirmPassword: ''
   });
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Clear previous errors
+    setFieldErrors({});
+    setMessage({ text: '', type: '' });
     
     // Basic validation
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
@@ -29,10 +34,17 @@ function SignupForm() {
     }
     
     setIsLoading(true);
-    setMessage({ text: '', type: '' });
     
     try {
-      const response = await signup(formData);
+      // Convert form data to match API expectations
+      const apiFormData = {
+        username: formData.name,
+        email: formData.email,
+        password: formData.password,
+        password2: formData.confirmPassword
+      };
+
+      const response = await signup(apiFormData);
       
       if (response.status) {
         setMessage({ text: response.message, type: 'success' });
@@ -41,9 +53,25 @@ function SignupForm() {
           navigate('/verify-otp', { state: { email: formData.email } });
         }, 1500);
       } else {
-        setMessage({ text: response.message || 'Registration failed', type: 'error' });
+        // Handle server-side validation errors
+        if (response.errors) {
+          const errors = response.errors;
+          setFieldErrors(errors);
+          
+          // Set general error message
+          setMessage({ 
+            text: response.message || 'Please correct the errors below',
+            type: 'error'
+          });
+        } else {
+          setMessage({ 
+            text: response.message || 'Registration failed', 
+            type: 'error' 
+          });
+        }
       }
     } catch (error) {
+      console.error("Registration error:", error);
       setMessage({ text: 'An error occurred during registration', type: 'error' });
     } finally {
       setIsLoading(false);
@@ -71,7 +99,11 @@ function SignupForm() {
               placeholder="Enter your username"
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
+              className={fieldErrors.username ? 'input-error' : ''}
             />
+            {fieldErrors.username && (
+              <div className="field-error">{fieldErrors.username[0]}</div>
+            )}
           </div>
 
           <div className="form-group">
@@ -81,7 +113,11 @@ function SignupForm() {
               placeholder="Enter your email"
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
+              className={fieldErrors.email ? 'input-error' : ''}
             />
+            {fieldErrors.email && (
+              <div className="field-error">{fieldErrors.email[0]}</div>
+            )}
           </div>
 
           <div className="form-group">
@@ -91,7 +127,11 @@ function SignupForm() {
               placeholder="Create a password"
               value={formData.password}
               onChange={(e) => setFormData({...formData, password: e.target.value})}
+              className={fieldErrors.password ? 'input-error' : ''}
             />
+            {fieldErrors.password && (
+              <div className="field-error">{fieldErrors.password[0]}</div>
+            )}
           </div>
 
           <div className="form-group">
@@ -101,7 +141,11 @@ function SignupForm() {
               placeholder="Confirm your password"
               value={formData.confirmPassword}
               onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+              className={fieldErrors.password2 ? 'input-error' : ''}
             />
+            {fieldErrors.password2 && (
+              <div className="field-error">{fieldErrors.password2[0]}</div>
+            )}
           </div>
 
           <button 

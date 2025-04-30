@@ -1,4 +1,5 @@
 export const BaseUrl = "https://edusphare.pythonanywhere.com"
+// export const BaseUrl = "http://127.0.0.1:8000";
 
 export const signup = async (data) => {
     try {
@@ -7,16 +8,24 @@ export const signup = async (data) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                username: data.name,
-                email: data.email,
-                password: data.password,
-                password2: data.confirmPassword
-            }),
+            body: JSON.stringify(data),
         });
         
         const result = await response.json();
-        return result;
+        
+        // Format the response to match what the frontend components expect
+        if (response.ok) {
+            return { 
+                status: true, 
+                message: result.message || "Registration successful! Please verify your email."
+            };
+        } else {
+            return {
+                status: false,
+                message: result.message || "Registration failed",
+                errors: result.errors || {}
+            };
+        }
     } catch (error) {
         console.error("Error during signup:", error);
         return { status: false, message: "An error occurred during registration" };
@@ -67,7 +76,7 @@ export const resendOtp = async (email) => {
 }
 
 // Add this new function for user login
-export const login = async (username, password) => {
+export const login = async (email, password) => {
     try {
         const response = await fetch(`${BaseUrl}/auth/login/`, {
             method: "POST",
@@ -75,13 +84,29 @@ export const login = async (username, password) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                email: username, // Sending as email field as expected by backend
+                email: email,
                 password: password
             }),
         });
         
         const result = await response.json();
-        return result;
+        
+        // Format the response to match what the frontend components expect
+        if (response.ok) {
+            return { 
+                status: true, 
+                message: result.message || "Login successful",
+                user: result.user,
+                access: result.access,
+                refresh: result.refresh 
+            };
+        } else {
+            return {
+                status: false,
+                message: result.message || "Invalid credentials",
+                errors: result.errors || {}
+            };
+        }
     } catch (error) {
         console.error("Error during login:", error);
         return { status: false, message: "An error occurred during login" };

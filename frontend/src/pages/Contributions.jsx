@@ -17,9 +17,12 @@ function Contributions() {
   const [userEnrollments, setUserEnrollments] = useState([]);
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Added state for filter options
   const [universities, setUniversities] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [majorSubjects, setMajorSubjects] = useState([]);
+  const [filterDataLoading, setFilterDataLoading] = useState(false);
   
   // Pagination state
   const [pagination, setPagination] = useState({
@@ -39,6 +42,45 @@ function Contributions() {
     user: '',
     search: ''
   });
+
+  // Function to fetch filter data (universities, departments, major subjects)
+  const fetchFilterData = async () => {
+    try {
+      setFilterDataLoading(true);
+      
+      // Fetch universities
+      const uniResponse = await fetch(`${BaseUrl}/api/universities/`);
+      const uniResult = await uniResponse.json();
+      if (uniResult.status) {
+        setUniversities(uniResult.data || []);
+      }
+      
+      // Fetch departments
+      const deptResponse = await fetch(`${BaseUrl}/api/departments/`);
+      const deptResult = await deptResponse.json();
+      if (deptResult.status) {
+        setDepartments(deptResult.data || []);
+      }
+      
+      // Fetch major subjects
+      const subjectResponse = await fetch(`${BaseUrl}/api/major-subjects/`);
+      const subjectResult = await subjectResponse.json();
+      if (subjectResult.status) {
+        setMajorSubjects(subjectResult.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching filter data:', error);
+    } finally {
+      setFilterDataLoading(false);
+    }
+  };
+
+  // Load filter data when filter dropdown is opened
+  useEffect(() => {
+    if (showFilter && universities.length === 0) {
+      fetchFilterData();
+    }
+  }, [showFilter]);
 
   // Function to build the API URL with filters and pagination
   const buildApiUrl = () => {
@@ -241,43 +283,11 @@ function Contributions() {
     }));
   };
 
-  // Fetch filter options when component mounts
-  useEffect(() => {
-    const fetchFilterOptions = async () => {
-      try {
-        // Fetch universities
-        const uniResponse = await fetch(`${BaseUrl}/api/universities/`);
-        const uniResult = await uniResponse.json();
-        if (uniResult.status) {
-          setUniversities(uniResult.data);
-        }
-        
-        // Fetch departments
-        const deptResponse = await fetch(`${BaseUrl}/api/departments/`);
-        const deptResult = await deptResponse.json();
-        if (deptResult.status) {
-          setDepartments(deptResult.data);
-        }
-        
-        // Fetch major subjects
-        const subjectResponse = await fetch(`${BaseUrl}/api/major-subjects/`);
-        const subjectResult = await subjectResponse.json();
-        if (subjectResult.status) {
-          setMajorSubjects(subjectResult.data);
-        }
-      } catch (error) {
-        console.error('Error fetching filter options:', error);
-      }
-    };
-
-    fetchFilterOptions();
-  }, []);
-
   return (
     <div className="contributions-page">
       <Navbar />
       <div className="contributions-content">
-        <h1>All the exam preparations you need in one place</h1>
+          <h1 className='title' >All the exam preparations you need in one place</h1>
         <p className="subtitle">From critical skills to exam topics, edusphere supports your development.</p>
         
         <div className="sub-navbar">
@@ -318,71 +328,89 @@ function Contributions() {
 
             {showFilter && (
               <div className="filter-dropdown">
-                <div className="filter-section">
-                  <h4>Universities</h4>
-                  <div className="filter-options">
-                    {universities.map(uni => (
-                      <label key={uni.id} className="filter-option">
-                        <input 
-                          type="checkbox" 
-                          checked={filters.university === uni.id}
-                          onChange={() => setFilters(prev => ({
-                            ...prev,
-                            university: prev.university === uni.id ? '' : uni.id
-                          }))}
-                        /> 
-                        {uni.name}
-                      </label>
-                    ))}
-                  </div>
-                </div>
+                {filterDataLoading ? (
+                  <div className="filter-loading">Loading filter options...</div>
+                ) : (
+                  <>
+                    <div className="filter-section">
+                      <h4>Universities</h4>
+                      <div className="filter-options">
+                        {universities && universities.length > 0 ? (
+                          universities.map(uni => (
+                            <label key={uni.id} className="filter-option">
+                              <input 
+                                type="checkbox" 
+                                checked={filters.university === uni.id}
+                                onChange={() => setFilters(prev => ({
+                                  ...prev,
+                                  university: prev.university === uni.id ? '' : uni.id
+                                }))}
+                              /> 
+                              {uni.name}
+                            </label>
+                          ))
+                        ) : (
+                          <p className="no-options">No universities available</p>
+                        )}
+                      </div>
+                    </div>
 
-                <div className="filter-section">
-                  <h4>Departments</h4>
-                  <div className="filter-options">
-                    {departments.map(dept => (
-                      <label key={dept.id} className="filter-option">
-                        <input 
-                          type="checkbox" 
-                          checked={filters.department === dept.id}
-                          onChange={() => setFilters(prev => ({
-                            ...prev,
-                            department: prev.department === dept.id ? '' : dept.id
-                          }))}
-                        /> 
-                        {dept.name}
-                      </label>
-                    ))}
-                  </div>
-                </div>
+                    <div className="filter-section">
+                      <h4>Departments</h4>
+                      <div className="filter-options">
+                        {departments && departments.length > 0 ? (
+                          departments.map(dept => (
+                            <label key={dept.id} className="filter-option">
+                              <input 
+                                type="checkbox" 
+                                checked={filters.department === dept.id}
+                                onChange={() => setFilters(prev => ({
+                                  ...prev,
+                                  department: prev.department === dept.id ? '' : dept.id
+                                }))}
+                              /> 
+                              {dept.name}
+                            </label>
+                          ))
+                        ) : (
+                          <p className="no-options">No departments available</p>
+                        )}
+                      </div>
+                    </div>
 
-                <div className="filter-section">
-                  <h4>Major Subjects</h4>
-                  <div className="filter-options">
-                    {majorSubjects.map(subject => (
-                      <label key={subject.id} className="filter-option">
-                        <input 
-                          type="checkbox" 
-                          checked={filters.major_subject === subject.id}
-                          onChange={() => setFilters(prev => ({
-                            ...prev,
-                            major_subject: prev.major_subject === subject.id ? '' : subject.id
-                          }))}
-                        /> 
-                        {subject.name}
-                      </label>
-                    ))}
-                  </div>
-                </div>
+                    <div className="filter-section">
+                      <h4>Major Subjects</h4>
+                      <div className="filter-options">
+                        {majorSubjects && majorSubjects.length > 0 ? (
+                          majorSubjects.map(subject => (
+                            <label key={subject.id} className="filter-option">
+                              <input 
+                                type="checkbox" 
+                                checked={filters.major_subject === subject.id}
+                                onChange={() => setFilters(prev => ({
+                                  ...prev,
+                                  major_subject: prev.major_subject === subject.id ? '' : subject.id
+                                }))}
+                              /> 
+                              {subject.name}
+                            </label>
+                          ))
+                        ) : (
+                          <p className="no-options">No major subjects available</p>
+                        )}
+                      </div>
+                    </div>
 
-                <div className="filter-actions">
-                  <button className="clear-filter-btn" onClick={handleClearFilter}>
-                    Clear
-                  </button>
-                  <button className="apply-filter-btn" onClick={handleApplyFilter}>
-                    Apply
-                  </button>
-                </div>
+                    <div className="filter-actions">
+                      <button className="clear-filter-btn" onClick={handleClearFilter}>
+                        Clear
+                      </button>
+                      <button className="apply-filter-btn" onClick={handleApplyFilter}>
+                        Apply
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>

@@ -2,26 +2,29 @@
   min-height: 100vh;
   background: white;
   color: #6c2bb3;
-  padding-top: 70px;
+  padding-top: 0;
 }
 
 .contributions-content {
-  padding: 1rem 6rem;
+  padding: 0.6rem;
 }
-
+.title{
+  color: rgb(53, 175, 212);
+}
 h1 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.1rem;
+  margin-top: 0.5rem;
   color: #6c2bb3;
 }
 
 .subtitle {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
   opacity: 0.9;
   color: #6c2bb3;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .sub-navbar {
@@ -29,12 +32,13 @@ h1 {
   justify-content: space-between;
   align-items: center;
   position: sticky;
-  top: 60px;
+  top: 50px;
   background: white;
   box-shadow: 0 2px 10px rgba(108, 43, 179, 0.1);
-  padding: 1rem 2rem;
+  padding: 0.5rem 2rem;
   z-index: 100;
-  gap: 1.5rem;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .search-container {
@@ -214,31 +218,35 @@ h1 {
 
 .video-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  padding: 2rem 0;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-top: 0.25rem;
+  padding-bottom: 1.5rem;
 }
 
 .video-card {
-  position: relative;
+  background: white;
+  border-radius: 10px;
   overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .video-thumbnail {
   position: relative;
   width: 100%;
-  height: 220px; /* Standard height for all cards */
+  height: 200px;
   overflow: hidden;
 }
 
 .thumbnail-image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* This ensures the image covers the area without distortion */
+  object-fit: cover;
   transition: transform 0.3s ease;
 }
 
@@ -248,7 +256,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f0e6fa; /* Light purple background */
+  background-color: #f0e6fa;
   color: #6c2bb3;
 }
 
@@ -287,7 +295,7 @@ h1 {
 
 .rating {
   margin: 5px 0;
-  color: #ffd700; /* Gold color for stars */
+  color: #ffd700;
 }
 
 .view-btn {
@@ -307,18 +315,56 @@ h1 {
 }
 
 @media (max-width: 1200px) {
+  .contributions-content {
+    padding: 0 3rem;
+  }
+}
+
+@media (max-width: 992px) {
   .video-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
 }
 
 @media (max-width: 768px) {
-  .contributions-content {
-    padding: 2rem;
+  .video-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
   }
+  
+  .contributions-page {
+    padding-top: 0;
+  }
+  
+  .contributions-content {
+    padding: 0 0.75rem;
+  }
+  
+  h1 {
+    font-size: 1.4rem;
+    margin-top: 0.25rem;
+  }
+  
+  .subtitle {
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .sub-navbar {
+    padding: 0.35rem 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  .search-container {
+    width: 100%;
+    max-width: none;
+  }
+}
 
+@media (max-width: 576px) {
   .video-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
 
