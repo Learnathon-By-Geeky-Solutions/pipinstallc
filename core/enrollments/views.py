@@ -90,7 +90,24 @@ class CreateEnrollmentView(APIView):
                 payment_status='PENDING'
             )
 
-        # Initialize SSLCommerz payment
+        # If price is 0, mark as completed immediately and skip payment processing
+        if contribution.price == 0 or contribution.price is None:
+            enrollment.payment_status = 'COMPLETED'
+            enrollment.payment_reference = 'FREE_ENROLLMENT'
+            enrollment.payment_method = 'FREE'
+            enrollment.save()
+            
+            return Response({
+                'status': True,
+                'message': 'Successfully enrolled in free contribution',
+                'data': {
+                    'enrollment_id': enrollment.id,
+                    'contribution_id': contribution.id,
+                    'contribution_title': contribution.title
+                }
+            }, status=status.HTTP_200_OK)
+
+        # Initialize SSLCommerz payment for paid contributions
         sslcommerz_settings = {
             'store_id': settings.SSLCOMMERZ['STORE_ID'],
             'store_pass': settings.SSLCOMMERZ['STORE_PASSWORD'],
