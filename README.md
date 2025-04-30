@@ -154,8 +154,8 @@ Enables students to upload notes, videos, or other academic resources to the pla
 - ⚛️ ReactJS  
 
 **Backend:**  
-- 🐍 Django  
-- 🗃️ PostgreSQL  
+- 🐍 Django ,DRF 
+- 🗃️ PostgreSQL/sqlite3  
 - 🔄 Django ORM  
 
 **Other Tools:**  
