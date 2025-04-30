@@ -19,6 +19,7 @@
 - [🎯 Stakeholders](#-stakeholders)
 - [📋 SRS - Functional Requirements](#-srs---functional-requirements)
 - [📈 Diagrams](#-diagrams)
+- [🖼️ Application Screenshots](#-application-screenshots)
 - [🛠 Tech Stack](#-tech-stack)
 - [🧑‍💻 Getting Started](#-getting-started)
 - [📏 Development Guidelines](#-development-guidelines)
@@ -119,7 +120,7 @@ It empowers students to seamlessly transition between the roles of learner and m
 ### 📚 Course Detail View
 
 ![Course Detail](frontend/public/images/contriview.png)
-![Course Resources](frontend/public/images/resourcecontri.png)
+![Course Resources](frontend/public/images/resourcesincontri.png)
 
 ### 💳 Payment Page
 
