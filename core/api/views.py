@@ -501,10 +501,6 @@ class AllContributionView(APIView):
     - Filter by user: ?user=<uuid> (to find a specific user's contributions)
     - Can combine multiple filters
     
-    Optimizations:
-    - Database-level pagination
-    - Efficient querying of related fields
-    - Optional caching for frequently accessed pages
     """
     pagination_class = OptimizedPagination
 
@@ -759,8 +755,15 @@ class ContributionCommentView(APIView):
     def post(self, request):
         """
         create a new comment
+        automatically get user from the request
         """
-        serializer = ContributionCommentSerializer(data=request.data)
+        # Create a mutable copy of request data
+        data = request.data.copy()
+        
+        # Set the user to the current authenticated user
+        data['user'] = request.user.id
+        
+        serializer = ContributionCommentSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return create_success_response(
@@ -769,8 +772,6 @@ class ContributionCommentView(APIView):
                 status_code=status.HTTP_201_CREATED
             )
         return create_error_response(INVALID_DATA_MSG, serializer.errors)
-
-
 
     def delete(self, request, contribution_id, comment_id):
         """
@@ -790,14 +791,23 @@ class ContributionCommentView(APIView):
     def put(self, request, contribution_id, comment_id):
         """
         update a comment
+        automatically get user from the request
         """
         contribution = get_object_or_404(Contributions, id=contribution_id)
         comment = get_object_or_404(ContributionsComments, id=comment_id, contribution=contribution)
+        
         if comment.user.id == request.user.id:
-            serializer = ContributionCommentSerializer(comment, data=request.data)
+            # Create a mutable copy of request data
+            data = request.data.copy()
+            
+            # Set the user to the current authenticated user
+            data['user'] = request.user.id
+            
+            serializer = ContributionCommentSerializer(comment, data=data)
             if serializer.is_valid():
                 serializer.save()
                 return create_success_response('Comment updated successfully', serializer.data)
+            return create_error_response(INVALID_DATA_MSG, serializer.errors)
         else:
             return create_error_response(
                 'You do not have permission to update this comment',

@@ -53,7 +53,9 @@ INSTALLED_APPS = [
     'enrollments',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    
+    'enrollments',
+    'drf_yasg',
+
 ]
 
 MIDDLEWARE = [
