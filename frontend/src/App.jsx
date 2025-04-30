@@ -20,6 +20,8 @@ import PaymentCancel from './pages/PaymentCancel'
 import AddContributions from './pages/AddContributions'
 import UserContributions from './pages/UserContributions'
 import UpdateContributions from './pages/UpdateContributions'
+import Profile from './pages/Profile'
+import Contributors from './pages/Contributors'
 
 // RouteChangeTracker component to handle route changes
 const RouteChangeTracker = ({ setLoading }) => {
@@ -70,6 +72,8 @@ function App() {
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-fail" element={<PaymentFail />} />
             <Route path="/payment-cancel" element={<PaymentCancel />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/contributors" element={<Contributors />} />
             
             <Route path="/add-contributions" element={<AddContributions />} />
             <Route path="/user-contributions" element={<UserContributions />} />

@@ -17,6 +17,9 @@ function Contributions() {
   const [userEnrollments, setUserEnrollments] = useState([]);
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [universities, setUniversities] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [majorSubjects, setMajorSubjects] = useState([]);
   
   // Pagination state
   const [pagination, setPagination] = useState({
@@ -237,6 +240,38 @@ function Contributions() {
       offset: 0
     }));
   };
+
+  // Fetch filter options when component mounts
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        // Fetch universities
+        const uniResponse = await fetch(`${BaseUrl}/api/universities/`);
+        const uniResult = await uniResponse.json();
+        if (uniResult.status) {
+          setUniversities(uniResult.data);
+        }
+        
+        // Fetch departments
+        const deptResponse = await fetch(`${BaseUrl}/api/departments/`);
+        const deptResult = await deptResponse.json();
+        if (deptResult.status) {
+          setDepartments(deptResult.data);
+        }
+        
+        // Fetch major subjects
+        const subjectResponse = await fetch(`${BaseUrl}/api/major-subjects/`);
+        const subjectResult = await subjectResponse.json();
+        if (subjectResult.status) {
+          setMajorSubjects(subjectResult.data);
+        }
+      } catch (error) {
+        console.error('Error fetching filter options:', error);
+      }
+    };
+
+    fetchFilterOptions();
+  }, []);
 
   return (
     <div className="contributions-page">
