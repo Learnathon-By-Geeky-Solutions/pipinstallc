@@ -4,10 +4,47 @@ from .models import Contributions, ContributionVideos, ContributionTags, Contrib
 from django.shortcuts import get_object_or_404
 from django.db import models
 from enrollments.models import Enrollment
+from django.core.cache import cache
 
 
 # Define constants for repeated string literals
 NAME_WHITESPACE_ERROR = "Name cannot be empty or just whitespace"
+
+def update_contribution_enrollment_status(contribution, user):
+    """
+    Utility function to update a contribution's enrollment status for a specific user.
+    This function is called by signal handlers to ensure real-time updates.
+    
+    Args:
+        contribution: The Contribution instance
+        user: The User instance
+    """
+    # This is a cache-busting operation to ensure real-time updates
+    # for the frontend's is_enrolled status
+    
+    # Clear contribution detail cache for this specific user
+    user_specific_cache_key = f"contribution_detail:{contribution.id}:user:{user.id}"
+    cache.delete(user_specific_cache_key)
+    
+    # Clear general contribution detail cache
+    cache.delete(f"contribution_detail:{contribution.id}")
+    
+    # Clear any cached serializer data that might include enrollment status
+    contribution_list_cache_keys = [
+        f"contributions_list:user:{user.id}",
+        f"user_contributions:{user.id}:*"
+    ]
+    
+    # Delete pattern-based cache keys if supported
+    for key_pattern in contribution_list_cache_keys:
+        if hasattr(cache, 'delete_pattern'):
+            cache.delete_pattern(key_pattern)
+        
+    # Force django to refresh the contribution from the database
+    # in case it's cached in memory
+    contribution.refresh_from_db()
+    
+    return True
 
 """
 Serializer for custom User model.
