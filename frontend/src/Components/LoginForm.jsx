@@ -43,6 +43,7 @@ function LoginForm() {
     setMessage({ text: '', type: '' });
     try {
       const response = await login(formData.email, formData.password);
+      
       if (response.status) {
         setMessage({ text: response.message || 'Login successful!', type: 'success' });
         // Store user data and tokens in localStorage
@@ -54,17 +55,22 @@ function LoginForm() {
           navigate('/');
         }, 1500);
       } else {
-        // Handle error message
-        let errorMessage = response.message;
-        if (typeof errorMessage === 'object') {
-          // Extract error message from object if needed
-          if (errorMessage.non_field_errors && errorMessage.non_field_errors.length > 0) {
-            errorMessage = errorMessage.non_field_errors[0];
-          } else {
-            errorMessage = 'Invalid credentials. Please try again.';
+        // Handle server validation errors
+        let errorMessage = response.message || 'Invalid credentials';
+        
+        // Check if the response contains detailed error information
+        if (response.errors) {
+          const errors = response.errors;
+          if (errors.non_field_errors) {
+            errorMessage = errors.non_field_errors[0];
+          } else if (errors.email) {
+            errorMessage = errors.email[0];
+          } else if (errors.password) {
+            errorMessage = errors.password[0];
           }
         }
-        setMessage({ text: errorMessage || 'Login failed', type: 'error' });
+        
+        setMessage({ text: errorMessage, type: 'error' });
       }
     } catch (error) {
       console.error('Login error:', error);
