@@ -171,6 +171,7 @@ Enables students to upload notes, videos, or other academic resources to the pla
 # Clone the repository
 git clone https://github.com/Learnathon-By-Geeky-Solutions/pipinstallc.git
 
+#create virtual environment& activate
 # Install dependencies
 cd frontend && npm install
 cd backend && pip install -r requirements.txt
