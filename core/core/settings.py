@@ -99,6 +99,7 @@ DATABASES = {
 }
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -213,7 +214,7 @@ LOGGING = {
     },
 }
 
-FRONTEND_URL = 'http://localhost:5173'
+FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 PAYMENT_REDIRECT_URLS = {
     'SUCCESS': f'{FRONTEND_URL}/payment-success/',
