@@ -23,6 +23,7 @@
 - [🛠 Tech Stack](#-tech-stack)
 - [🧑‍💻 Getting Started](#-getting-started)
 - [📏 Development Guidelines](#-development-guidelines)
+- [📫 API Testing with Postman](#-api-testing-with-postman)
 
 
 ---
@@ -165,9 +166,34 @@ Enables students to upload notes, videos, or other academic resources to the pla
 
 ---
 
+## 📫 API Testing with Postman
+
+To explore and test the API endpoints of **EduSphere**, you can use the Postman collection we’ve provided.
+
+### 🔧 How to Run
+
+1. 📥 **[Download Postman Collection](postman/edusphere.postman_collection.json)**  
+   *(Make sure the file path is correct in your repo)*
+
+2. 🚀 **Import into Postman**
+   - Open Postman  
+   - Click on **Import**  
+   - Select the downloaded JSON file or drag-and-drop it
+
+3. 🧪 **Test API Endpoints**
+   - Choose your desired endpoint (e.g., Login, Signup, Add Contribution)  
+   - Set environment variables if needed (e.g., auth tokens or base URL)  
+   - Hit **Send** to test the API responses
+
+> 💡 Make sure your backend server is running locally or deployed before testing.
+
+
 ## 🧑‍💻 Getting Started
 
 ```bash
+
+
+
 # Clone the repository
 git clone https://github.com/Learnathon-By-Geeky-Solutions/pipinstallc.git
 
